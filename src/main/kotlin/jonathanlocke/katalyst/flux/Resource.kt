@@ -1,10 +1,10 @@
 package jonathanlocke.katalyst.flux
 
-import jonathanlocke.katalyst.flux.hierarchy.Renamable
-import jonathanlocke.katalyst.flux.io.Copyable
 import jonathanlocke.katalyst.flux.io.StreamReadable
 import jonathanlocke.katalyst.flux.io.StreamWritable
 import jonathanlocke.katalyst.flux.io.Writable
+import jonathanlocke.katalyst.flux.storage.Copyable
+import jonathanlocke.katalyst.flux.storage.Renamable
 
 interface Resource :
     ResourceObject,

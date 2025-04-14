@@ -1,8 +1,8 @@
-package jonathanlocke.katalyst.nucleus.error
+package jonathanlocke.katalyst.nucleus.language.errors
 
-import jonathanlocke.katalyst.nucleus.error.strategies.ReturnNull
-import jonathanlocke.katalyst.nucleus.error.strategies.ReturnValue
-import jonathanlocke.katalyst.nucleus.error.strategies.Throw
+import jonathanlocke.katalyst.nucleus.language.errors.strategies.ReturnNull
+import jonathanlocke.katalyst.nucleus.language.errors.strategies.ReturnValue
+import jonathanlocke.katalyst.nucleus.language.errors.strategies.Throw
 import jonathanlocke.katalyst.nucleus.values.Bytes
 
 /**
