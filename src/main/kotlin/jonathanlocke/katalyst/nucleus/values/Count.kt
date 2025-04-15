@@ -1,5 +1,7 @@
 package jonathanlocke.katalyst.nucleus.values
 
+import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandlingStrategy
+import jonathanlocke.katalyst.nucleus.language.errors.strategies.Throw
 import jonathanlocke.katalyst.nucleus.language.strings.StringFormattingStrategy
 import jonathanlocke.katalyst.nucleus.language.strings.ToString
 
@@ -7,12 +9,38 @@ import jonathanlocke.katalyst.nucleus.language.strings.ToString
 value class Count private constructor(val value: Long) : Comparable<Count>, ToString<Count> {
 
     companion object {
-        
+
         val ThousandsSeparated = StringFormattingStrategy<Count> { "%,d".format(it.value) }
 
         fun of(value: Long): Count = Count(value)
             .also { require(value >= 0) { "Count must be non-negative, was $value" } }
+
+        fun parseCount(text: String): Count = parseCount(text)
+
+        fun parseCount(
+            text: String,
+            error: ErrorHandlingStrategy<Count> = Throw()
+        ): Count? {
+
+            val value = text.replace(",", "").toLongOrNull()
+            return if (value == null) {
+                error.onError("Could not parse bytes: $text")
+            } else {
+                Count(value)
+            }
+        }
     }
+
+    fun loop(code: () -> Unit) = (0 until value).forEach { code() }
+
+    fun isZero(): Boolean = this.value == 0L
+
+    fun asLong() = value
+    fun asDouble() = value.toDouble()
+    fun asFloat() = value.toFloat()
+    fun asInt() = value.toInt()
+    fun asShort() = value.toShort()
+    fun asByte() = value.toByte()
 
     override operator fun compareTo(other: Count): Int = this.value.compareTo(other.value)
 
