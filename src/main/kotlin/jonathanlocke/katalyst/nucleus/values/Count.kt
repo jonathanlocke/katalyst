@@ -1,16 +1,15 @@
 package jonathanlocke.katalyst.nucleus.values
 
-import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandlingStrategy
+import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandler
 import jonathanlocke.katalyst.nucleus.language.errors.strategies.Throw
-import jonathanlocke.katalyst.nucleus.language.strings.StringFormattingStrategy
-import jonathanlocke.katalyst.nucleus.language.strings.ToString
+import jonathanlocke.katalyst.nucleus.language.strings.formatting.StringFormatter
 
 @JvmInline
-value class Count private constructor(val value: Long) : Comparable<Count>, ToString<Count> {
+value class Count private constructor(val value: Long) : Comparable<Count> {
 
     companion object {
 
-        val ThousandsSeparated = StringFormattingStrategy<Count> { "%,d".format(it.value) }
+        val ThousandsSeparated = StringFormatter<Count> { "%,d".format(it.value) }
 
         fun of(value: Long): Count = Count(value)
             .also { require(value >= 0) { "Count must be non-negative, was $value" } }
@@ -19,12 +18,12 @@ value class Count private constructor(val value: Long) : Comparable<Count>, ToSt
 
         fun parseCount(
             text: String,
-            error: ErrorHandlingStrategy<Count> = Throw()
+            error: ErrorHandler<Count> = Throw()
         ): Count? {
 
             val value = text.replace(",", "").toLongOrNull()
             return if (value == null) {
-                error.onError("Could not parse bytes: $text")
+                error.error("Could not parse bytes: $text")
             } else {
                 Count(value)
             }
@@ -44,7 +43,6 @@ value class Count private constructor(val value: Long) : Comparable<Count>, ToSt
 
     override operator fun compareTo(other: Count): Int = this.value.compareTo(other.value)
 
-    override fun toString(strategy: StringFormattingStrategy<Count>): String = strategy.format(this)
     override fun toString(): String = value.toString()
 
     fun plus(other: Count): Count = of(this.value + other.value)

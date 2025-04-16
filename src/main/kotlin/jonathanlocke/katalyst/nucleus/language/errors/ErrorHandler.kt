@@ -6,7 +6,7 @@ import jonathanlocke.katalyst.nucleus.language.errors.strategies.Throw
 import jonathanlocke.katalyst.nucleus.values.Bytes
 
 /**
- * An [ErrorHandlingStrategy] allows code to be flexible in how it handles error conditions in different usage contexts.
+ * An [ErrorHandler] allows code to be flexible in how it handles error conditions in different usage contexts.
  *
  * In one context, it might be desirable for a method to throw an exception, while in another context, it might
  * be desirable for the same method to return a `null` value for performance reasons.
@@ -21,10 +21,10 @@ import jonathanlocke.katalyst.nucleus.values.Bytes
  * workaround with [String.toIntOrNull]. But this leaves something to be desired because the functionality of integer
  * parsing had to be duplicated.
  *
- * [ErrorHandlingStrategy] provides a way to avoid this kind of duplication by allowing the caller of a method to
+ * [ErrorHandler] provides a way to avoid this kind of duplication by allowing the caller of a method to
  * specify how the error handling should work.
  *
- * For example, the integer parsing problem could be solved using [ErrorHandlingStrategy] like this:
+ * For example, the integer parsing problem could be solved using [ErrorHandler] like this:
  *
  * ```
  * fun String.parseInt(onError: ErrorHandlingStrategy<Int> = Throw()): Int? { ... }
@@ -54,14 +54,14 @@ import jonathanlocke.katalyst.nucleus.values.Bytes
  *
  * # Example - [Bytes]
  *
- * For another example of how [ErrorHandlingStrategy] can be used effectively, see [Bytes]
+ * For another example of how [ErrorHandler] can be used effectively, see [Bytes]
  *
  * @see ReturnNull
  * @see ReturnValue
  * @see Throw
  * @see Bytes
  */
-interface ErrorHandlingStrategy<T> {
+interface ErrorHandler<T> {
 
-    fun onError(message: String, throwable: Throwable? = null): T?
+    fun error(message: String, throwable: Throwable? = null): T?
 }

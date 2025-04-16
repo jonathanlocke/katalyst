@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.nucleus.language.errors.strategies
 
-import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandlingStrategy
+import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandler
 
-class ReturnValue<T>(private val errorValue: T) : ErrorHandlingStrategy<T> {
-    override fun onError(message: String, throwable: Throwable?): T = errorValue
+class ReturnValue<T>(private val errorValue: T) : ErrorHandler<T> {
+    override fun error(message: String, throwable: Throwable?): T = errorValue
 }

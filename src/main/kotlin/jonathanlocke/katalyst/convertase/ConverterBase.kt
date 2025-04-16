@@ -1,10 +1,11 @@
 package jonathanlocke.katalyst.convertase
 
-import kotlin.reflect.KClass
+import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandler
+import jonathanlocke.katalyst.nucleus.language.errors.strategies.Throw
 
 /**
  * Base class for implementing converters. The inherited [Converter.convert] method converts from the 'From' type
- * to the To type. Whether the conversion allows null values or not can be specified with [allowNull].
+ * to the To type. Whether the conversion allows null values or not can be specified with [nullAllowed].
  *
  * **Conversion**
  *
@@ -16,37 +17,28 @@ import kotlin.reflect.KClass
  *
  * **Missing Values**
  *
- * - [allowsNull]
- * - [allowNull]
+ * - [nullAllowed]
+ * - [nullAllowed]
  *
  * @param From The type to convert from
  * @param To The type to convert to
  * @see Converter
  */
-abstract class ConverterBase<From : Any, To : Any>(
-    override val fromType: KClass<From>,
-    override val toType: KClass<To>
-) : Converter<From, To> {
+abstract class ConverterBase<From : Any, To : Any> : Converter<From, To> {
 
     /** True if this converter allows null values */
-    private var allowNull: Boolean = false
+    val nullAllowed: Boolean = false
 
-    /**
-     * Sets whether null values should be converted to null.
-     *
-     * @param allowNull True if null values should be allowed
-     * @return The current instance
-     */
-    fun allowNull(allowNull: Boolean): ConverterBase<From, To> {
-        this.allowNull = allowNull
+    var errorHandler: ErrorHandler<To> = Throw()
+
+    override fun errorHandler(errorHandler: ErrorHandler<To>): Converter<From, To> {
+        this.errorHandler = errorHandler
         return this
     }
 
-    /**
-     * Returns true if this converter allows null values, false if a problem will be broadcast when a null value is
-     * encountered.
-     */
-    fun allowsNull(): Boolean = allowNull
+    override fun error(message: String, throwable: Throwable?): To? = errorHandler.error(message, throwable)
+
+    override fun nullValue(): To? = null
 
     /**
      * Converts from the From type to the To type. If the 'from' value is null and the converter allows
@@ -59,15 +51,15 @@ abstract class ConverterBase<From : Any, To : Any>(
         return if (from == null) {
 
             // and we don't allow that,
-            if (!allowsNull()) {
+            if (!nullAllowed) {
 
                 // then it's an error
-                error("Cannot convert null value to $toType")
-                
+                error("Cannot convert null value")
+
             } else {
 
-                // otherwise, convert to null
-                null
+                // otherwise, convert to the null value
+                nullValue()
             }
         } else {
 
@@ -80,7 +72,7 @@ abstract class ConverterBase<From : Any, To : Any>(
             } catch (e: Exception) {
 
                 // unless an exception occurs
-                error("Cannot convert $from to $toType")
+                error("Cannot convert $from")
             }
         }
     }

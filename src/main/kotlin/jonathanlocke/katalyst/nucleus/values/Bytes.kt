@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.nucleus.values
 
-import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandlingStrategy
+import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandler
 import jonathanlocke.katalyst.nucleus.language.errors.strategies.Throw
 import jonathanlocke.katalyst.nucleus.values.Bytes.MeasurementSystem.Binary
 import jonathanlocke.katalyst.nucleus.values.Bytes.MeasurementSystem.Metric
@@ -47,7 +47,7 @@ class Bytes(val bytes: Double) {
         fun parseBytes(
             text: String,
             system: MeasurementSystem = Metric,
-            error: ErrorHandlingStrategy<Bytes> = Throw()
+            error: ErrorHandler<Bytes> = Throw()
         ): Bytes? {
 
             val match = system.pattern.matchEntire(text)
@@ -67,7 +67,7 @@ class Bytes(val bytes: Double) {
                             "terabyte", "T", "Tb", "TB" -> terabytes(number)
                             "petabyte", "P", "Pb", "PB" -> petabytes(number)
                             "exabyte", "X", "Xb", "XB" -> exabytes(number)
-                            else -> error.onError("Unsupported units format: $units")
+                            else -> error.error("Unsupported units format: $units")
                         }
 
                     Binary ->
@@ -79,12 +79,12 @@ class Bytes(val bytes: Double) {
                             "tebibyte", "T", "TB", "TiB" -> terabytes(number)
                             "pebibyte", "P", "PB", "PiB" -> petabytes(number)
                             "exbibyte", "X", "XB", "XiB" -> exabytes(number)
-                            else -> error.onError("Unsupported units format: $units")
+                            else -> error.error("Unsupported units format: $units")
                         }
                 }
             }
 
-            return error.onError("Could not parse bytes: $text")
+            return error.error("Could not parse bytes: $text")
         }
     }
 

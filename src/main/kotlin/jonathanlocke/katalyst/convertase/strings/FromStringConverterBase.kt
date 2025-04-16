@@ -1,8 +1,9 @@
-package jonathanlocke.katalyst.convertase
+package jonathanlocke.katalyst.convertase.strings
 
+import jonathanlocke.katalyst.convertase.ConverterBase
+import jonathanlocke.katalyst.nucleus.language.strings.formatting.StringFormatter
+import jonathanlocke.katalyst.nucleus.language.strings.formatting.formats.Anything.Companion.ToString
 import java.util.*
-import java.util.function.Function
-import kotlin.reflect.KClass
 
 /**
  * Base class for conversions to and from String objects.
@@ -17,7 +18,7 @@ import kotlin.reflect.KClass
  * <p><b>Blank Strings</b></p>
  *
  * <p>
- * Just as [ConverterBase] has an option to allow or disallow null values, [StringConverterBase] has an
+ * Just as [ConverterBase] has an option to allow or disallow null values, [FromStringConverterBase] has an
  * option to allow or disallow blank strings. A blank string is null, zero length or contains nothing but whitespace. The
  * method [allowBlankStrings] can be used to allow blank values (which are not allowed by default), and
  * [allowsBlankString] will return true if the converter allows blank strings.
@@ -54,13 +55,13 @@ import kotlin.reflect.KClass
  * </ul>
  *
  * @param To The type to convert to and from
- * @see TwoWayConverterBase
- * @see StringConverter
+ * @see ConversionBase
+ * @see FromStringConverter
  */
-abstract class StringConverterBase<To : Any>(
-    toType: KClass<To>,
-    private var lambda: Function<String?, To?>? = null
-) : TwoWayConverterBase<String, To>(String::class, toType), StringConverter<To> {
+open class FromStringConverterBase<To : Any>(
+    val formatter: StringFormatter<To>? = ToString(),
+    val lambda: ((String) -> To?)? = null
+) : ConverterBase<String, To>(), FromStringConverter<To> {
 
     /** True if blank strings are allowed */
     private var allowBlank: Boolean = false
@@ -68,7 +69,7 @@ abstract class StringConverterBase<To : Any>(
     /**
      * Specifies whether blank (null, whitespace or "") strings should be allowed (they will convert to null)
      */
-    fun allowBlankStrings(allowBlank: Boolean): StringConverterBase<To> {
+    fun allowBlankStrings(allowBlank: Boolean): FromStringConverterBase<To> {
         this.allowBlank = allowBlank
         return this
     }
@@ -81,13 +82,13 @@ abstract class StringConverterBase<To : Any>(
     /**
      * {@inheritDoc}
      */
-    final override fun onConvert(from: String): To? {
+    override fun onConvert(from: String): To? {
 
         // If we allow blank strings and the from string is blank,
         return if (allowBlank && from.isBlank()) {
 
-            // then convert to null,
-            null
+            // then convert to the null value,
+            nullValue()
 
         } else {
 
@@ -97,61 +98,14 @@ abstract class StringConverterBase<To : Any>(
     }
 
     /**
-     * {@inheritDoc}
-     */
-    final override fun unconvert(to: To?): String? {
-
-        // If the value is null,
-        if (to == null) {
-
-            // and we allow that,
-            return if (allowsNull()) {
-
-                // then unconvert to the null string value,
-                nullString()
-                
-            } else {
-
-                // otherwise, it's an error
-                error("Cannot unconvert null value")
-            }
-        }
-
-        // Return
-        return try {
-
-            // the value as a string
-            onToString(to)
-
-        } catch (e: Exception) {
-
-            // unless there's an exception
-            error("Cannot unconvert: $to")
-        }
-    }
-
-    /**
-     * Returns the string representation of a null value. By default, this value is null, not "null".
-     */
-    protected open fun nullString(): String? = null
-
-    /**
-     * Convert the given value to a string
-     *
-     * @param value The (guaranteed non-null, non-blank) value
-     * @return A string which is by default value.toString() if this method is not overridden
-     */
-    protected open fun onToString(value: To): String = value.toString()
-
-    /**
      * Implemented by subclass to convert the given string to a value. The subclass implementation will never be called
      * in cases where value is null or blank, so it need not check for either case.
      *
-     * @param value The (guaranteed non-null, non-blank) value to convert
+     * @param text The (guaranteed non-null, non-blank) value to convert
      * @return The converted object
      */
-    protected open fun onToValue(value: String?): To? {
-        Objects.requireNonNull(lambda)
-        return lambda!!.apply(value)
+    protected open fun onToValue(text: String): To? {
+        require(lambda != null)
+        return lambda.invoke(text)
     }
 }
