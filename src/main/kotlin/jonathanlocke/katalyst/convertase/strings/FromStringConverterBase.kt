@@ -1,91 +1,46 @@
 package jonathanlocke.katalyst.convertase.strings
 
 import jonathanlocke.katalyst.convertase.ConverterBase
-import jonathanlocke.katalyst.nucleus.language.strings.formatting.StringFormatter
-import jonathanlocke.katalyst.nucleus.language.strings.formatting.formats.Anything.Companion.ToString
-import java.util.*
 
 /**
- * Base class for conversions to and from String objects.
  *
- * <p><b>Converting to and from Strings</b>
- * <p>
- * Subclasses implement conversion by overriding [onToValue]. If no implementation is given for
- * [onToString], a default implementation is provided which simply converts the object to a String by
- * calling [toString].
- * </p>
+ * Base class for implementing converters from [String] -> [To]. If the input String is non-null (or nulls
+ * are allowed by [nullAllowed]) and if it is non-blank (or blanks are allowed by [blankAllowed]), the
+ * subclass method [onToValue] is called to convert the string to the type [To].
  *
- * <p><b>Blank Strings</b></p>
+ * **Conversion**
  *
- * <p>
- * Just as [ConverterBase] has an option to allow or disallow null values, [FromStringConverterBase] has an
- * option to allow or disallow blank strings. A blank string is null, zero length or contains nothing but whitespace. The
- * method [allowBlankStrings] can be used to allow blank values (which are not allowed by default), and
- * [allowsBlankString] will return true if the converter allows blank strings.
- * </p>
+ * - [blankAllowed] - True if blank input strings are allowed and should convert to the [nullValue]
+ * - [nullAllowed] - True if null input values are allowed
+ * - [nullValue] - The value to use for nullity if (a) nulls are not allowed, or (b) a conversion fails and the
+ *                 error handler returns a null value instead of throwing an exception
  *
- * <p><b>Thread Safety</b></p>
+ * **Errors**
  *
- * <p>
- * Note: String converters in general are thread-safe as the base classes do not have mutable state, but some specific
- * string converter implementations may have mutable state, for example, Java formatter objects. Such converters will
- * not be thread-safe.
- * </p>
+ *  - [errorHandler] - Sets the error handler to use when reporting errors
+ *  - [error] - Reports an error
  *
- * <p><b>Conversions</b></p>
+ * **Implementing Converters**
  *
- * <ul>
- *     <li>[Converter.convert] - Called to convert string => value</li>
- *     <li>[TwoWayConverter.unconvert] - Called to convert value => string</li>
- * </ul>
+ * - [onToValue] - Called with an always non-null text string to convert if the from string value is non-null (or nulls
+ *                 are allowed) and if it is non-blank (or blanks are allowed)
  *
- * <p><b>Implementing Converters</b></p>
- *
- * <ul>
- *     <li>[onToString] - Overridden to provide value => string conversion</li>
- *     <li>[onToValue] - Overridden to provide string => value conversion</li>
- * </ul>
- *
- * <p><b>Missing Values</b></p>
- *
- * <ul>
- *     <li>[allowsBlankString]</li>
- *     <li>[allowBlankStrings]</li>
- *     <li>[nullString]</li>
- * </ul>
- *
- * @param To The type to convert to and from
- * @see ConversionBase
+ * * @param To The type to convert to and from
+ * @see ConverterBase
  * @see FromStringConverter
  */
-open class FromStringConverterBase<To : Any>(
-    val formatter: StringFormatter<To>? = ToString(),
-    val lambda: ((String) -> To?)? = null
-) : ConverterBase<String, To>(), FromStringConverter<To> {
+abstract class FromStringConverterBase<To : Any> : ConverterBase<String, To>(), FromStringConverter<To> {
 
     /** True if blank strings are allowed */
-    private var allowBlank: Boolean = false
-
-    /**
-     * Specifies whether blank (null, whitespace or "") strings should be allowed (they will convert to null)
-     */
-    fun allowBlankStrings(allowBlank: Boolean): FromStringConverterBase<To> {
-        this.allowBlank = allowBlank
-        return this
-    }
-
-    /**
-     * Returns true if this string converter allows blank strings
-     */
-    fun allowsBlankString(): Boolean = allowBlank
+    val blankAllowed: Boolean = false
 
     /**
      * {@inheritDoc}
      */
-    override fun onConvert(from: String): To? {
+    override fun onConvert(from: String): To? =
 
         // If we allow blank strings and the from string is blank,
-        return if (allowBlank && from.isBlank()) {
+        if (blankAllowed && from.isBlank()) {
 
             // then convert to the null value,
             nullValue()
@@ -95,7 +50,6 @@ open class FromStringConverterBase<To : Any>(
             // otherwise, convert to the To type
             onToValue(from)
         }
-    }
 
     /**
      * Implemented by subclass to convert the given string to a value. The subclass implementation will never be called
@@ -104,8 +58,5 @@ open class FromStringConverterBase<To : Any>(
      * @param text The (guaranteed non-null, non-blank) value to convert
      * @return The converted object
      */
-    protected open fun onToValue(text: String): To? {
-        require(lambda != null)
-        return lambda.invoke(text)
-    }
+    protected abstract fun onToValue(text: String): To?
 }

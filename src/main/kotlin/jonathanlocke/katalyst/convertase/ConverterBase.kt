@@ -1,24 +1,28 @@
 package jonathanlocke.katalyst.convertase
 
 import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandler
-import jonathanlocke.katalyst.nucleus.language.errors.strategies.Throw
 
 /**
- * Base class for implementing converters. The inherited [Converter.convert] method converts from the 'From' type
- * to the To type. Whether the conversion allows null values or not can be specified with [nullAllowed].
+ * Base class for implementing converters. The [Converter.convert] method converts from the [From] type
+ * to the [To] type. Whether the conversion allows null values or not can be specified with [nullAllowed].
+ * Errors are handled according to the conventions of [ErrorHandler], which allows the caller to determine
+ * if a conversion throws an exception or if it returns null.
  *
  * **Conversion**
  *
- * - [convert]
+ * - [convert] - Converts from the [From] type to the [To] type
+ * - [nullAllowed] - True if null input values are allowed
+ * - [nullValue] - The value to use for nullity if (a) nulls are not allowed, or (b) a conversion fails and the
+ *                 error handler returns a null value instead of throwing an exception
+ *
+ * **Errors**
+ *
+ *  - [errorHandler] - Sets the error handler to use when reporting errors
+ *  - [error] - Reports an error
  *
  * **Implementing Converters**
  *
- * - [onConvert]
- *
- * **Missing Values**
- *
- * - [nullAllowed]
- * - [nullAllowed]
+ * - [onConvert] - Called if the [From] value is non-null to perform the conversion to type [To]
  *
  * @param From The type to convert from
  * @param To The type to convert to
@@ -28,15 +32,6 @@ abstract class ConverterBase<From : Any, To : Any> : Converter<From, To> {
 
     /** True if this converter allows null values */
     val nullAllowed: Boolean = false
-
-    var errorHandler: ErrorHandler<To> = Throw()
-
-    override fun errorHandler(errorHandler: ErrorHandler<To>): Converter<From, To> {
-        this.errorHandler = errorHandler
-        return this
-    }
-
-    override fun error(message: String, throwable: Throwable?): To? = errorHandler.error(message, throwable)
 
     override fun nullValue(): To? = null
 
@@ -54,7 +49,7 @@ abstract class ConverterBase<From : Any, To : Any> : Converter<From, To> {
             if (!nullAllowed) {
 
                 // then it's an error
-                error("Cannot convert null value")
+                error("Cannot convert null value") ?: nullValue()
 
             } else {
 

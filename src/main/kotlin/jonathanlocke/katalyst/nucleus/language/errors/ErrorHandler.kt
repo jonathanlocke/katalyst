@@ -1,17 +1,17 @@
 package jonathanlocke.katalyst.nucleus.language.errors
 
-import jonathanlocke.katalyst.nucleus.language.errors.strategies.ReturnNull
-import jonathanlocke.katalyst.nucleus.language.errors.strategies.ReturnValue
-import jonathanlocke.katalyst.nucleus.language.errors.strategies.Throw
+import jonathanlocke.katalyst.nucleus.language.errors.handlers.ReturnDefault
+import jonathanlocke.katalyst.nucleus.language.errors.handlers.ReturnNull
+import jonathanlocke.katalyst.nucleus.language.errors.handlers.Throw
 import jonathanlocke.katalyst.nucleus.values.Bytes
 
 /**
  * An [ErrorHandler] allows code to be flexible in how it handles error conditions in different usage contexts.
  *
  * In one context, it might be desirable for a method to throw an exception, while in another context, it might
- * be desirable for the same method to return a `null` value for performance reasons.
+ * be desirable for the same method to return a null value for performance reasons.
  *
- * # Example - Integer.parseInt()
+ * # Integer.parseInt()
  *
  * The classic example of this problem is Java's [Integer.parseInt] method, which throws a [NumberFormatException] if
  * its argument is not a valid integer. While this may be convenient in many cases, in some use contexts (like
@@ -37,7 +37,7 @@ import jonathanlocke.katalyst.nucleus.values.Bytes
  * "5.6".parseInt()
  * ```
  *
- * but when there is a need to avoid throwing exceptions, the caller can invoke the same method like this:
+ * but when there is a need to avoid throwing exceptions, the caller could do this:
  *
  * ```
  * dirtyText.parseInt(ReturnNull())
@@ -52,12 +52,12 @@ import jonathanlocke.katalyst.nucleus.values.Bytes
  *
  * Kotlin's compiler is smart enough to figure out that the return value cannot be null!
  *
- * # Example - [Bytes]
+ * #  Bytes
  *
  * For another example of how [ErrorHandler] can be used effectively, see [Bytes]
  *
  * @see ReturnNull
- * @see ReturnValue
+ * @see ReturnDefault
  * @see Throw
  * @see Bytes
  */

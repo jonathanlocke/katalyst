@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.nucleus.values
 
 import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandler
-import jonathanlocke.katalyst.nucleus.language.errors.strategies.Throw
+import jonathanlocke.katalyst.nucleus.language.errors.handlers.Throw
 import jonathanlocke.katalyst.nucleus.values.Bytes.MeasurementSystem.Binary
 import jonathanlocke.katalyst.nucleus.values.Bytes.MeasurementSystem.Metric
 import java.text.DecimalFormat

@@ -1,5 +1,3 @@
 package jonathanlocke.katalyst.flux.io
 
-class ResourceWriter {
-
-}
+class ResourceWriter

@@ -2,4 +2,7 @@ package jonathanlocke.katalyst.convertase.strings
 
 import jonathanlocke.katalyst.convertase.Converter
 
-interface ToStringConverter<T : Any> : Converter<T, String>
+/**
+ * Converter from type [From] to a string value
+ */
+interface ToStringConverter<From : Any> : Converter<From, String>
