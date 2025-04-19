@@ -12,5 +12,5 @@ import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandler
  * Note: Throw() is the default, so explicitly setting the error handler in a conversion is not necessary.
  */
 class Throw<T> : ErrorHandler<T> {
-    override fun error(message: String, throwable: Throwable?): T = throw Exception(message, throwable)
+    override fun error(message: String, throwable: Throwable?, value: T?): T = throw Exception(message, throwable)
 }

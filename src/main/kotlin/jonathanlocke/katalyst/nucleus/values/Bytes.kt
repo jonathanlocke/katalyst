@@ -1,12 +1,12 @@
 package jonathanlocke.katalyst.nucleus.values
 
+import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.stringToValueConverter
 import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandler
 import jonathanlocke.katalyst.nucleus.language.errors.handlers.Throw
 import jonathanlocke.katalyst.nucleus.values.Bytes.MeasurementSystem.Binary
 import jonathanlocke.katalyst.nucleus.values.Bytes.MeasurementSystem.Metric
 import java.text.DecimalFormat
 
-@Suppress("SpellCheckingInspection")
 class Bytes(val bytes: Double) {
 
     enum class MeasurementSystem(val radix: Double, suffixPattern: String) {
@@ -25,6 +25,11 @@ class Bytes(val bytes: Double) {
     }
 
     companion object {
+
+        fun bytesConverter(measurementSystem: MeasurementSystem = Metric) =
+            stringToValueConverter(Bytes::class) { text, errorHandler ->
+                parseBytes(text, measurementSystem, errorHandler)
+            }
 
         fun bytes(value: Double) = Bytes(value)
 
@@ -47,7 +52,7 @@ class Bytes(val bytes: Double) {
         fun parseBytes(
             text: String,
             system: MeasurementSystem = Metric,
-            error: ErrorHandler<Bytes> = Throw()
+            error: ErrorHandler<Bytes?> = Throw()
         ): Bytes? {
 
             val match = system.pattern.matchEntire(text)
@@ -58,29 +63,27 @@ class Bytes(val bytes: Double) {
 
                 return when (system) {
 
-                    Metric ->
-                        when (units) {
-                            "byte", "" -> bytes(number)
-                            "kilobyte", "K", "Kb", "KB" -> kilobytes(number)
-                            "megabyte", "M", "Mb", "MB" -> megabytes(number)
-                            "gigabyte", "G", "Gb", "GB" -> gigabytes(number)
-                            "terabyte", "T", "Tb", "TB" -> terabytes(number)
-                            "petabyte", "P", "Pb", "PB" -> petabytes(number)
-                            "exabyte", "X", "Xb", "XB" -> exabytes(number)
-                            else -> error.error("Unsupported units format: $units")
-                        }
+                    Metric -> when (units) {
+                        "byte", "" -> bytes(number)
+                        "kilobyte", "K", "Kb", "KB" -> kilobytes(number)
+                        "megabyte", "M", "Mb", "MB" -> megabytes(number)
+                        "gigabyte", "G", "Gb", "GB" -> gigabytes(number)
+                        "terabyte", "T", "Tb", "TB" -> terabytes(number)
+                        "petabyte", "P", "Pb", "PB" -> petabytes(number)
+                        "exabyte", "X", "Xb", "XB" -> exabytes(number)
+                        else -> error.error("Unsupported units format: $units")
+                    }
 
-                    Binary ->
-                        when (units) {
-                            "byte", "" -> bytes(number)
-                            "kibibyte", "K", "KB", "KiB" -> kilobytes(number)
-                            "mebibyte", "M", "MB", "MiB" -> megabytes(number)
-                            "gibibyte", "G", "GB", "GiB" -> gigabytes(number)
-                            "tebibyte", "T", "TB", "TiB" -> terabytes(number)
-                            "pebibyte", "P", "PB", "PiB" -> petabytes(number)
-                            "exbibyte", "X", "XB", "XiB" -> exabytes(number)
-                            else -> error.error("Unsupported units format: $units")
-                        }
+                    Binary -> when (units) {
+                        "byte", "" -> bytes(number)
+                        "kibibyte", "K", "KB", "KiB" -> kilobytes(number)
+                        "mebibyte", "M", "MB", "MiB" -> megabytes(number)
+                        "gibibyte", "G", "GB", "GiB" -> gigabytes(number)
+                        "tebibyte", "T", "TB", "TiB" -> terabytes(number)
+                        "pebibyte", "P", "PB", "PiB" -> petabytes(number)
+                        "exbibyte", "X", "XB", "XiB" -> exabytes(number)
+                        else -> error.error("Unsupported units format: $units")
+                    }
                 }
             }
 

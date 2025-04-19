@@ -1,0 +1,79 @@
+package jonathanlocke.katalyst.convertase.conversion.strings.collections
+
+import jonathanlocke.katalyst.convertase.conversion.Conversion
+import jonathanlocke.katalyst.convertase.conversion.ConversionBase
+import jonathanlocke.katalyst.convertase.conversion.Converter
+import jonathanlocke.katalyst.convertase.conversion.ConverterBase
+import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter
+import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.stringToValueConverter
+import jonathanlocke.katalyst.convertase.conversion.strings.ValueToStringConverter
+import jonathanlocke.katalyst.convertase.conversion.strings.values.ValueToString
+import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandler
+import jonathanlocke.katalyst.nucleus.language.errors.handlers.Throw
+import jonathanlocke.katalyst.nucleus.language.strings.parsing.Separator
+import kotlin.reflect.KClass
+
+/**
+ * A bidirectional [String] <-> List<[Value]> conversion.
+ *
+ * **Forward Conversion ([String] <-> List<[Value]>)**
+ *
+ *  - [stringToValueConverter] - The converter that converts [String] -> [Value]
+ *  - [separator] - The separator to use when parsing text and joining value objects
+ *  - [elementToValueErrorHandler] - The error to use problems with [String] -> [Value]
+ *
+ * **Reverse Conversion (List<[Value]> -> [String])**
+ *
+ *  - [valueToStringConverter] - The converter that converts [Value] -> [String]
+ *  - [elementToStringErrorHandler] - The error to use problems with [Value] -> [String]**
+ *  - [defaultToStringValue] - The value to use for null elements when converting to [String]
+ *
+ * @param Value The type of value to convert to and from
+ * @property stringToValueConverter The converter that converts [String] -> [Value]
+ * @property separator The separator to use when parsing text and joining value objects
+ * @property elementToValueErrorHandler The error to use problems with [String] -> [Value]
+ * @property valueToStringConverter The converter that converts [Value] -> [String]
+ * @property elementToStringErrorHandler The error to use problems with [Value] -> [String]
+ * @property defaultToStringValue The value to use for null elements when converting to [String]]
+ *
+ * @see Conversion
+ * @see StringToValueConverter
+ * @see ValueToStringConverter
+ * @see StringToValueConverter
+ * @see Separator
+ */
+@Suppress("UNCHECKED_CAST")
+class ListConversion<Value : Any>(
+
+    // Value class
+    val valueClass: KClass<Value>,
+
+    // String -> Value conversion
+    val stringToValueConverter: StringToValueConverter<Value>,
+    val separator: Separator = Separator(),
+    val elementToValueErrorHandler: ErrorHandler<Value?> = Throw(),
+
+    // Value -> String conversion
+    val valueToStringConverter: ValueToStringConverter<Value> = ValueToString(valueClass) as ValueToStringConverter<Value>,
+    val elementToStringErrorHandler: ErrorHandler<String?> = Throw(),
+    val defaultToStringValue: String = "?"
+
+) : ConversionBase<String, List<Value>>(String::class, List::class as KClass<List<Value>>) {
+
+    @Suppress("UNCHECKED_CAST")
+    override fun forwardConverter(): StringToValueConverter<List<Value>> = stringToValueConverter(
+        List::class as KClass<List<Value>>
+    ) { text, errorHandler ->
+        separator.split(text).map { member ->
+            stringToValueConverter.convert(member, elementToValueErrorHandler)
+                ?: errorHandler.error("Failed to convert element: $member")
+        } as List<Value>?
+    }
+
+    override fun reverseConverter(): Converter<List<Value>, String> = object : ConverterBase<List<Value>, String>
+        (List::class as KClass<List<Value>>, String::class) {
+        override fun onConvert(from: List<Value>): String = separator.join(from.map {
+            valueToStringConverter.convert(it, elementToStringErrorHandler) ?: defaultToStringValue
+        }.toList())
+    }
+}

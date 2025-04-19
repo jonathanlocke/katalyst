@@ -63,5 +63,5 @@ import jonathanlocke.katalyst.nucleus.values.Bytes
  */
 interface ErrorHandler<T> {
 
-    fun error(message: String, throwable: Throwable? = null): T?
+    fun error(message: String, throwable: Throwable? = null, value: T? = null): T?
 }

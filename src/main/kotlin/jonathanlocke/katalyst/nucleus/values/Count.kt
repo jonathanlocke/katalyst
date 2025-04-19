@@ -1,6 +1,10 @@
 package jonathanlocke.katalyst.nucleus.values
 
+import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.stringToValueConverter
+import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.toValue
+import jonathanlocke.katalyst.convertase.conversion.strings.values.StringToNumber.Companion.longConverter
 import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandler
+import jonathanlocke.katalyst.nucleus.language.errors.handlers.ReturnNull
 import jonathanlocke.katalyst.nucleus.language.errors.handlers.Throw
 import jonathanlocke.katalyst.nucleus.language.strings.formatting.StringFormatter
 
@@ -10,6 +14,14 @@ value class Count private constructor(val value: Long) : Comparable<Count> {
     companion object {
 
         val ThousandsSeparated = StringFormatter<Count> { "%,d".format(it.value) }
+
+        fun countConverter() =
+            stringToValueConverter(Count::class) { text, errorHandler ->
+                text.toValue(longConverter, ReturnNull())?.toCount()
+                    ?: errorHandler.error("Could not parse count: $text")
+            }
+
+        fun Number.toCount(): Count = of(this.toLong())
 
         fun of(value: Long): Count = Count(value)
             .also { require(value >= 0) { "Count must be non-negative, was $value" } }
@@ -31,9 +43,7 @@ value class Count private constructor(val value: Long) : Comparable<Count> {
     }
 
     fun loop(code: () -> Unit) = (0 until value).forEach { code() }
-
     fun isZero(): Boolean = this.value == 0L
-
     fun asLong() = value
     fun asDouble() = value.toDouble()
     fun asFloat() = value.toFloat()

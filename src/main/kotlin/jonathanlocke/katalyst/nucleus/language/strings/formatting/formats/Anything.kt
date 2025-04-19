@@ -6,6 +6,6 @@ class Anything {
 
     companion object {
 
-        fun <T> ToString() = StringFormatter<T> { it.toString() }
+        fun <T> convertToString() = StringFormatter<T> { it.toString() }
     }
 }

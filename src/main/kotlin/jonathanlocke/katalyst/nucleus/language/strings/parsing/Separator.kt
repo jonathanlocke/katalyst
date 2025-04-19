@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.nucleus.language.strings.parsing
 
-class Separator(val parseSeparator: Regex = Regex(",\\*"), val joinSeparator: String = ", ") {
+class Separator(val parseSeparator: Regex = Regex(",\\s*"), val joinSeparator: String = ", ") {
 
     constructor(parseSeparator: String, joinSeparator: String = parseSeparator) : this(
         Regex(parseSeparator),
