@@ -1,33 +1,74 @@
 package jonathanlocke.katalyst.checkpoint.validation
 
-import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandler
-import jonathanlocke.katalyst.nucleus.language.errors.handlers.Throw
+import jonathanlocke.katalyst.checkpoint.validation.Validator.Companion.ensure
+import jonathanlocke.katalyst.checkpoint.validation.Validator.Companion.isValid
+import jonathanlocke.katalyst.checkpoint.validation.Validator.Companion.validator
+import java.util.function.Consumer
 
-interface Validator<T> {
+/**
+ * A validator checks values and returns a [ValidationResult].
+ *
+ * Validators can be implemented by subclassing [ValidatorBase] or by passing a lambda function to [validator].
+ *
+ * **Usage**
+ *
+ * - [isValid] - Checks if a value is valid by calling [validate] on each validator in the list
+ * - [ensure] - Checks if a value is valid and throws an exception if it is not
+ * - [validator] - Creates a validator from a lambda function
+ *
+ * **Examples**
+ *
+ * - [isValid] - Checks if a value is valid by calling one or more validators
+ * - [ensure] - Ensures that a validator is valid or an exception is thrown
+ * - [validator] - Creates a validator from a lambda function
+ *
+ * @see ValidatorBase
+ *
+ * @param Value The type of value to validate
+ */
+interface Validator<Value> {
 
     /**
-     * Performs validation of the given value, calling the error handler if it is not valid.
+     * Performs validation of the given value
      *
-     * @return Returns true if validation succeeded. If validation fails, returns false unless the error handler
-     * throws an exception
-     * @throws Exception Thrown by error handler if the implementation is [Throw]
+     * @param value The value to validate
+     * @return Returns the result of validation.
      */
-    fun validate(value: T, errorHandler: ErrorHandler<Boolean>): Boolean
+    fun validate(value: Value): ValidationResult<Value>
 
     companion object {
 
-        fun <T : Any> T.isValid(vararg validators: Validator<T>): Boolean =
-            validators.all { it.validate(this, Throw()) }
+        /**
+         * Checks if this value is valid by calling [validate] on each validator in the list.
+         * @param validators The list of validators to check
+         * @return Returns true if all validators validate successfully. If a validator encounters a problem,
+         *         the [ErrorHandler] is called, which determines whether a null value is returned ([ReturnNull]) or
+         *         an exception is thrown ([Throw]).
+         */
+        fun <Value : Any> Value.isValid(vararg validators: Validator<Value>): Boolean =
+            validators.all { it.validate(this).isValid }
 
-        fun <T : Any> T.validated(validator: Validator<T>): T {
-            validator.validate(this, Throw())
+        /**
+         * Checks if this value is valid by calling [validate] on each validator in the list.
+         * @param validator The validator to check
+         * @return Returns this value for method chaining.
+         */
+        fun <Value : Any> Value.ensure(vararg validators: Validator<Value>): Value {
+            validators.all { it.validate(this).isValid() }
             return this
         }
 
-        fun <T> validator(lambda: (value: T, errorHandler: ErrorHandler<Boolean>) -> Boolean): Validator<T> =
-            object : Validator<T> {
-                override fun validate(value: T, errorHandler: ErrorHandler<Boolean>): Boolean =
-                    lambda(value, errorHandler)
+        /**
+         * Creates a validator from a lambda function. The purpose of this function is purely to make it easier and
+         * more concise to create validators.
+         * @param lambda The lambda function to use for validation
+         * @return Returns a validator that calls the given lambda function to validate values.
+         */
+        fun <Value> validator(lambda: (value: Value, error: Consumer<String>) -> Unit): Validator<Value> =
+            object : ValidatorBase<Value>() {
+                override fun onValidate(value: Value) {
+                    lambda.invoke(value) { message -> error(message) }
+                }
             }
     }
 }

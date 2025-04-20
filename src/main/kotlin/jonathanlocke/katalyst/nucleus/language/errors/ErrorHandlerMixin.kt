@@ -22,5 +22,5 @@ interface ErrorHandlerMixin<T> : Mixin {
      * @param message The error message
      * @param throwable Any exception that caused the error
      */
-    fun error(message: String, throwable: Throwable? = null): T? = errorHandler().error(message, throwable)
+    fun error(message: String, throwable: Throwable? = null): T? = errorHandler().error(message, throwable = throwable)
 }

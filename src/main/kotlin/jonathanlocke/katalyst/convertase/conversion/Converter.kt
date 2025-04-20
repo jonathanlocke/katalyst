@@ -1,7 +1,6 @@
 package jonathanlocke.katalyst.convertase.conversion
 
 import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandler
-import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandlerMixin
 import jonathanlocke.katalyst.nucleus.language.errors.handlers.ReturnNull
 import jonathanlocke.katalyst.nucleus.language.errors.handlers.Throw
 import kotlin.reflect.KClass
@@ -18,7 +17,7 @@ import kotlin.reflect.KClass
  *
  * @param From Source type
  * @param To Destination type
- * @see ErrorHandlerMixin
+ * @see ErrorHandler
  */
 interface Converter<From : Any, To : Any> {
 

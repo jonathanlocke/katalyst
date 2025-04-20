@@ -50,8 +50,8 @@ abstract class ConverterBase<From : Any, To : Any>(
      * @param message The error message
      * @param throwable Any exception that caused the error
      */
-    override fun error(message: String, throwable: Throwable?, value: To?): To? =
-        errorHandler.error(message, throwable)
+    override fun error(message: String, value: To?, throwable: Throwable?): To? =
+        errorHandler.error(message, throwable = throwable)
 
     /**
      * Converts from the From type to the To type. If the 'from' value is null and the converter allows

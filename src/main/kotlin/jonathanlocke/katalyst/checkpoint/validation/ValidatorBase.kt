@@ -1,17 +1,50 @@
 package jonathanlocke.katalyst.checkpoint.validation
 
-import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandler
+/**
+ * A base class for implementing a [Validator].
+ *
+ *  - [onValidate] - Called when [validate] is called
+ *  - [result] - A collection of validation problems
+ *  - [isValid] - True if there are no validation problems
+ *  - [isInvalid] - True if there are validation problems
+ *
+ * @param Value The type of value to validate
+ * @see Validator
+ * @see ValidationResult
+ */
+abstract class ValidatorBase<Value> : Validator<Value> {
 
-abstract class ValidatorBase<T> : Validator<T> {
+    val isValid = result.isValid
+    val isInvalid = result.isInvalid
 
-    val errors = ValidationErrors<T>()
-    val isValid = errors.isValid
-    val isInvalid = errors.isInvalid
+    private lateinit var result: ValidationResult<Value>
 
-    override fun validate(value: T, errorHandler: ErrorHandler<Boolean>): Boolean {
-        onValidate()
-        return errors.isValid
+    /**
+     * Performs validation of the given value, calling the error handler if it is not valid.
+     * @param value The value to validate
+     * @return The result of validation
+     */
+    final override fun validate(value: Value): ValidationResult<Value> {
+
+        // Create the validation result for the given value,
+        this.result = ValidationResult(value)
+
+        try {
+
+            // call the subclass to validate the value
+            onValidate(value)
+
+        } catch (e: Exception) {
+
+            // and if an exception is thrown, record an error.
+            error("Unexpected exception: ${e.message}")
+        }
+
+        return result
     }
 
-    protected abstract fun onValidate()
+    fun error(message: String) = result.error(message, result.value)
+    fun warning(message: String) = result.warning(message, result.value)
+
+    protected abstract fun onValidate(value: Value)
 }

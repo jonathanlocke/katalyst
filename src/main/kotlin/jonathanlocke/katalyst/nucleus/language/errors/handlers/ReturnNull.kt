@@ -10,5 +10,5 @@ import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandler
  * ```
  */
 class ReturnNull<T> : ErrorHandler<T> {
-    override fun error(message: String, throwable: Throwable?, value: T?): T? = null
+    override fun error(message: String, value: T?, throwable: Throwable?): T? = null
 }
