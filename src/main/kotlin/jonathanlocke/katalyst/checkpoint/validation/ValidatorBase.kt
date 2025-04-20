@@ -17,7 +17,7 @@ abstract class ValidatorBase<Value> : Validator<Value> {
     val isValid = result.isValid
     val isInvalid = result.isInvalid
 
-    private lateinit var result: ValidationResult<Value>
+    protected lateinit var result: ValidationResult<Value>
 
     /**
      * Performs validation of the given value, calling the error handler if it is not valid.
@@ -43,8 +43,8 @@ abstract class ValidatorBase<Value> : Validator<Value> {
         return result
     }
 
-    fun error(message: String) = result.error(message, result.value)
-    fun warning(message: String) = result.warning(message, result.value)
+    fun error(message: String) = result.error(message)
+    fun warning(message: String) = result.warning(message)
 
     protected abstract fun onValidate(value: Value)
 }

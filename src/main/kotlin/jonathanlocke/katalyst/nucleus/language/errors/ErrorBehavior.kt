@@ -1,12 +1,11 @@
 package jonathanlocke.katalyst.nucleus.language.errors
 
-import jonathanlocke.katalyst.nucleus.language.errors.handlers.ReturnDefault
-import jonathanlocke.katalyst.nucleus.language.errors.handlers.ReturnNull
-import jonathanlocke.katalyst.nucleus.language.errors.handlers.Throw
+import jonathanlocke.katalyst.nucleus.language.errors.behaviors.ReturnResult
+import jonathanlocke.katalyst.nucleus.language.errors.behaviors.Throw
 import jonathanlocke.katalyst.nucleus.values.Bytes
 
 /**
- * An [ErrorHandler] allows code to be flexible in how it handles error conditions in different usage contexts.
+ * An [ErrorBehavior] allows code to be flexible in how it handles error conditions in different usage contexts.
  *
  * In one context, it might be desirable for a method to throw an exception, while in another context, it might
  * be desirable for the same method to return a null value for performance reasons.
@@ -21,13 +20,13 @@ import jonathanlocke.katalyst.nucleus.values.Bytes
  * workaround with [String.toIntOrNull]. But this leaves something to be desired because the functionality of integer
  * parsing had to be duplicated.
  *
- * [ErrorHandler] provides a way to avoid this kind of duplication by allowing the caller of a method to
+ * [ErrorBehavior] provides a way to avoid this kind of duplication by allowing the caller of a method to
  * specify how the error handling should work.
  *
- * For example, the integer parsing problem could be solved using [ErrorHandler] like this:
+ * For example, the integer parsing problem could be solved using [ErrorBehavior] like this:
  *
  * ```
- * fun String.parseInt(onError: ErrorHandlingStrategy<Int> = Throw()): Int? { ... }
+ * fun String.parseInt(errorBehavior: ErrorBehavior = Throw()): Int? { ... }
  * ```
  *
  * With this hypothetical implementation of [String.parseInt], when the caller wants an exception thrown they can
@@ -54,14 +53,16 @@ import jonathanlocke.katalyst.nucleus.values.Bytes
  *
  * #  Bytes
  *
- * For another example of how [ErrorHandler] can be used effectively, see [Bytes]
+ * For another example of how [ErrorBehavior] can be used effectively, see [Bytes]
  *
- * @see ReturnNull
- * @see ReturnDefault
+ * @see ReturnResult
  * @see Throw
  * @see Bytes
  */
-interface ErrorHandler<T> {
+interface ErrorBehavior<Value> {
 
-    fun error(message: String, value: T? = null, throwable: Throwable? = null): T?
+    /**
+     * Provides behavior for an error condition.
+     */
+    fun error(message: String, value: Value? = null, throwable: Throwable? = null): Result<Value>?
 }

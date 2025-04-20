@@ -1,8 +1,8 @@
 package jonathanlocke.katalyst.checkpoint.validation
 
 import jonathanlocke.katalyst.checkpoint.validation.Validator.Companion.isValid
-import jonathanlocke.katalyst.checkpoint.validation.values.Numbers.Companion.isGreaterThan
-import jonathanlocke.katalyst.checkpoint.validation.values.Numbers.Companion.isLessThan
+import jonathanlocke.katalyst.checkpoint.validation.values.NumberValidators.Companion.isGreaterThan
+import jonathanlocke.katalyst.checkpoint.validation.values.NumberValidators.Companion.isLessThan
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 

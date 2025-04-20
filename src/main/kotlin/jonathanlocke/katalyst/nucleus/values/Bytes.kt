@@ -1,8 +1,8 @@
 package jonathanlocke.katalyst.nucleus.values
 
 import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.stringToValueConverter
-import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandler
-import jonathanlocke.katalyst.nucleus.language.errors.handlers.Throw
+import jonathanlocke.katalyst.nucleus.language.errors.ErrorBehavior
+import jonathanlocke.katalyst.nucleus.language.errors.behaviors.Throw
 import jonathanlocke.katalyst.nucleus.values.Bytes.MeasurementSystem.Binary
 import jonathanlocke.katalyst.nucleus.values.Bytes.MeasurementSystem.Metric
 import java.text.DecimalFormat
@@ -27,8 +27,8 @@ class Bytes(val bytes: Double) {
     companion object {
 
         fun bytesConverter(measurementSystem: MeasurementSystem = Metric) =
-            stringToValueConverter(Bytes::class) { text, errorHandler ->
-                parseBytes(text, measurementSystem, errorHandler)
+            stringToValueConverter(Bytes::class) { text, errorBehavior ->
+                parseBytes(text, measurementSystem, errorBehavior)
             }
 
         fun bytes(value: Double) = Bytes(value)
@@ -52,7 +52,7 @@ class Bytes(val bytes: Double) {
         fun parseBytes(
             text: String,
             system: MeasurementSystem = Metric,
-            error: ErrorHandler<Bytes?> = Throw()
+            error: ErrorBehavior<Bytes?> = Throw()
         ): Bytes? {
 
             val match = system.pattern.matchEntire(text)

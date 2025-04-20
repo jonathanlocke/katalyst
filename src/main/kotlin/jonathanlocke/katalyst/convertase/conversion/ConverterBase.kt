@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.convertase.conversion
 
-import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandler
+import jonathanlocke.katalyst.nucleus.language.errors.ErrorBehavior
 import kotlin.reflect.KClass
 
 /**
@@ -28,13 +28,13 @@ abstract class ConverterBase<From : Any, To : Any>(
     override val toClass: KClass<To>
 ) :
     Converter<From, To>,
-    ErrorHandler<To?> {
+    ErrorBehavior<To?> {
 
     /** True if this converter allows null values */
     val nullAllowed: Boolean = false
 
     /** The error handler to use when reporting errors */
-    private lateinit var errorHandler: ErrorHandler<To?>
+    private lateinit var errorBehavior: ErrorBehavior<To?>
 
     /**
      * The value to use for nullity if (a) nulls are not allowed, or (b) a conversion fails and the
@@ -51,17 +51,17 @@ abstract class ConverterBase<From : Any, To : Any>(
      * @param throwable Any exception that caused the error
      */
     override fun error(message: String, value: To?, throwable: Throwable?): To? =
-        errorHandler.error(message, throwable = throwable)
+        errorBehavior.error(message, throwable = throwable)
 
     /**
      * Converts from the From type to the To type. If the 'from' value is null and the converter allows
      * null values, null will be returned. If the value is null and the converter does not allow null values a problem
      * will be broadcast. Any exceptions that occur during conversion are caught and broadcast as problems.
      */
-    final override fun convert(from: From?, errorHandler: ErrorHandler<To?>): To? {
+    final override fun convert(from: From?, errorBehavior: ErrorBehavior<To?>): To? {
 
         // Set the error handler to use for this conversion
-        this.errorHandler = errorHandler
+        this.errorBehavior = errorBehavior
 
         // If the value is null,
         return if (from == null) {

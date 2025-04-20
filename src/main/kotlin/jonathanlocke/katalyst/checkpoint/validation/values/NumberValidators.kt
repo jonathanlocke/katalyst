@@ -1,0 +1,39 @@
+package jonathanlocke.katalyst.checkpoint.validation.values
+
+import jonathanlocke.katalyst.checkpoint.validation.Validator
+import jonathanlocke.katalyst.checkpoint.validation.Validator.Companion.validator
+
+/**
+ * Validators for numbers.
+ *
+ * @see Validator
+ */
+class NumberValidators {
+
+    companion object {
+
+        fun isLessThan(max: Number) = validator { value: Number, result ->
+            value.toDouble() < max.toDouble() || result.error("$value must be greater than $max")
+        }
+
+        fun isGreaterThan(max: Number) = validator { value: Number, result ->
+            value.toDouble() > max.toDouble() || result.error("$value must be greater than $max")
+        }
+
+        fun isLessThanOrEqualTo(max: Number) = validator { value: Number, result ->
+            value.toDouble() <= max.toDouble() || result.error("$value must be less than $max")
+        }
+
+        fun isGreaterThanOrEqualTo(max: Number) = validator { value: Number, result ->
+            value.toDouble() >= max.toDouble() || result.error("$value must be greater than $max")
+        }
+
+        fun isEqualTo(max: Number) = validator { value: Number, result ->
+            value.toDouble() == max.toDouble() || result.error("$value must be greater than $max")
+        }
+
+        fun isNotEqualTo(max: Number) = validator { value: Number, result ->
+            value.toDouble() != max.toDouble() || result.error("$value must be greater than $max")
+        }
+    }
+}

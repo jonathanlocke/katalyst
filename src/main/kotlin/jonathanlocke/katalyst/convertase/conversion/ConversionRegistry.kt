@@ -26,12 +26,12 @@ import kotlin.reflect.full.companionObjectInstance
  *
  *     companion object {
  *
- *         val ToByte = stringToValueConverter(Byte::class) { text, errorHandler ->
- *             text.toByteOrNull() ?: errorHandler.error("Invalid Byte value $text")
+ *         val ToByte = stringToValueConverter(Byte::class) { text, errorBehavior ->
+ *             text.toByteOrNull() ?: errorBehavior.error("Invalid Byte value $text")
  *         }
  *
- *         val ToInt = stringToValueConverter(Int::class) { text, errorHandler ->
- *             text.toIntOrNull() ?: errorHandler.error("Invalid Int value $text")
+ *         val ToInt = stringToValueConverter(Int::class) { text, errorBehavior ->
+ *             text.toIntOrNull() ?: errorBehavior.error("Invalid Int value $text")
  *         }
  *     }
  * ```

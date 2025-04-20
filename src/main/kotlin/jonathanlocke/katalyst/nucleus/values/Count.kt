@@ -3,9 +3,9 @@ package jonathanlocke.katalyst.nucleus.values
 import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.stringToValueConverter
 import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.toValue
 import jonathanlocke.katalyst.convertase.conversion.strings.values.StringToNumber.Companion.longConverter
-import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandler
-import jonathanlocke.katalyst.nucleus.language.errors.handlers.ReturnNull
-import jonathanlocke.katalyst.nucleus.language.errors.handlers.Throw
+import jonathanlocke.katalyst.nucleus.language.errors.ErrorBehavior
+import jonathanlocke.katalyst.nucleus.language.errors.behaviors.ReturnResult
+import jonathanlocke.katalyst.nucleus.language.errors.behaviors.Throw
 import jonathanlocke.katalyst.nucleus.language.strings.formatting.StringFormatter
 
 @JvmInline
@@ -16,9 +16,9 @@ value class Count private constructor(val value: Long) : Comparable<Count> {
         val ThousandsSeparated = StringFormatter<Count> { "%,d".format(it.value) }
 
         fun countConverter() =
-            stringToValueConverter(Count::class) { text, errorHandler ->
-                text.toValue(longConverter, ReturnNull())?.toCount()
-                    ?: errorHandler.error("Could not parse count: $text")
+            stringToValueConverter(Count::class) { text, errorBehavior ->
+                text.toValue(longConverter, ReturnResult())?.toCount()
+                    ?: errorBehavior.error("Could not parse count: $text")
             }
 
         fun Number.toCount(): Count = of(this.toLong())
@@ -30,7 +30,7 @@ value class Count private constructor(val value: Long) : Comparable<Count> {
 
         fun parseCount(
             text: String,
-            error: ErrorHandler<Count> = Throw()
+            error: ErrorBehavior<Count> = Throw()
         ): Count? {
 
             val value = text.replace(",", "").toLongOrNull()

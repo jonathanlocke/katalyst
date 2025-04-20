@@ -9,8 +9,8 @@ import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConvert
 import jonathanlocke.katalyst.convertase.conversion.strings.collections.ListConversion
 import jonathanlocke.katalyst.convertase.conversion.strings.values.StringToNumber
 import jonathanlocke.katalyst.convertase.conversion.strings.values.ValueToString
-import jonathanlocke.katalyst.nucleus.language.errors.ErrorHandler
-import jonathanlocke.katalyst.nucleus.language.errors.handlers.Throw
+import jonathanlocke.katalyst.nucleus.language.errors.ErrorBehavior
+import jonathanlocke.katalyst.nucleus.language.errors.behaviors.Throw
 import jonathanlocke.katalyst.nucleus.language.strings.parsing.Separator
 import kotlin.reflect.KClass
 
@@ -58,7 +58,7 @@ interface StringToValueConverter<Value : Any> : Converter<String, Value> {
          */
         fun <Value : Any> stringToValueConverter(
             valueClass: KClass<Value>,
-            lambda: (String, ErrorHandler<Value?>) -> Value?
+            lambda: (String, ErrorBehavior<Value?>) -> Value?
         ): StringToValueConverter<Value> = (object : StringToValueConverterBase<Value>(valueClass) {
             override fun onToValue(text: String): Value? = lambda.invoke(text, this)
         }).also {
@@ -69,31 +69,31 @@ interface StringToValueConverter<Value : Any> : Converter<String, Value> {
          * Converts any string to an object of type [Value]
          *
          * @param converter Converter from String -> [Value]
-         * @param errorHandler An optional error handler to use
+         * @param errorBehavior An optional error handler to use
          */
         fun <Value : Any> String.toValue(
             converter: StringToValueConverter<Value>,
-            errorHandler: ErrorHandler<Value?> = Throw()
-        ): Value? = converter.convert(this, errorHandler) ?: errorHandler.error("Cannot convert $this")
+            errorBehavior: ErrorBehavior<Value?> = Throw()
+        ): Value? = converter.convert(this, errorBehavior) ?: errorBehavior.error("Cannot convert $this")
 
         /**
          * Converts any string to a list of objects of type [Value]
          * @param stringToValueConverter The converter to use to convert each element in the list
          * @param separator The separator to use when parsing text and joining value objects
-         * @param errorHandler An optional error handler to use
-         * @param elementToValueErrorHandler An optional error handler to use when an element in the list fails to convert
+         * @param errorBehavior An optional error handler to use
+         * @param elementToValueErrorBehavior An optional error handler to use when an element in the list fails to convert
          */
         fun <Value : Any> String.toList(
             stringToValueConverter: StringToValueConverter<Value>,
             separator: Separator = Separator(),
-            errorHandler: ErrorHandler<List<Value>?> = Throw(),
-            elementToValueErrorHandler: ErrorHandler<Value?> = Throw()
+            errorBehavior: ErrorBehavior<List<Value>?> = Throw(),
+            elementToValueErrorBehavior: ErrorBehavior<Value?> = Throw()
         ): List<Value>? =
             ListConversion(
                 stringToValueConverter.valueClass, stringToValueConverter, separator,
-                elementToValueErrorHandler
+                elementToValueErrorBehavior
             )
                 .forwardConverter()
-                .convert(this, errorHandler)
+                .convert(this, errorBehavior)
     }
 }

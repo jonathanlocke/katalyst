@@ -3,7 +3,6 @@ package jonathanlocke.katalyst.checkpoint.validation
 import jonathanlocke.katalyst.checkpoint.validation.Validator.Companion.ensure
 import jonathanlocke.katalyst.checkpoint.validation.Validator.Companion.isValid
 import jonathanlocke.katalyst.checkpoint.validation.Validator.Companion.validator
-import java.util.function.Consumer
 
 /**
  * A validator checks values and returns a [ValidationResult].
@@ -64,10 +63,10 @@ interface Validator<Value> {
          * @param lambda The lambda function to use for validation
          * @return Returns a validator that calls the given lambda function to validate values.
          */
-        fun <Value> validator(lambda: (value: Value, error: Consumer<String>) -> Unit): Validator<Value> =
+        fun <Value> validator(lambda: (value: Value, result: ValidationResult<Value>) -> Unit): Validator<Value> =
             object : ValidatorBase<Value>() {
                 override fun onValidate(value: Value) {
-                    lambda.invoke(value) { message -> error(message) }
+                    lambda.invoke(value, result)
                 }
             }
     }
