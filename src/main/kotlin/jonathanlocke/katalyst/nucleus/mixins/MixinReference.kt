@@ -3,7 +3,7 @@ package jonathanlocke.katalyst.nucleus.mixins
 import java.util.*
 import kotlin.reflect.KClass
 
-internal class MixinReference(val type: KClass<*>, val owner: Any) {
+internal class MixinReference(val owner: Any, val type: KClass<*>) {
 
     override fun toString(): String = "${System.identityHashCode(owner)}:${type.simpleName}"
 

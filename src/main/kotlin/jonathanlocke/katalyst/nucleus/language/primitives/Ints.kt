@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.nucleus.language.primitives
 
-import jonathanlocke.katalyst.nucleus.language.functions.Action
+import jonathanlocke.katalyst.nucleus.language.functional.Action
 import java.util.function.Consumer
 
 class Ints {

@@ -2,10 +2,10 @@ package jonathanlocke.katalyst.nucleus.language.primitives
 
 class Booleans {
 
-    fun Boolean.orThrow(message: String = "Error", throwable: Throwable) = this || throw Exception(message, throwable)
+    fun Boolean.orThrow(message: String = "Error", cause: Throwable) = this || throw Exception(message, cause)
 
-    fun Boolean.thenThrow(message: String = "Error", throwable: Throwable) =
-        !this || throw Exception(message, throwable)
+    fun Boolean.thenThrow(message: String = "Error", cause: Throwable) =
+        !this || throw Exception(message, cause)
 
     fun Boolean.then(code: () -> Unit) = if (this) code() else Unit
 

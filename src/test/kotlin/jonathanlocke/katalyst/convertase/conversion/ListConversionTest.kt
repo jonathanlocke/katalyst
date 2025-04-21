@@ -2,7 +2,7 @@ package jonathanlocke.katalyst.convertase.conversion
 
 import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.toList
 import jonathanlocke.katalyst.convertase.conversion.strings.values.StringToNumber.Companion.intConverter
-import jonathanlocke.katalyst.nucleus.language.errors.behaviors.ReturnResult
+import jonathanlocke.katalyst.nucleus.language.functional.reporters.ReturnNull
 import jonathanlocke.katalyst.nucleus.language.strings.parsing.Separator.Companion.COLON_SEPARATOR
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
@@ -27,6 +27,6 @@ class ListConversionTest {
 
     @Test
     fun testReturnNull() {
-        assertNull("1,2,x,4,5".toList(intConverter, errorBehavior = ReturnResult()))
+        assertNull("1,2,x,4,5".toList(intConverter, reporter = ReturnNull()))
     }
 }

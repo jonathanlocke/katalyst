@@ -1,11 +1,13 @@
-package jonathanlocke.katalyst.nucleus.language.errors
+package jonathanlocke.katalyst.nucleus.language.functional
 
-import jonathanlocke.katalyst.nucleus.language.errors.behaviors.ReturnResult
-import jonathanlocke.katalyst.nucleus.language.errors.behaviors.Throw
+import jonathanlocke.katalyst.nucleus.language.functional.reporters.Throw
+import jonathanlocke.katalyst.nucleus.language.problems.Error
+import jonathanlocke.katalyst.nucleus.language.problems.Problem
+import jonathanlocke.katalyst.nucleus.language.problems.Warning
 import jonathanlocke.katalyst.nucleus.values.Bytes
 
 /**
- * An [ErrorBehavior] allows code to be flexible in how it handles error conditions in different usage contexts.
+ * An [Reporter] allows code to be flexible in how it handles error conditions in different usage contexts.
  *
  * In one context, it might be desirable for a method to throw an exception, while in another context, it might
  * be desirable for the same method to return a null value for performance reasons.
@@ -20,10 +22,10 @@ import jonathanlocke.katalyst.nucleus.values.Bytes
  * workaround with [String.toIntOrNull]. But this leaves something to be desired because the functionality of integer
  * parsing had to be duplicated.
  *
- * [ErrorBehavior] provides a way to avoid this kind of duplication by allowing the caller of a method to
+ * [Reporter] provides a way to avoid this kind of duplication by allowing the caller of a method to
  * specify how the error handling should work.
  *
- * For example, the integer parsing problem could be solved using [ErrorBehavior] like this:
+ * For example, the integer parsing problem could be solved using [Reporter] like this:
  *
  * ```
  * fun String.parseInt(errorBehavior: ErrorBehavior = Throw()): Int? { ... }
@@ -53,16 +55,21 @@ import jonathanlocke.katalyst.nucleus.values.Bytes
  *
  * #  Bytes
  *
- * For another example of how [ErrorBehavior] can be used effectively, see [Bytes]
+ * For another example of how [Reporter] can be used effectively, see [Bytes]
  *
- * @see ReturnResult
  * @see Throw
  * @see Bytes
  */
-interface ErrorBehavior<Value> {
+interface Reporter<Value : Any> {
 
     /**
      * Provides behavior for an error condition.
      */
-    fun error(message: String, value: Value? = null, throwable: Throwable? = null): Result<Value>?
+    fun report(problem: Problem): Value?
+
+    fun error(message: String, cause: Throwable? = null, value: Value? = null) =
+        report(Error(message, cause, value))
+
+    fun warning(message: String, cause: Throwable? = null, value: Value? = null) =
+        report(Warning(message, cause, value))
 }

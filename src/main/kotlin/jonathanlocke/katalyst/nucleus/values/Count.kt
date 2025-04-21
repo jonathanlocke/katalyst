@@ -3,9 +3,8 @@ package jonathanlocke.katalyst.nucleus.values
 import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.stringToValueConverter
 import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.toValue
 import jonathanlocke.katalyst.convertase.conversion.strings.values.StringToNumber.Companion.longConverter
-import jonathanlocke.katalyst.nucleus.language.errors.ErrorBehavior
-import jonathanlocke.katalyst.nucleus.language.errors.behaviors.ReturnResult
-import jonathanlocke.katalyst.nucleus.language.errors.behaviors.Throw
+import jonathanlocke.katalyst.nucleus.language.functional.Reporter
+import jonathanlocke.katalyst.nucleus.language.functional.reporters.Throw
 import jonathanlocke.katalyst.nucleus.language.strings.formatting.StringFormatter
 
 @JvmInline
@@ -16,9 +15,9 @@ value class Count private constructor(val value: Long) : Comparable<Count> {
         val ThousandsSeparated = StringFormatter<Count> { "%,d".format(it.value) }
 
         fun countConverter() =
-            stringToValueConverter(Count::class) { text, errorBehavior ->
-                text.toValue(longConverter, ReturnResult())?.toCount()
-                    ?: errorBehavior.error("Could not parse count: $text")
+            stringToValueConverter(Count::class) { text, reporter ->
+                text.toValue(longConverter, Throw())?.toCount()
+                    ?: reporter.error("Could not parse count: $text")
             }
 
         fun Number.toCount(): Count = of(this.toLong())
@@ -30,12 +29,11 @@ value class Count private constructor(val value: Long) : Comparable<Count> {
 
         fun parseCount(
             text: String,
-            error: ErrorBehavior<Count> = Throw()
+            reporter: Reporter<Count> = Throw()
         ): Count? {
-
             val value = text.replace(",", "").toLongOrNull()
             return if (value == null) {
-                error.error("Could not parse bytes: $text")
+                reporter.error("Could not parse bytes: $text", value = value)
             } else {
                 Count(value)
             }

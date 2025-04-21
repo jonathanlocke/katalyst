@@ -25,7 +25,7 @@ import jonathanlocke.katalyst.checkpoint.validation.Validator.Companion.validato
  *
  * @param Value The type of value to validate
  */
-interface Validator<Value> {
+interface Validator<Value : Any> {
 
     /**
      * Performs validation of the given value
@@ -63,11 +63,11 @@ interface Validator<Value> {
          * @param lambda The lambda function to use for validation
          * @return Returns a validator that calls the given lambda function to validate values.
          */
-        fun <Value> validator(lambda: (value: Value, result: ValidationResult<Value>) -> Unit): Validator<Value> =
-            object : ValidatorBase<Value>() {
-                override fun onValidate(value: Value) {
-                    lambda.invoke(value, result)
-                }
+        fun <Value : Any> validator(lambda: (value: Value, result: ValidationResult<Value>) -> Unit):
+                Validator<Value> = object : ValidatorBase<Value>() {
+            override fun onValidate(value: Value, result: ValidationResult<Value>) {
+                lambda.invoke(value, result)
             }
+        }
     }
 }

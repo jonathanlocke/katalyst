@@ -8,8 +8,8 @@ import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConvert
 import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.stringToValueConverter
 import jonathanlocke.katalyst.convertase.conversion.strings.ValueToStringConverter
 import jonathanlocke.katalyst.convertase.conversion.strings.values.ValueToString
-import jonathanlocke.katalyst.nucleus.language.errors.ErrorBehavior
-import jonathanlocke.katalyst.nucleus.language.errors.behaviors.Throw
+import jonathanlocke.katalyst.nucleus.language.functional.Reporter
+import jonathanlocke.katalyst.nucleus.language.functional.reporters.Throw
 import jonathanlocke.katalyst.nucleus.language.strings.parsing.Separator
 import kotlin.reflect.KClass
 
@@ -20,20 +20,20 @@ import kotlin.reflect.KClass
  *
  *  - [stringToValueConverter] - The converter that converts [String] -> [Value]
  *  - [separator] - The separator to use when parsing text and joining value objects
- *  - [elementToValueErrorBehavior] - The error to use problems with [String] -> [Value]
+ *  - [stringToValueReporter] - The error to use problems with [String] -> [Value]
  *
  * **Reverse Conversion (List<[Value]> -> [String])**
  *
  *  - [valueToStringConverter] - The converter that converts [Value] -> [String]
- *  - [elementToStringErrorBehavior] - The error to use problems with [Value] -> [String]**
+ *  - [valueToStringReporter] - The error to use problems with [Value] -> [String]**
  *  - [defaultToStringValue] - The value to use for null elements when converting to [String]
  *
  * @param Value The type of value to convert to and from
  * @property stringToValueConverter The converter that converts [String] -> [Value]
  * @property separator The separator to use when parsing text and joining value objects
- * @property elementToValueErrorBehavior The error to use problems with [String] -> [Value]
+ * @property stringToValueReporter The error to use problems with [String] -> [Value]
  * @property valueToStringConverter The converter that converts [Value] -> [String]
- * @property elementToStringErrorBehavior The error to use problems with [Value] -> [String]
+ * @property valueToStringReporter The error to use problems with [Value] -> [String]
  * @property defaultToStringValue The value to use for null elements when converting to [String]]
  *
  * @see Conversion
@@ -51,11 +51,11 @@ class ListConversion<Value : Any>(
     // String -> Value conversion
     val stringToValueConverter: StringToValueConverter<Value>,
     val separator: Separator = Separator(),
-    val elementToValueErrorBehavior: ErrorBehavior<Value?> = Throw(),
+    val stringToValueReporter: Reporter<Value> = Throw(),
 
     // Value -> String conversion
     val valueToStringConverter: ValueToStringConverter<Value> = ValueToString(valueClass) as ValueToStringConverter<Value>,
-    val elementToStringErrorBehavior: ErrorBehavior<String?> = Throw(),
+    val valueToStringReporter: Reporter<String> = Throw(),
     val defaultToStringValue: String = "?"
 
 ) : ConversionBase<String, List<Value>>(String::class, List::class as KClass<List<Value>>) {
@@ -63,17 +63,17 @@ class ListConversion<Value : Any>(
     @Suppress("UNCHECKED_CAST")
     override fun forwardConverter(): StringToValueConverter<List<Value>> = stringToValueConverter(
         List::class as KClass<List<Value>>
-    ) { text, errorBehavior ->
+    ) { text, reporter ->
         separator.split(text).map { member ->
-            stringToValueConverter.convert(member, elementToValueErrorBehavior)
-                ?: errorBehavior.error("Failed to convert element: $member")
+            stringToValueConverter.convert(member, stringToValueReporter)
+                ?: stringToValueReporter.error("Failed to convert element: $member")
         } as List<Value>?
     }
 
     override fun reverseConverter(): Converter<List<Value>, String> = object : ConverterBase<List<Value>, String>
         (List::class as KClass<List<Value>>, String::class) {
         override fun onConvert(from: List<Value>): String = separator.join(from.map {
-            valueToStringConverter.convert(it, elementToStringErrorBehavior) ?: defaultToStringValue
+            valueToStringConverter.convert(it, valueToStringReporter) ?: defaultToStringValue
         }.toList())
     }
 }

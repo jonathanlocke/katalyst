@@ -19,10 +19,10 @@ abstract class ValueToStringConverterBase<Value : Any>(valueClass: KClass<Value>
     /**
      * Called with an always non-null value to convert to a string.
      */
-    override fun onConvert(from: Value): String? = onToString(from)
+    override fun onConvert(from: Value): String = onToString(from)
 
     /**
      * Implemented by subclass to convert the given value to a string.
      */
-    fun onToString(value: Value): String? = value.toString()
+    fun onToString(value: Value): String = value.toString()
 }

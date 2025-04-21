@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.convertase.conversion.strings.values
 
 import jonathanlocke.katalyst.convertase.conversion.strings.ValueToStringConverter
-import jonathanlocke.katalyst.nucleus.language.errors.ErrorBehavior
+import jonathanlocke.katalyst.nucleus.language.functional.Reporter
 import jonathanlocke.katalyst.nucleus.language.strings.formatting.StringFormatter
 import jonathanlocke.katalyst.nucleus.language.strings.formatting.formats.Anything.Companion.convertToString
 import kotlin.reflect.KClass
@@ -17,6 +17,6 @@ class ValueToString<From : Any>(
 
     override val toClass: KClass<String> = String::class
 
-    override fun convert(from: From?, errorBehavior: ErrorBehavior<String?>): String =
+    override fun convert(from: From?, reporter: Reporter<String>): String? =
         if (from != null) formatter.format(from) else "?"
 }

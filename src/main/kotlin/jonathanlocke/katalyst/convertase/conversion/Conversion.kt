@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.convertase.conversion
 
 import jonathanlocke.katalyst.convertase.conversion.Conversion.Companion.conversion
-import jonathanlocke.katalyst.nucleus.language.errors.ErrorBehavior
+import jonathanlocke.katalyst.nucleus.language.functional.Reporter
 import kotlin.reflect.KClass
 
 /**
@@ -53,23 +53,23 @@ interface Conversion<From : Any, To : Any> {
         fun <From : Any, To : Any> conversion(
             fromClass: Class<From>,
             toClass: Class<To>,
-            forwardConverterLambda: (From?, ErrorBehavior<To?>) -> To?,
-            reverseConverterLambda: (To?, ErrorBehavior<From?>) -> From?
+            forwardConverterLambda: (From?, Reporter<To>) -> To?,
+            reverseConverterLambda: (To?, Reporter<From>) -> From?
         ): Conversion<From, To> =
             object : ConversionBase<From, To>(fromClass.kotlin, toClass.kotlin) {
 
                 override fun forwardConverter(): Converter<From, To> = object : Converter<From, To> {
                     override val fromClass = fromClass.kotlin
                     override val toClass = toClass.kotlin
-                    override fun convert(from: From?, errorBehavior: ErrorBehavior<To?>): To? =
-                        forwardConverterLambda(from, errorBehavior)
+                    override fun convert(from: From?, reporter: Reporter<To>): To? =
+                        forwardConverterLambda(from, reporter)
                 }
 
                 override fun reverseConverter(): Converter<To, From> = object : Converter<To, From> {
                     override val fromClass = toClass.kotlin
                     override val toClass = fromClass.kotlin
-                    override fun convert(from: To?, errorBehavior: ErrorBehavior<From?>): From? =
-                        reverseConverterLambda(from, errorBehavior)
+                    override fun convert(from: To?, reporter: Reporter<From>): From? =
+                        reverseConverterLambda(from, reporter)
                 }
             }
     }
@@ -85,8 +85,9 @@ interface Conversion<From : Any, To : Any> {
     @Suppress("UNCHECKED_CAST")
     fun <Value : Any> stringConversion(
         valueClass: KClass<Value>,
-        valueToStringLambda: (Value?, ErrorBehavior<String?>) -> String? = { value, errorBehavior -> value.toString() },
-        stringToValueLambda: (String, ErrorBehavior<Value?>) -> Value?
+        valueToStringLambda: (Value?, Reporter<String>) -> String?
+        = { value, errorBehavior -> value.toString() },
+        stringToValueLambda: (String, Reporter<Value>) -> Value?
     ): Conversion<String, Value> =
         object : ConversionBase<String, Value>(String::class, valueClass) {
 
@@ -102,8 +103,8 @@ interface Conversion<From : Any, To : Any> {
             override fun reverseConverter(): Converter<Value, String> = object : Converter<Value, String> {
                 override val fromClass = valueClass
                 override val toClass = String::class
-                override fun convert(from: Value?, errorBehavior: ErrorBehavior<String?>): String? {
-                    return valueToStringLambda(from, errorBehavior)
+                override fun convert(from: Value?, reporter: Reporter<String>): String? {
+                    return valueToStringLambda(from, reporter)
                 }
             }
         }

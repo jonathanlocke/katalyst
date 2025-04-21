@@ -1,8 +1,11 @@
 package jonathanlocke.katalyst.checkpoint.validation
 
-import jonathanlocke.katalyst.nucleus.language.errors.Problem
-import jonathanlocke.katalyst.nucleus.language.errors.problems.Error
-import jonathanlocke.katalyst.nucleus.language.errors.problems.Warning
+import jonathanlocke.katalyst.checkpoint.validation.problems.ValidationError
+import jonathanlocke.katalyst.checkpoint.validation.problems.ValidationWarning
+import jonathanlocke.katalyst.nucleus.language.functional.Reporter
+import jonathanlocke.katalyst.nucleus.language.problems.Error
+import jonathanlocke.katalyst.nucleus.language.problems.Problem
+import jonathanlocke.katalyst.nucleus.language.problems.Warning
 import jonathanlocke.katalyst.nucleus.values.Count.Companion.toCount
 
 /**
@@ -17,13 +20,24 @@ import jonathanlocke.katalyst.nucleus.values.Count.Companion.toCount
  * @see Error
  * @see Warning
  */
-class ValidationResult<Value>(val value: Value) {
+class ValidationResult<Value : Any>(val value: Value) {
 
     val problems = mutableListOf<Problem>()
     val isValid = problems.none { it is Error }
     val isInvalid = problems.isNotEmpty()
     val count = problems.size.toCount()
 
-    fun error(message: String) = problems.add(Error(message, value = value))
-    fun warning(message: String) = problems.add(Warning(message, value = value))
+    fun validationError(message: String, cause: Throwable? = null) =
+        problems.add(ValidationError(message, cause, value))
+
+    fun validationWarning(message: String, cause: Throwable? = null) =
+        problems.add(ValidationWarning(message, cause, value))
+
+    fun reporter(): Reporter<Value> = object : Reporter<Value> {
+        override fun report(problem: Problem): Value? {
+            if (problem is Error) validationError(problem.message, problem.cause)
+            if (problem is Warning) validationWarning(problem.message, problem.cause)
+            return null
+        }
+    }
 }

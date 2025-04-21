@@ -1,6 +1,7 @@
 package jonathanlocke.katalyst.convertase.conversion
 
-import jonathanlocke.katalyst.nucleus.language.errors.ErrorBehavior
+import jonathanlocke.katalyst.nucleus.language.functional.Reporter
+import jonathanlocke.katalyst.nucleus.language.problems.Problem
 import kotlin.reflect.KClass
 
 /**
@@ -12,7 +13,7 @@ import kotlin.reflect.KClass
  *
  * - [nullAllowed] - True if null input values are allowed
  * - [onConvert] - Abstract method called to convert to type [To] if the [From] value is non-null
- * - [error] - Reports an error to the error handler
+ * - [report] - Reports an error to the error handler
  *
  * **Inherited**
  *
@@ -28,13 +29,13 @@ abstract class ConverterBase<From : Any, To : Any>(
     override val toClass: KClass<To>
 ) :
     Converter<From, To>,
-    ErrorBehavior<To?> {
+    Reporter<To> {
 
     /** True if this converter allows null values */
     val nullAllowed: Boolean = false
 
     /** The error handler to use when reporting errors */
-    private lateinit var errorBehavior: ErrorBehavior<To?>
+    private lateinit var reporter: Reporter<To>
 
     /**
      * The value to use for nullity if (a) nulls are not allowed, or (b) a conversion fails and the
@@ -47,21 +48,20 @@ abstract class ConverterBase<From : Any, To : Any>(
 
     /**
      * Invokes the error handler for this object with the given message
-     * @param message The error message
-     * @param throwable Any exception that caused the error
+     * @param problem The problem to report
      */
-    override fun error(message: String, value: To?, throwable: Throwable?): To? =
-        errorBehavior.error(message, throwable = throwable)
+    override fun report(problem: Problem): To? =
+        reporter.report(problem)
 
     /**
      * Converts from the From type to the To type. If the 'from' value is null and the converter allows
      * null values, null will be returned. If the value is null and the converter does not allow null values a problem
      * will be broadcast. Any exceptions that occur during conversion are caught and broadcast as problems.
      */
-    final override fun convert(from: From?, errorBehavior: ErrorBehavior<To?>): To? {
+    final override fun convert(from: From?, reporter: Reporter<To>): To? {
 
         // Set the error handler to use for this conversion
-        this.errorBehavior = errorBehavior
+        this.reporter = reporter
 
         // If the value is null,
         return if (from == null) {
@@ -70,7 +70,7 @@ abstract class ConverterBase<From : Any, To : Any>(
             if (!nullAllowed) {
 
                 // then it's an error
-                error("Cannot convert null value")
+                reporter.error("Cannot convert null value")
 
             } else {
 
@@ -88,7 +88,7 @@ abstract class ConverterBase<From : Any, To : Any>(
             } catch (e: Exception) {
 
                 // unless an exception occurs
-                error("Cannot convert $from")
+                reporter.error("Cannot convert $from")
             }
         }
     }

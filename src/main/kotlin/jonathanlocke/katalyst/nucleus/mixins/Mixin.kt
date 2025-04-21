@@ -1,14 +1,16 @@
 package jonathanlocke.katalyst.nucleus.mixins
 
-interface Mixin {
+import kotlin.reflect.KClass
 
-    fun <T : Any> mixinAttach(valueFactory: () -> T): T {
-        return MixinStore.attach(mixinStateReference(), valueFactory)
+interface Mixin<T : Any> {
+
+    fun mixinAttach(type: KClass<T>, valueFactory: () -> T): T {
+        return MixinStore.attach(mixinStateReference(type), valueFactory)
     }
 
-    fun <T : Any> mixinDetach() {
-        MixinStore.detach(mixinStateReference())
+    fun mixinDetach(type: KClass<T>) {
+        MixinStore.detach(mixinStateReference(type))
     }
 
-    private fun mixinStateReference() = MixinReference(this::class, this)
+    private fun mixinStateReference(type: KClass<T>) = MixinReference(this, type)
 }

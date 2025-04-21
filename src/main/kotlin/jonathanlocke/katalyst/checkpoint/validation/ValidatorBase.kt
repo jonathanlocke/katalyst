@@ -12,7 +12,7 @@ package jonathanlocke.katalyst.checkpoint.validation
  * @see Validator
  * @see ValidationResult
  */
-abstract class ValidatorBase<Value> : Validator<Value> {
+abstract class ValidatorBase<Value : Any> : Validator<Value> {
 
     val isValid = result.isValid
     val isInvalid = result.isInvalid
@@ -32,7 +32,7 @@ abstract class ValidatorBase<Value> : Validator<Value> {
         try {
 
             // call the subclass to validate the value
-            onValidate(value)
+            onValidate(value, result)
 
         } catch (e: Exception) {
 
@@ -43,8 +43,8 @@ abstract class ValidatorBase<Value> : Validator<Value> {
         return result
     }
 
-    fun error(message: String) = result.error(message)
-    fun warning(message: String) = result.warning(message)
+    fun validationError(message: String) = result.validationError(message)
+    fun validationWarning(message: String) = result.validationWarning(message)
 
-    protected abstract fun onValidate(value: Value)
+    protected abstract fun onValidate(value: Value, result: ValidationResult<Value>)
 }

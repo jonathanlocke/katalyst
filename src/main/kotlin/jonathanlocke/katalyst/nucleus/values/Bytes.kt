@@ -1,8 +1,8 @@
 package jonathanlocke.katalyst.nucleus.values
 
 import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.stringToValueConverter
-import jonathanlocke.katalyst.nucleus.language.errors.ErrorBehavior
-import jonathanlocke.katalyst.nucleus.language.errors.behaviors.Throw
+import jonathanlocke.katalyst.nucleus.language.functional.Reporter
+import jonathanlocke.katalyst.nucleus.language.functional.reporters.Throw
 import jonathanlocke.katalyst.nucleus.values.Bytes.MeasurementSystem.Binary
 import jonathanlocke.katalyst.nucleus.values.Bytes.MeasurementSystem.Metric
 import java.text.DecimalFormat
@@ -27,8 +27,8 @@ class Bytes(val bytes: Double) {
     companion object {
 
         fun bytesConverter(measurementSystem: MeasurementSystem = Metric) =
-            stringToValueConverter(Bytes::class) { text, errorBehavior ->
-                parseBytes(text, measurementSystem, errorBehavior)
+            stringToValueConverter(Bytes::class) { text, reporter ->
+                parseBytes(text, measurementSystem, reporter)
             }
 
         fun bytes(value: Double) = Bytes(value)
@@ -52,7 +52,7 @@ class Bytes(val bytes: Double) {
         fun parseBytes(
             text: String,
             system: MeasurementSystem = Metric,
-            error: ErrorBehavior<Bytes?> = Throw()
+            reporter: Reporter<Bytes> = Throw()
         ): Bytes? {
 
             val match = system.pattern.matchEntire(text)
@@ -71,7 +71,7 @@ class Bytes(val bytes: Double) {
                         "terabyte", "T", "Tb", "TB" -> terabytes(number)
                         "petabyte", "P", "Pb", "PB" -> petabytes(number)
                         "exabyte", "X", "Xb", "XB" -> exabytes(number)
-                        else -> error.error("Unsupported units format: $units")
+                        else -> reporter.error("Unsupported units format: $units")
                     }
 
                     Binary -> when (units) {
@@ -82,12 +82,12 @@ class Bytes(val bytes: Double) {
                         "tebibyte", "T", "TB", "TiB" -> terabytes(number)
                         "pebibyte", "P", "PB", "PiB" -> petabytes(number)
                         "exbibyte", "X", "XB", "XiB" -> exabytes(number)
-                        else -> error.error("Unsupported units format: $units")
+                        else -> reporter.error("Unsupported units format: $units")
                     }
                 }
             }
 
-            return error.error("Could not parse bytes: $text")
+            return reporter.error("Could not parse bytes: $text")
         }
     }
 
