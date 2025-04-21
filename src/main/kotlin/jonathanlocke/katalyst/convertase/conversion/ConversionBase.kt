@@ -6,7 +6,9 @@ import kotlin.reflect.KClass
 /**
  * Base class for implementing a [Conversion].
  *
- *  - [register] - Registers this conversion with the [ConversionRegistry]]
+ *  **Methods**
+ *
+ * - [register] - Registers this conversion with the [ConversionRegistry]
  *
  * @param From Source type
  * @param To Destination type

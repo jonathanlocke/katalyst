@@ -1,15 +1,21 @@
 package jonathanlocke.katalyst.convertase.conversion
 
 import jonathanlocke.katalyst.convertase.conversion.Conversion.Companion.conversion
-import jonathanlocke.katalyst.nucleus.language.functional.Reporter
+import jonathanlocke.katalyst.convertase.conversion.Conversion.Companion.stringConversion
+import jonathanlocke.katalyst.nucleus.language.problems.ProblemReporter
 import kotlin.reflect.KClass
 
 /**
- * A conversion supplies a "to" converter and a "from" converter
+ * A conversion supplies [From] -> [To] (forward) and [To] -> [From] (reverse) converters.
  *
- * - [forwardConverter] - The converter from [From] to [To]
- * - [reverseConverter] - The converter from [To] to [From]
+ *  **Methods**
+ *
  * - [register] - Registers this conversion with the [ConversionRegistry]
+ * - [forwardConverter] - [From] -> [To] converter
+ * - [reverseConverter] - [To] -> [From] converter]
+ *
+ *  **Companions**
+ *
  * - [conversion] - Implements a [Conversion] using the given forward and reverse conversion lambdas
  * - [stringConversion] - Implements a [Conversion] from [String] -> Value and its reverse using the given lambdas
  *
@@ -23,6 +29,11 @@ import kotlin.reflect.KClass
 interface Conversion<From : Any, To : Any> {
 
     /**
+     * Registers this conversion with the [ConversionRegistry]
+     */
+    fun register()
+
+    /**
      * Returns the converter from the [From] type to the [To] type
      */
     fun forwardConverter(): Converter<From, To>
@@ -31,11 +42,6 @@ interface Conversion<From : Any, To : Any> {
      * Returns the converter from the [To] type to the [From] type
      */
     fun reverseConverter(): Converter<To, From>
-
-    /**
-     * Registers this conversion with the [ConversionRegistry]
-     */
-    fun register()
 
     companion object {
 
@@ -53,59 +59,58 @@ interface Conversion<From : Any, To : Any> {
         fun <From : Any, To : Any> conversion(
             fromClass: Class<From>,
             toClass: Class<To>,
-            forwardConverterLambda: (From?, Reporter<To>) -> To?,
-            reverseConverterLambda: (To?, Reporter<From>) -> From?
+            forwardConverterLambda: (From?, ProblemReporter<To>) -> To?,
+            reverseConverterLambda: (To?, ProblemReporter<From>) -> From?
         ): Conversion<From, To> =
             object : ConversionBase<From, To>(fromClass.kotlin, toClass.kotlin) {
 
                 override fun forwardConverter(): Converter<From, To> = object : Converter<From, To> {
                     override val fromClass = fromClass.kotlin
                     override val toClass = toClass.kotlin
-                    override fun convert(from: From?, reporter: Reporter<To>): To? =
+                    override fun convert(from: From?, reporter: ProblemReporter<To>): To? =
                         forwardConverterLambda(from, reporter)
                 }
 
                 override fun reverseConverter(): Converter<To, From> = object : Converter<To, From> {
                     override val fromClass = toClass.kotlin
                     override val toClass = fromClass.kotlin
-                    override fun convert(from: To?, reporter: Reporter<From>): From? =
+                    override fun convert(from: To?, reporter: ProblemReporter<From>): From? =
                         reverseConverterLambda(from, reporter)
                 }
             }
+
+        /**
+         * Implements a bidirectional [String] <-> [Value] conversion using the given lambdas.
+         *
+         * @param valueClass The value class (necessary due to type erasure)
+         * @param valueToStringLambda Converter from [From] -> [String]
+         * @param stringToValueLambda Converter from [String] -> [Value]
+         * @return A bidirectional [String] <-> [Value] conversion
+         */
+        @Suppress("UNCHECKED_CAST")
+        fun <Value : Any> stringConversion(
+            valueClass: KClass<Value>,
+            valueToStringLambda: (Value?, ProblemReporter<String>) -> String? = { value, reporter -> value.toString() },
+            stringToValueLambda: (String, ProblemReporter<Value>) -> Value?
+        ): Conversion<String, Value> =
+            object : ConversionBase<String, Value>(String::class, valueClass) {
+
+                override fun forwardConverter(): Converter<String, Value> = object : ConverterBase<String, Value>(
+                    String::class,
+                    valueClass
+                ) {
+                    override fun onConvert(from: String): Value? {
+                        return stringToValueLambda(from, this)
+                    }
+                }
+
+                override fun reverseConverter(): Converter<Value, String> = object : Converter<Value, String> {
+                    override val fromClass = valueClass
+                    override val toClass = String::class
+                    override fun convert(from: Value?, reporter: ProblemReporter<String>): String? {
+                        return valueToStringLambda(from, reporter)
+                    }
+                }
+            }
     }
-
-    /**
-     * Implements a bidirectional [String] <-> [Value] conversion using the given lambdas.
-     *
-     * @param valueClass The value class (necessary due to type erasure)
-     * @param valueToStringLambda Converter from [From] -> [String]
-     * @param stringToValueLambda Converter from [String] -> [Value]
-     * @return A bidirectional [String] <-> [Value] conversion
-     */
-    @Suppress("UNCHECKED_CAST")
-    fun <Value : Any> stringConversion(
-        valueClass: KClass<Value>,
-        valueToStringLambda: (Value?, Reporter<String>) -> String?
-        = { value, errorBehavior -> value.toString() },
-        stringToValueLambda: (String, Reporter<Value>) -> Value?
-    ): Conversion<String, Value> =
-        object : ConversionBase<String, Value>(String::class, valueClass) {
-
-            override fun forwardConverter(): Converter<String, Value> = object : ConverterBase<String, Value>(
-                String::class,
-                valueClass
-            ) {
-                override fun onConvert(from: String): Value? {
-                    return stringToValueLambda(from, this)
-                }
-            }
-
-            override fun reverseConverter(): Converter<Value, String> = object : Converter<Value, String> {
-                override val fromClass = valueClass
-                override val toClass = String::class
-                override fun convert(from: Value?, reporter: Reporter<String>): String? {
-                    return valueToStringLambda(from, reporter)
-                }
-            }
-        }
 }

@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.checkpoint.validation.problems
 
-import jonathanlocke.katalyst.nucleus.language.problems.Warning
+import jonathanlocke.katalyst.nucleus.language.problems.categories.Warning
 
 class ValidationWarning(message: String, cause: Throwable? = null, value: Any? = null) :
     Warning(message, cause, value)

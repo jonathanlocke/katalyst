@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.convertase.conversion
 
-import jonathanlocke.katalyst.nucleus.language.functional.Reporter
 import jonathanlocke.katalyst.nucleus.language.problems.Problem
+import jonathanlocke.katalyst.nucleus.language.problems.ProblemReporter
 import kotlin.reflect.KClass
 
 /**
@@ -11,9 +11,17 @@ import kotlin.reflect.KClass
  * resulting from such conditions and exceptions. This allows the subclass to focus on the conversion logic
  * in [onConvert], where the [From] value is guaranteed to be non-null.
  *
+ * **Properties**
+ *
  * - [nullAllowed] - True if null input values are allowed
+ *
+ * **Problems**
+ *
+ * - [report] - Reports a problem
+ *
+ * **Extension Points**
+ *
  * - [onConvert] - Abstract method called to convert to type [To] if the [From] value is non-null
- * - [report] - Reports an error to the error handler
  *
  * **Inherited**
  *
@@ -22,20 +30,23 @@ import kotlin.reflect.KClass
  *
  * @param From The type to convert from
  * @param To The type to convert to
+ *
  * @see Converter
+ * @see ProblemReporter
+ * @see Problem
  */
 abstract class ConverterBase<From : Any, To : Any>(
     override val fromClass: KClass<From>,
     override val toClass: KClass<To>
 ) :
     Converter<From, To>,
-    Reporter<To> {
+    ProblemReporter<To> {
 
     /** True if this converter allows null values */
     val nullAllowed: Boolean = false
 
-    /** The error handler to use when reporting errors */
-    private lateinit var reporter: Reporter<To>
+    /** The reporter to use when handling conversion problems */
+    private lateinit var reporter: ProblemReporter<To>
 
     /**
      * The value to use for nullity if (a) nulls are not allowed, or (b) a conversion fails and the
@@ -58,7 +69,7 @@ abstract class ConverterBase<From : Any, To : Any>(
      * null values, null will be returned. If the value is null and the converter does not allow null values a problem
      * will be broadcast. Any exceptions that occur during conversion are caught and broadcast as problems.
      */
-    final override fun convert(from: From?, reporter: Reporter<To>): To? {
+    final override fun convert(from: From?, reporter: ProblemReporter<To>): To? {
 
         // Set the error handler to use for this conversion
         this.reporter = reporter

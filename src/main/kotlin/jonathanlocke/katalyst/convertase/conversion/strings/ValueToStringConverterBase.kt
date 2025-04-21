@@ -6,7 +6,16 @@ import kotlin.reflect.KClass
 /**
  * Base class for implementing converters from [Value] -> [String].
  *
- * - [onToString] - Called with an always non-null value to convert to a string
+ * **Extension Points**
+ *
+ * - [onToString] - Called with an always non-null value to convert it to a string
+ *
+ * **Inherited**
+ *
+ * - [nullValue] - The value to use for nullity if (a) nulls are not allowed, or (b) a conversion fails and the
+ *                 error handler returns a null value instead of throwing an exception
+ * - [nullAllowed] - True if null input values are allowed
+ * - [report] - Reports an error to the error handler
  *
  * @param Value The type to convert from
  * @see ConverterBase
@@ -19,7 +28,7 @@ abstract class ValueToStringConverterBase<Value : Any>(valueClass: KClass<Value>
     /**
      * Called with an always non-null value to convert to a string.
      */
-    override fun onConvert(from: Value): String = onToString(from)
+    final override fun onConvert(from: Value): String = onToString(from)
 
     /**
      * Implemented by subclass to convert the given value to a string.

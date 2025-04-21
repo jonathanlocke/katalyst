@@ -3,10 +3,23 @@ package jonathanlocke.katalyst.checkpoint.validation
 /**
  * A base class for implementing a [Validator].
  *
+ *  **Methods**
+ *
+ *  - [validate] - Validates the given value and returns a [ValidationResult]
+ *
+ *  **Properties**
+ *
+ *  - [isValid] - True if there were no validation problems
+ *  - [isInvalid] - True if there were validation problems
+ *
+ *  **Extension Points**
+ *
  *  - [onValidate] - Called when [validate] is called
- *  - [result] - A collection of validation problems
- *  - [isValid] - True if there are no validation problems
- *  - [isInvalid] - True if there are validation problems
+ *
+ *  **Protected**
+ *
+ *  - [validationError] - Records an error to the [ValidationResult]
+ *  - [validationWarning] - Records a warning to the [ValidationResult]
  *
  * @param Value The type of value to validate
  * @see Validator
@@ -17,7 +30,7 @@ abstract class ValidatorBase<Value : Any> : Validator<Value> {
     val isValid = result.isValid
     val isInvalid = result.isInvalid
 
-    protected lateinit var result: ValidationResult<Value>
+    private lateinit var result: ValidationResult<Value>
 
     /**
      * Performs validation of the given value, calling the error handler if it is not valid.
@@ -43,8 +56,22 @@ abstract class ValidatorBase<Value : Any> : Validator<Value> {
         return result
     }
 
-    fun validationError(message: String) = result.validationError(message)
-    fun validationWarning(message: String) = result.validationWarning(message)
+    /**
+     * Records an error to the [ValidationResult]
+     */
+    protected fun validationError(message: String) = result.validationError(message)
 
+    /**
+     * Records a warning to the [ValidationResult]
+     */
+    protected fun validationWarning(message: String) = result.validationWarning(message)
+
+    /**
+     * Extension point for subclasses to validate the given value.
+     *
+     * @param value The value to validate
+     * @param result The [ValidationResult] to record errors and warnings to
+     * @throws Exception If an exception is thrown, it will be caught and recorded as an error
+     */
     protected abstract fun onValidate(value: Value, result: ValidationResult<Value>)
 }

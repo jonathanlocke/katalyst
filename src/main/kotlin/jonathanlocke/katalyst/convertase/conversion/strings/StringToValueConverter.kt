@@ -9,13 +9,13 @@ import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConvert
 import jonathanlocke.katalyst.convertase.conversion.strings.collections.ListConversion
 import jonathanlocke.katalyst.convertase.conversion.strings.values.StringToNumber
 import jonathanlocke.katalyst.convertase.conversion.strings.values.ValueToString
-import jonathanlocke.katalyst.nucleus.language.functional.Reporter
-import jonathanlocke.katalyst.nucleus.language.functional.reporters.Throw
+import jonathanlocke.katalyst.nucleus.language.problems.ProblemReporter
+import jonathanlocke.katalyst.nucleus.language.problems.reporters.Throw
 import jonathanlocke.katalyst.nucleus.language.strings.parsing.Separator
 import kotlin.reflect.KClass
 
 /**
- * Converts from [String] -> [Value]
+ * Converter from [String] -> [Value]
  *
  *  - [asStringToValueConversion] - Returns a bidirectional [String] <-> [Value] [Conversion]
  *  - [stringToValueConverter] - Returns a [StringToValueConverter] that converts from [String] to [Value] using the
@@ -58,7 +58,7 @@ interface StringToValueConverter<Value : Any> : Converter<String, Value> {
          */
         fun <Value : Any> stringToValueConverter(
             valueClass: KClass<Value>,
-            lambda: (String, Reporter<Value>) -> Value?
+            lambda: (String, ProblemReporter<Value>) -> Value?
         ): StringToValueConverter<Value> = (object : StringToValueConverterBase<Value>(valueClass) {
             override fun onToValue(text: String): Value? = lambda.invoke(text, this)
         }).also {
@@ -73,7 +73,7 @@ interface StringToValueConverter<Value : Any> : Converter<String, Value> {
          */
         fun <Value : Any> String.toValue(
             converter: StringToValueConverter<Value>,
-            reporter: Reporter<Value> = Throw()
+            reporter: ProblemReporter<Value> = Throw()
         ): Value? = converter.convert(this, reporter)
 
         /**
@@ -86,8 +86,8 @@ interface StringToValueConverter<Value : Any> : Converter<String, Value> {
         fun <Value : Any> String.toList(
             stringToValueConverter: StringToValueConverter<Value>,
             separator: Separator = Separator(),
-            reporter: Reporter<List<Value>> = Throw(),
-            elementToValueReporter: Reporter<Value> = Throw()
+            reporter: ProblemReporter<List<Value>> = Throw(),
+            elementToValueReporter: ProblemReporter<Value> = Throw()
         ): List<Value>? =
             ListConversion(stringToValueConverter.valueClass, stringToValueConverter, separator, elementToValueReporter)
                 .forwardConverter()

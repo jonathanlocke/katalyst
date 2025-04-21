@@ -9,31 +9,36 @@ import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 
 /**
- * Registry for [Conversion]s.
+ * Registry of [Conversion]s.
+ *
+ *  **Methods**
+ *
+ *  - [register] - Registers a conversion with the registry
+ *
+ *  **Companions**
  *
  *  - [conversionRegistry] - The singleton registry instance
- *  - [register] - Registers a conversion with the registry
  *  - [registerConversions] - Registers all [Conversion] properties of the given class' companion object
  *                            by forcing each conversion property to be created. When the conversion is
- *                            created,
+ *                            created, it is registered with the registry.
  *
  *  **Example**
  *
  *  ```
- *      init {
+ *  class StringToNumber {
+ *
+ *     init {
  *         registerConversions(this::class)
  *     }
  *
  *     companion object {
  *
- *         val ToByte = stringToValueConverter(Byte::class) { text, errorBehavior ->
- *             text.toByteOrNull() ?: errorBehavior.error("Invalid Byte value $text")
+ *         val byteConverter = stringToValueConverter(Byte::class) {
+ *             text, reporter -> text.toByteOrNull() ?:
+ *                 reporter.error("Invalid Byte value $text")
  *         }
  *
- *         val ToInt = stringToValueConverter(Int::class) { text, errorBehavior ->
- *             text.toIntOrNull() ?: errorBehavior.error("Invalid Int value $text")
- *         }
- *     }
+ *     [...]
  * ```
  *
  * @see Conversion

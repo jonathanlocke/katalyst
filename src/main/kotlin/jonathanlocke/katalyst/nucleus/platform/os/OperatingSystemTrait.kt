@@ -3,7 +3,7 @@ package jonathanlocke.katalyst.nucleus.platform.os
 import jonathanlocke.katalyst.nucleus.platform.os.OperatingSystem.Type.UNIX
 import jonathanlocke.katalyst.nucleus.platform.os.OperatingSystem.Type.WINDOWS
 
-class OperatingSystemTrait {
+interface OperatingSystemTrait {
 
     fun os(): OperatingSystem = OperatingSystem.get()
     fun env(): Set<EnvironmentVariable> = os().environmentVariables()

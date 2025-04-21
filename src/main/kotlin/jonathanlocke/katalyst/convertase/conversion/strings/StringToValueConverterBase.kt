@@ -9,7 +9,16 @@ import kotlin.reflect.KClass
  * are allowed by [nullAllowed]) and if it is non-blank (or blanks are allowed by [blankAllowed]), the
  * subclass method [onToValue] is called to convert the string to the type [Value].
  *
+ * **Properties**
+ *
  * - [blankAllowed] - True if blank input strings are allowed and should convert to the [nullValue]
+ *
+ * **Methods**
+ *
+ * - [register] - Registers this converter with the [ConversionRegistry]
+ *
+ * **Extension Points**
+ *
  * - [onToValue] - Called with an always non-null text string to convert if the from string value is non-null (or nulls
  *                 are allowed) and if it is non-blank (or blanks are allowed)
  *

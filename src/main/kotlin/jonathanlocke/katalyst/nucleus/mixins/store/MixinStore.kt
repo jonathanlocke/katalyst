@@ -1,5 +1,13 @@
-package jonathanlocke.katalyst.nucleus.mixins
+package jonathanlocke.katalyst.nucleus.mixins.store
 
+import jonathanlocke.katalyst.nucleus.mixins.Mixin
+
+/**
+ * Store of values associated with mixins via [MixinReference]s.
+ *
+ * @see Mixin
+ * @see MixinReference
+ */
 internal class MixinStore {
 
     companion object {

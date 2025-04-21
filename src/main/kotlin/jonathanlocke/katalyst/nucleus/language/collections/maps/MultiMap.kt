@@ -1,5 +1,13 @@
 package jonathanlocke.katalyst.nucleus.language.collections.maps
 
+/**
+ * A map that allows multiple values to be associated with a single key.
+ *
+ * @param K The type of the key
+ * @param V The type of the value
+ *
+ * @see MutableMap
+ */
 class MultiMap<K, V> {
 
     private val map: MutableMap<K, MutableList<V>> = mutableMapOf()

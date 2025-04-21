@@ -3,10 +3,42 @@ package jonathanlocke.katalyst.nucleus.values
 import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.stringToValueConverter
 import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.toValue
 import jonathanlocke.katalyst.convertase.conversion.strings.values.StringToNumber.Companion.longConverter
-import jonathanlocke.katalyst.nucleus.language.functional.Reporter
-import jonathanlocke.katalyst.nucleus.language.functional.reporters.Throw
+import jonathanlocke.katalyst.nucleus.language.problems.ProblemReporter
+import jonathanlocke.katalyst.nucleus.language.problems.reporters.Throw
 import jonathanlocke.katalyst.nucleus.language.strings.formatting.StringFormatter
+import jonathanlocke.katalyst.nucleus.values.Count.Companion.ThousandsSeparated
+import jonathanlocke.katalyst.nucleus.values.Count.Companion.count
+import jonathanlocke.katalyst.nucleus.values.Count.Companion.parseCount
 
+/**
+ * Represents a positive integer count of something.
+ *
+ *  **Creation**
+ *
+ *  - [count]
+ *  - [parseCount] - Parses text to a [Count], handling problems as specified by the given [ProblemReporter]
+ *
+ *  **Conversion**
+ *
+ *  - [asLong], [asDouble], [asFloat], [asInt], [asShort], [asByte]
+ *
+ *  **Formatting**
+ *
+ *  - [ThousandsSeparated]
+ *
+ *  **Language**
+ *
+ *  - [equals], [hashCode], [compareTo], [toString]
+ *
+ *  **Operators**
+ *
+ *  - [plus], [minus], [times], [div], [rem], [inc], [dec]
+ *
+ *  **Other**
+ *
+ *  - [isZero], [loop]
+ *
+ */
 @JvmInline
 value class Count private constructor(val value: Long) : Comparable<Count> {
 
@@ -14,22 +46,19 @@ value class Count private constructor(val value: Long) : Comparable<Count> {
 
         val ThousandsSeparated = StringFormatter<Count> { "%,d".format(it.value) }
 
-        fun countConverter() =
-            stringToValueConverter(Count::class) { text, reporter ->
-                text.toValue(longConverter, Throw())?.toCount()
-                    ?: reporter.error("Could not parse count: $text")
-            }
+        fun countConverter() = stringToValueConverter(Count::class) { text, reporter ->
+            text.toValue(longConverter, Throw())?.toCount() ?: reporter.error("Could not parse count: $text")
+        }
 
-        fun Number.toCount(): Count = of(this.toLong())
+        fun Number.toCount(): Count = count(this.toLong())
 
-        fun of(value: Long): Count = Count(value)
-            .also { require(value >= 0) { "Count must be non-negative, was $value" } }
+        fun count(value: Long): Count =
+            Count(value).also { require(value >= 0) { "Count must be non-negative, was $value" } }
 
         fun parseCount(text: String): Count = parseCount(text)
 
         fun parseCount(
-            text: String,
-            reporter: Reporter<Count> = Throw()
+            text: String, reporter: ProblemReporter<Count> = Throw()
         ): Count? {
             val value = text.replace(",", "").toLongOrNull()
             return if (value == null) {
@@ -53,27 +82,27 @@ value class Count private constructor(val value: Long) : Comparable<Count> {
 
     override fun toString(): String = value.toString()
 
-    fun plus(other: Count): Count = of(this.value + other.value)
-    operator fun plus(other: Number): Count = of(this.value + other.toLong())
+    fun plus(other: Count): Count = count(this.value + other.value)
+    operator fun plus(other: Number): Count = count(this.value + other.toLong())
 
-    operator fun minus(other: Count): Count = of((this.value - other.value).coerceAtLeast(0))
-    operator fun minus(other: Number): Count = of((this.value - other.toLong()).coerceAtLeast(0))
+    operator fun minus(other: Count): Count = count((this.value - other.value).coerceAtLeast(0))
+    operator fun minus(other: Number): Count = count((this.value - other.toLong()).coerceAtLeast(0))
 
-    operator fun times(other: Count): Count = of(this.value * other.value)
-    operator fun times(other: Number): Count = of(this.value * other.toLong())
+    operator fun times(other: Count): Count = count(this.value * other.value)
+    operator fun times(other: Number): Count = count(this.value * other.toLong())
 
-    operator fun inc(): Count = of(this.value + 1)
-    operator fun dec(): Count = of((this.value - 1).coerceAtLeast(0))
+    operator fun inc(): Count = count(this.value + 1)
+    operator fun dec(): Count = count((this.value - 1).coerceAtLeast(0))
 
-    operator fun div(other: Count): Count = of(this.value / other.value)
-        .also { require(other.value != 0L) { "Cannot divide by zero" } }
+    operator fun div(other: Count): Count =
+        count(this.value / other.value).also { require(other.value != 0L) { "Cannot divide by zero" } }
 
-    operator fun div(other: Number): Count = of(this.value / other.toLong())
-        .also { require(other.toLong() != 0L) { "Cannot divide by zero" } }
+    operator fun div(other: Number): Count =
+        count(this.value / other.toLong()).also { require(other.toLong() != 0L) { "Cannot divide by zero" } }
 
-    operator fun rem(other: Count): Count = of(this.value % other.value)
-        .also { require(other.value != 0L) { "Cannot mod by zero" } }
+    operator fun rem(other: Count): Count =
+        count(this.value % other.value).also { require(other.value != 0L) { "Cannot mod by zero" } }
 
-    operator fun rem(other: Number): Count = of(this.value % other.toLong())
-        .also { require(other.toLong() != 0L) { "Cannot mod by zero" } }
+    operator fun rem(other: Number): Count =
+        count(this.value % other.toLong()).also { require(other.toLong() != 0L) { "Cannot mod by zero" } }
 }

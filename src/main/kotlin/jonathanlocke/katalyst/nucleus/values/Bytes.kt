@@ -1,12 +1,69 @@
 package jonathanlocke.katalyst.nucleus.values
 
+import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter
 import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.stringToValueConverter
-import jonathanlocke.katalyst.nucleus.language.functional.Reporter
-import jonathanlocke.katalyst.nucleus.language.functional.reporters.Throw
+import jonathanlocke.katalyst.nucleus.language.problems.ProblemReporter
+import jonathanlocke.katalyst.nucleus.language.problems.reporters.Throw
+import jonathanlocke.katalyst.nucleus.values.Bytes.Companion.exabytes
+import jonathanlocke.katalyst.nucleus.values.Bytes.Companion.exbibytes
+import jonathanlocke.katalyst.nucleus.values.Bytes.Companion.gibibytes
+import jonathanlocke.katalyst.nucleus.values.Bytes.Companion.gigabytes
+import jonathanlocke.katalyst.nucleus.values.Bytes.Companion.kibibytes
+import jonathanlocke.katalyst.nucleus.values.Bytes.Companion.kilobytes
+import jonathanlocke.katalyst.nucleus.values.Bytes.Companion.mebibytes
+import jonathanlocke.katalyst.nucleus.values.Bytes.Companion.megabytes
+import jonathanlocke.katalyst.nucleus.values.Bytes.Companion.parseBytes
+import jonathanlocke.katalyst.nucleus.values.Bytes.Companion.pebibytes
+import jonathanlocke.katalyst.nucleus.values.Bytes.Companion.petabytes
+import jonathanlocke.katalyst.nucleus.values.Bytes.Companion.stringToBytesConverter
+import jonathanlocke.katalyst.nucleus.values.Bytes.Companion.tebibytes
+import jonathanlocke.katalyst.nucleus.values.Bytes.Companion.terabytes
 import jonathanlocke.katalyst.nucleus.values.Bytes.MeasurementSystem.Binary
 import jonathanlocke.katalyst.nucleus.values.Bytes.MeasurementSystem.Metric
 import java.text.DecimalFormat
 
+/**
+ * An immutable byte count, always positive, but possibly fractional (1.5 bytes is a valid value).
+ *
+ * Two [MeasurementSystem]s are supported: [Metric] and [Binary]. The metric system is the SI standard where
+ * units are multiples of 1000, and the binary system is the IEC standard, where units are multiples of 1024.
+ *
+ * **Creation**
+ *
+ * Several factory methods are provided for creating [Bytes] objects in both measurement systems:
+ *
+ * *Metric System*
+ *
+ *  - [bytes], [kilobytes], [megabytes], [gigabytes], [terabytes], [petabytes], [exabytes]
+ *
+ * *Binary System*
+ *
+ *  - [kibibytes], [mebibytes], [gibibytes], [tebibytes], [pebibytes], [exbibytes]
+ *
+ * *Either System*
+ *
+ *  - [parseBytes] - Parses text to a [Bytes] value in the given [MeasurementSystem], handling problems as specified
+ *                   by the given [ProblemReporter]
+ *
+ * **Conversion**
+ *
+ *  - [stringToBytesConverter] - Returns a [StringToValueConverter] that converts a string to a [Bytes] value
+ *  - [asBytes], [asKilobytes], [asMegabytes], [asGigabytes], [asTerabytes], [asPetabytes], [asExabytes]
+ *  - [asKibibytes], [asMebibytes], [asGibibytes], [asTebibytes], [asPebibytes], [asExbibytes]
+ *  - [asMetricString], [asBinaryString]
+ *
+ *  **Language**
+ *
+ *  - [compareTo], [equals], [hashCode], [toString]
+ *
+ * **Operators**
+ *
+ * - [plus], [div], [minus], [times]
+ *
+ * @property bytes The byte count
+ * @see StringToValueConverter
+ * @see ProblemReporter
+ */
 class Bytes(val bytes: Double) {
 
     enum class MeasurementSystem(val radix: Double, suffixPattern: String) {
@@ -26,7 +83,7 @@ class Bytes(val bytes: Double) {
 
     companion object {
 
-        fun bytesConverter(measurementSystem: MeasurementSystem = Metric) =
+        fun stringToBytesConverter(measurementSystem: MeasurementSystem = Metric) =
             stringToValueConverter(Bytes::class) { text, reporter ->
                 parseBytes(text, measurementSystem, reporter)
             }
@@ -52,7 +109,7 @@ class Bytes(val bytes: Double) {
         fun parseBytes(
             text: String,
             system: MeasurementSystem = Metric,
-            reporter: Reporter<Bytes> = Throw()
+            reporter: ProblemReporter<Bytes> = Throw()
         ): Bytes? {
 
             val match = system.pattern.matchEntire(text)

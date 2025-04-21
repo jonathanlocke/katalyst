@@ -8,8 +8,8 @@ import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConvert
 import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.stringToValueConverter
 import jonathanlocke.katalyst.convertase.conversion.strings.ValueToStringConverter
 import jonathanlocke.katalyst.convertase.conversion.strings.values.ValueToString
-import jonathanlocke.katalyst.nucleus.language.functional.Reporter
-import jonathanlocke.katalyst.nucleus.language.functional.reporters.Throw
+import jonathanlocke.katalyst.nucleus.language.problems.ProblemReporter
+import jonathanlocke.katalyst.nucleus.language.problems.reporters.Throw
 import jonathanlocke.katalyst.nucleus.language.strings.parsing.Separator
 import kotlin.reflect.KClass
 
@@ -51,11 +51,11 @@ class ListConversion<Value : Any>(
     // String -> Value conversion
     val stringToValueConverter: StringToValueConverter<Value>,
     val separator: Separator = Separator(),
-    val stringToValueReporter: Reporter<Value> = Throw(),
+    val stringToValueReporter: ProblemReporter<Value> = Throw(),
 
     // Value -> String conversion
     val valueToStringConverter: ValueToStringConverter<Value> = ValueToString(valueClass) as ValueToStringConverter<Value>,
-    val valueToStringReporter: Reporter<String> = Throw(),
+    val valueToStringReporter: ProblemReporter<String> = Throw(),
     val defaultToStringValue: String = "?"
 
 ) : ConversionBase<String, List<Value>>(String::class, List::class as KClass<List<Value>>) {
