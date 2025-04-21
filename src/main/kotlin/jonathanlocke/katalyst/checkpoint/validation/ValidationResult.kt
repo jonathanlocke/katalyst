@@ -6,7 +6,7 @@ import jonathanlocke.katalyst.nucleus.language.problems.Problem
 import jonathanlocke.katalyst.nucleus.language.problems.ProblemReporter
 import jonathanlocke.katalyst.nucleus.language.problems.categories.Error
 import jonathanlocke.katalyst.nucleus.language.problems.categories.Warning
-import jonathanlocke.katalyst.nucleus.values.Count.Companion.toCount
+import jonathanlocke.katalyst.nucleus.values.count.Count.Companion.toCount
 
 /**
  * A collection of validation problems.

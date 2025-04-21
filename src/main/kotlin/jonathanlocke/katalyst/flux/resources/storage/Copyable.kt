@@ -2,8 +2,8 @@ package jonathanlocke.katalyst.flux.resources.storage
 
 import jonathanlocke.katalyst.flux.resources.storage.Copyable.CopyMethod.Safe
 import jonathanlocke.katalyst.flux.resources.streams.Resource
-import jonathanlocke.katalyst.flux.resources.streams.io.WriteMode
-import jonathanlocke.katalyst.flux.resources.streams.io.WriteMode.DoNotOverwrite
+import jonathanlocke.katalyst.flux.resources.streams.writing.WriteMode
+import jonathanlocke.katalyst.flux.resources.streams.writing.WriteMode.DoNotOverwrite
 
 interface Copyable {
 

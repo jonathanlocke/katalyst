@@ -1,8 +1,8 @@
 package jonathanlocke.katalyst.flux.resources.metadata
 
+import jonathanlocke.katalyst.flux.resources.creation.ResourceScheme
 import jonathanlocke.katalyst.flux.resources.proximity.ResourceProximity
-import jonathanlocke.katalyst.flux.resources.uri.ResourceScheme
-import jonathanlocke.katalyst.nucleus.values.Bytes
+import jonathanlocke.katalyst.nucleus.values.bytes.Bytes
 import java.net.URI
 import java.nio.file.Path
 import java.time.Instant
@@ -19,4 +19,6 @@ interface ResourceMetadata {
     val uri: URI
     val scheme: ResourceScheme
     val proximity: ResourceProximity
+    val isReadable: Boolean
+    val isWritable: Boolean
 }

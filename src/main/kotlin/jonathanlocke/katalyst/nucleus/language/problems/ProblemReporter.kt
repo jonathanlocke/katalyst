@@ -54,7 +54,7 @@ import jonathanlocke.katalyst.nucleus.language.problems.reporters.Throw
  *
  * **Bytes**
  *
- * For another example of how [ProblemReporter] can be used effectively, see [jonathanlocke.katalyst.nucleus.values.Bytes.parseBytes]
+ * For another example of how [ProblemReporter] can be used effectively, see [jonathanlocke.katalyst.nucleus.values.bytes.Bytes.parseBytes]
  *
  * @see Throw
  * @see ReturnNull
