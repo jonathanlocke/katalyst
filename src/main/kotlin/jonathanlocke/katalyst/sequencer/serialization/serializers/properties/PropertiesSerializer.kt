@@ -7,13 +7,13 @@ import jonathanlocke.katalyst.nucleus.language.problems.ProblemListener
 import jonathanlocke.katalyst.sequencer.serialization.SerializationLimiter
 import jonathanlocke.katalyst.sequencer.serialization.SerializationSession
 import jonathanlocke.katalyst.sequencer.serialization.serializers.Serializer
+import kotlin.reflect.KClass
 
 class PropertiesSerializer<Value : Any>(
     val conversionRegistry: ConversionRegistry = ConversionRegistry.defaultConversionRegistry,
     val listener: ProblemListener,
     val limiter: SerializationLimiter,
-) :
-    Serializer<Value> {
+) : Serializer<Value> {
 
     @Suppress("UNCHECKED_CAST")
     override fun serialize(value: Value): String {
@@ -26,29 +26,46 @@ class PropertiesSerializer<Value : Any>(
         // then walk the properties of the value recursively,
         PropertyWalker(value).walk { property, type, path, value ->
 
-            // and if there is a conversion for the type,
-            val conversions = conversionRegistry[type]
-            if (!conversions.isEmpty()) {
+            // convert the value to a string,
+            val text = convertToString(type, value)
 
-                // get the reverse converter (Value to String),
-                val converter = conversions[0].reverseConverter() as Converter<Any, Value>
+            // and add a line to the properties lines,
+            lines.add("$path=$text")
 
-                // convert the value to text,
-                val text = converter.convert(value, listener)
+            // then check if the session limit has reached a limit,
+            if (limiter.isLimitExceeded(session, listener)) {
 
-                // and add a line to the properties lines,
-                lines.add("$path=$text")
-
-                // then check if the session limit has reached a limit,
-                if (limiter.isLimitExceeded(session, listener)) {
-
-                    // and report an error if so.
-                    listener.error("Serialization limit exceeded")
-                    return@walk
-                }
+                // and report an error if so.
+                listener.error("Serialization limit exceeded")
+                return@walk
             }
         }
 
         return lines.joinToString("\n")
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun convertToString(type: KClass<*>, value: Any?): String {
+
+        // Get the list of conversions for the type,
+        val conversions = conversionRegistry[type]
+
+        // and if there is no conversion,
+        var text: String
+        if (conversions.isEmpty()) {
+
+            // just do a toString,
+            text = value.toString()
+
+        } else {
+
+            // otherwise, get the reverse converter (Value to String),
+            val converter = conversions[0].reverseConverter() as Converter<Any, String?>
+
+            // and convert the value to text,
+            text = converter.convert(value, listener) ?: "null"
+        }
+
+        return text
     }
 }

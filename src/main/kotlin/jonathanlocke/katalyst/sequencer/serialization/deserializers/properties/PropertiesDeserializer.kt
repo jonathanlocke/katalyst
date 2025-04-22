@@ -15,8 +15,7 @@ class PropertiesDeserializer<Value : Any>(
     val conversionRegistry: ConversionRegistry = ConversionRegistry.defaultConversionRegistry,
     val listener: ProblemListener,
     val limiter: SerializationLimiter,
-) :
-    Deserializer<Value> {
+) : Deserializer<Value> {
 
     @Suppress("UNCHECKED_CAST")
     override fun deserialize(text: String): Value {
@@ -29,6 +28,10 @@ class PropertiesDeserializer<Value : Any>(
 
         // then for each non-blank line,
         text.lineSequence().filterNot { it.isBlank() }.forEach { line ->
+
+            // increase the session line count and bytes read,
+            session.lines = session.lines + 1
+            session.bytes = session.bytes + line.length + 1
 
             // split the line into a path and a value,
             val (propertyPath, valueText) = line.trim().split("=", limit = 2)
@@ -74,10 +77,8 @@ class PropertiesDeserializer<Value : Any>(
         var at: KClass<*> = type
         var property: KMutableProperty<*>? = null
         for (segment in path.split('.')) {
-            property = at.memberProperties
-                .filterIsInstance<KMutableProperty<*>>()
-                .find { it.name == segment }
-                ?: return null
+            property =
+                at.memberProperties.filterIsInstance<KMutableProperty<*>>().find { it.name == segment } ?: return null
             at = property.returnType.classifier as? KClass<*> ?: return property
         }
         return property
