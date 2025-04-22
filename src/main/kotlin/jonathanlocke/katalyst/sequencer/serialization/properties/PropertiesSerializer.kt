@@ -54,7 +54,7 @@ class PropertiesSerializer<Value : Any>(
             if (text != null) {
 
                 // create a properties file line in key/value format,
-                val line = "$path=$text"
+                val line = "${path.pathString()}=$text"
 
                 // add it to the list of lines,
                 lines.add(line)

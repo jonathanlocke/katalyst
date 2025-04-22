@@ -4,29 +4,39 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.memberProperties
 
-class PropertyPath : ArrayList<String>() {
+class PropertyPath(val type: KClass<*>) : ArrayList<String>() {
 
     companion object {
 
         const val SEPARATOR = "."
 
-        val rootPropertyPath: PropertyPath = PropertyPath()
+        fun rootPropertyPath(type: KClass<*>): PropertyPath = PropertyPath(type)
 
-        fun propertyPath(text: String): PropertyPath = PropertyPath().apply { addAll(text.split(SEPARATOR)) }
+        fun propertyPath(type: KClass<*>, text: String): PropertyPath = PropertyPath(type).apply {
+            addAll(text.split(SEPARATOR))
+        }
     }
 
-    override fun toString(): String = this.joinToString(SEPARATOR)
+    fun pathString(): String = this.joinToString(SEPARATOR)
+
+    override fun toString(): String = type.simpleName + ":" + pathString()
 
     fun parent(): PropertyPath {
-        val copy = PropertyPath()
+        val copy = PropertyPath(type)
         copy.addAll(this.dropLast(1))
         return copy
     }
 
     fun copy(): PropertyPath {
-        val copy = PropertyPath()
+        val copy = PropertyPath(type)
         copy.addAll(this)
         return copy
+    }
+
+    fun value(instance: Any): Any? = property()?.getter?.call(instance)
+
+    fun value(instance: Any, value: Any?) {
+        property()?.setter?.call(instance, value)
     }
 
     /**
@@ -34,7 +44,7 @@ class PropertyPath : ArrayList<String>() {
      * @param type The type to search for the property.
      * @return The property at this path in the given type, or null if it does not exist.
      */
-    fun property(type: KClass<*>): KMutableProperty<*>? {
+    fun property(): KMutableProperty<*>? {
 
         var at: KClass<*> = type
         var property: KMutableProperty<*>? = null

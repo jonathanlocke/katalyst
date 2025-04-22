@@ -31,7 +31,7 @@ class PropertyWalker(val value: Any) {
     }
 
     fun walk(filter: PropertyFilter = PUBLIC_PROPERTIES, recursive: Boolean = true, visitor: PropertyVisitor) =
-        walk(PropertyPath(), filter, recursive, visitor)
+        walk(PropertyPath(value::class), filter, recursive, visitor)
 
     private fun walk(path: PropertyPath, filter: PropertyFilter, recursive: Boolean, visitor: PropertyVisitor) {
         for (property in value::class.declaredProperties()) {

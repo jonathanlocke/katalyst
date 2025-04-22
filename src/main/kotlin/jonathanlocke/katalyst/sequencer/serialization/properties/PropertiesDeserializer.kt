@@ -29,82 +29,131 @@ class PropertiesDeserializer<Value : Any>(
 ) : Deserializer<Value> {
 
     /**
-     * Deserializes a properties file to a value of the given [type] following these steps:
-     *
-     * 1. Create an instance of [type]
-     * 2. For each non-blank line in the properties file, split the line into a path and a value
-     * 3. Get the property at the path
-     * 4. Convert the value to the property's type
-     * 5. Set the property's value to the converted value
-     * 6. Tell the serialization session that we processed a property
-     * 7. If the serialization session limit has reached any limit, report an error and fail the deserialization
-     *
-     * @param listener A problem listener to report problems to
-     * @param text The properties file text to deserialize
-     * @return The deserialized value
+     * Deserializes individual properties
      */
-    @Suppress("UNCHECKED_CAST")
-    override fun deserialize(listener: ProblemListener, text: String): Value {
+    internal inner class PropertyDeserializer(val listener: ProblemListener) {
 
-        // Create a serialization session,
-        val session = PropertiesSerializationSession()
-
-        // create a new instance of the type,
+        /**
+         * The root value we're deserializing
+         */
         val value = type.createInstance()
+
+        /**
+         * The last property path we processed.
+         */
+        var lastPath: PropertyPath = rootPropertyPath(Any::class)
+
         val pathToValue = mutableMapOf<PropertyPath, Any>()
-        pathToValue[rootPropertyPath] = value
 
-        // then for each non-blank line,
-        text.lineSequence().filterNot { it.isBlank() }.forEach { propertyText ->
+        init {
+            pathToValue[lastPath] = value
+        }
 
-            // split the line into a path and a value,
-            val (propertyPathText, valueText) = propertyText.trim().split("=", limit = 2)
+        /**
+         * A property is deserialized by the following steps:
+         *
+         * 1.
+         * 2. For each non-blank line in the properties file, split the line into a path and a value
+         * 3. Get the property at the path
+         * 4. Convert the value to the property's type
+         * 5. Set the property's value to the converted value
+         */
+        fun deserialize(path: PropertyPath, valueText: String) {
 
-            // get the property at the path,
-            val propertyPath = propertyPath(propertyPathText)
-            val property = propertyPath.property(type)
+            // Get the property at the given path in the value's type,
+            val property = path.property()
 
             // and if there is no property,
             if (property == null) {
 
                 // fail
-                listener.fail("Property path '$propertyPathText' does not exist in type '${type.simpleName}'")
+                listener.fail("Property path does not exist: $path")
 
             } else {
 
-                // otherwise, if there is a conversion for the type,
+                // otherwise, get the path of the parent of the property we're deserializing,'
+                val parentPath = path.parent()
+
+                // and if the path is deeper than the last path we processed,
+                if (path.size > lastPath.size && lastPath.isNotEmpty()) {
+
+                    // first ensure the path only increases by one level at a time,
+                    if (path.size > lastPath.size + 1) {
+                        listener.fail("Property path '$path' skips levels - can only increase depth by one level at a time")
+                        return
+                    }
+
+                    // then get the parent property,
+                    val parentProperty = parentPath.property()
+                    if (parentProperty == null) {
+                        listener.fail("Parent property path '$parentPath' does not exist in type '${type.simpleName}'")
+                        return
+                    }
+
+                    // and initialize it to a new value,
+                    val parentValue = parentProperty.kClass().createInstance()
+                    val grandparentValue = pathToValue[parentPath.parent()]
+                    parentProperty.setter.call(grandparentValue, parentValue)
+                    pathToValue[parentPath] = parentValue
+                }
+
+                // then if there is a conversion to the property type,
                 val conversions = conversionRegistry.to(property.kClass())
                 if (!conversions.isEmpty()) {
 
                     // get the forward converter (String to Value),
-                    val converter = conversions.first().forwardConverter() as Converter<Any, Value>
+                    val converter = conversions.first().forwardConverter() as Converter<Any, *>
 
                     // convert the value text to the type,
                     val converted = converter.convert(valueText, listener)
 
                     // set the property value
-                    property.setter.call(value, converted)
-
-                    // tell the session that we processed a property,
-                    session.processedProperty(propertyText)
-
-                    // then ensure that the session limit has not been reached
-                    limiter.ensureLimitNotReached(session, listener)
-
-                } else {
-
-                    // since there is no conversion, create an instance of the property's type,
-                    val child = property.kClass().createInstance()
-
-                    // and keep it in the child paths map for later,
-                    pathToValue[propertyPath] = child
-
-                    // and store the child
-                    property.setter.call(pathToValue[propertyPath.parent()], child)
+                    val instance = pathToValue[path.parent()]
+                    if (instance != null) {
+                        path.value(instance, converted)
+                    }
                 }
+
+                lastPath = path
             }
         }
+    }
 
-        return value
+    /**
+     * Deserializes a properties file to a value of the given [type] following these steps:
+     *
+     * 1. Create a serialization session and a property deserializer
+     * 2. For each non-blank line in the properties file, split the line into a path and a value
+     * 3. Deserialize the property
+     * 4. Tell the serialization session that we processed a property
+     * 5. If the serialization session limit has reached any limit, report an error and fail the deserialization
+     *
+     * @param listener A problem listener to report problems to
+     * @param text The properties file text to deserialize
+     * @return The deserialized value
+     */
+    override fun deserialize(listener: ProblemListener, text: String): Value {
+
+        // Create a serialization session and a property deserializer,
+        val session = PropertiesSerializationSession()
+        val propertyDeserializer = PropertyDeserializer(listener)
+
+        // then for each non-blank line,
+        text.lineSequence().filterNot { it.isBlank() }.forEach { propertyText ->
+
+            // split the line into a property path and a value,
+            val (propertyPathText, valueText) = propertyText.trim().split("=", limit = 2)
+
+            // deserialize the property,
+            propertyDeserializer.deserialize(propertyPath(type, propertyPathText), valueText)
+
+            // tell the session that we processed the property,
+            session.processedProperty(propertyText)
+
+            // then ensure that the session limit has not been reached
+            limiter.ensureLimitNotReached(session, listener)
+        }
+
+        return propertyDeserializer.value
     }
 }

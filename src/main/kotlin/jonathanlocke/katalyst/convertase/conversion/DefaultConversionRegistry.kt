@@ -6,6 +6,5 @@ class DefaultConversionRegistry : ConversionRegistry() {
 
     init {
         StringToNumber.registerConversions(this)
-        println(this)
     }
 }

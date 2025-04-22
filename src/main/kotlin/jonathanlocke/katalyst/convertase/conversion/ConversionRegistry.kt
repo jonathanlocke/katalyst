@@ -105,6 +105,20 @@ open class ConversionRegistry {
     }
 
     /**
+     * True if the registry contains a conversion from the given type to another type
+     */
+    fun hasConversionFrom(fromType: KClass<*>): Boolean = synchronized(this) {
+        from.containsKey(fromType)
+    }
+
+    /**
+     * True if the registry contains a conversion to the given type from another type
+     */
+    fun hasConversionTo(toType: KClass<*>): Boolean = synchronized(this) {
+        to.containsKey(toType)
+    }
+
+    /**
      * All the conversions that convert *from* the given type to another type
      */
     fun from(fromType: KClass<*>): List<Conversion<*, *>> = synchronized(this) {

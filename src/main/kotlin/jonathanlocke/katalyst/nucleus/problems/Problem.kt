@@ -21,4 +21,11 @@ import jonathanlocke.katalyst.nucleus.problems.categories.Warning
  * @see ValidationError
  * @see ValidationWarning
  */
-abstract class Problem(val message: String, val cause: Throwable? = null, val value: Any? = null)
+abstract class Problem(val message: String, val cause: Throwable? = null, val value: Any? = null) {
+
+    override fun toString(): String {
+        val causeText = cause?.let { ", cause: $it" } ?: ""
+        val valueText = value?.let { ", value: $it" } ?: ""
+        return message + causeText + valueText
+    }
+}
