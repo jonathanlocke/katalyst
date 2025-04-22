@@ -1,9 +1,9 @@
 package jonathanlocke.katalyst.nucleus.values.bytes
 
-import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter
-import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.stringToValueConverter
-import jonathanlocke.katalyst.nucleus.language.problems.ProblemListener
-import jonathanlocke.katalyst.nucleus.language.problems.listeners.Throw
+import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter
+import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter.Companion.stringToValueConverter
+import jonathanlocke.katalyst.nucleus.problems.ProblemListener
+import jonathanlocke.katalyst.nucleus.problems.listeners.Throw
 import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.exabytes
 import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.exbibytes
 import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.gibibytes
@@ -88,22 +88,21 @@ class Bytes(val bytes: Double) {
                 parseBytes(text, measurementSystem, listener)
             }
 
-        fun bytes(value: Double) = Bytes(value)
-        fun bytes(value: Long) = Bytes(value.toDouble())
+        fun bytes(value: Number) = Bytes(value.toDouble())
 
-        fun kilobytes(value: Double) = bytes(value * Metric.radix)
-        fun megabytes(value: Double) = kilobytes(value * Metric.radix)
-        fun gigabytes(value: Double) = megabytes(value * Metric.radix)
-        fun terabytes(value: Double) = gigabytes(value * Metric.radix)
-        fun petabytes(value: Double) = terabytes(value * Metric.radix)
-        fun exabytes(value: Double) = petabytes(value * Metric.radix)
+        fun kilobytes(value: Number) = bytes(value.toDouble() * Metric.radix)
+        fun megabytes(value: Number) = kilobytes(value.toDouble() * Metric.radix)
+        fun gigabytes(value: Number) = megabytes(value.toDouble() * Metric.radix)
+        fun terabytes(value: Number) = gigabytes(value.toDouble() * Metric.radix)
+        fun petabytes(value: Number) = terabytes(value.toDouble() * Metric.radix)
+        fun exabytes(value: Number) = petabytes(value.toDouble() * Metric.radix)
 
-        fun kibibytes(value: Double) = bytes(value * Binary.radix)
-        fun mebibytes(value: Double) = kibibytes(value * Binary.radix)
-        fun gibibytes(value: Double) = mebibytes(value * Binary.radix)
-        fun tebibytes(value: Double) = gibibytes(value * Binary.radix)
-        fun pebibytes(value: Double) = tebibytes(value * Binary.radix)
-        fun exbibytes(value: Double) = pebibytes(value * Binary.radix)
+        fun kibibytes(value: Number) = bytes(value.toDouble() * Binary.radix)
+        fun mebibytes(value: Number) = kibibytes(value.toDouble() * Binary.radix)
+        fun gibibytes(value: Number) = mebibytes(value.toDouble() * Binary.radix)
+        fun tebibytes(value: Number) = gibibytes(value.toDouble() * Binary.radix)
+        fun pebibytes(value: Number) = tebibytes(value.toDouble() * Binary.radix)
+        fun exbibytes(value: Number) = pebibytes(value.toDouble() * Binary.radix)
 
         fun parseBytes(text: String, system: MeasurementSystem = Metric): Bytes =
             parseBytes(text, system)

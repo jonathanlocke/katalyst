@@ -1,10 +1,19 @@
 package jonathanlocke.katalyst.sequencer.serialization
 
-import jonathanlocke.katalyst.sequencer.serialization.deserializers.Deserializer
-import jonathanlocke.katalyst.sequencer.serialization.serializers.Serializer
+import kotlin.reflect.KClass
 
-interface Serialization<Value> {
+/**
+ * A serialization implements both a [Serializer] and a [Deserializer]
+ */
+interface Serialization<Value : Any> {
 
+    /**
+     * The [Value] serializer
+     */
     fun serializer(): Serializer<Value>
-    fun deserializer(): Deserializer<Value>
+
+    /**
+     * The [Value] deserializer
+     */
+    fun deserializer(type: KClass<Value>): Deserializer<Value>
 }

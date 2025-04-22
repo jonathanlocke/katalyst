@@ -1,6 +1,5 @@
 package jonathanlocke.katalyst.convertase.conversion
 
-import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry.Companion.defaultConversionRegistry
 import kotlin.reflect.KClass
 
 /**
@@ -15,10 +14,11 @@ import kotlin.reflect.KClass
  *
  * @see Conversion
  */
-abstract class ConversionBase<From : Any, To : Any>(val from: KClass<From>, val to: KClass<To>) : Conversion<From, To> {
+abstract class ConversionBase<From : Any, To : Any>(override val from: KClass<From>, override val to: KClass<To>) :
+    Conversion<From, To> {
 
     /**
      * Registers this conversion with the default [ConversionRegistry]
      */
-    override fun register() = defaultConversionRegistry.register(from, to, this)
+    override fun register(conversionRegistry: ConversionRegistry) = conversionRegistry.register(from, to, this)
 }

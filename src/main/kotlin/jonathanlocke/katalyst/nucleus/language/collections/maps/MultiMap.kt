@@ -47,7 +47,7 @@ class MultiMap<K : Any, V : Any> {
 
     fun values(): List<V> = map.values.flatten()
 
-    fun entries(): Map<K, List<V>> = map.mapValues { it.value.toList() }
+    fun entries(): List<Pair<K, List<V>>> = map.map { it.key to it.value.toList() }
 
     fun clear() = map.clear()
 

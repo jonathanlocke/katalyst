@@ -1,9 +1,9 @@
 package jonathanlocke.katalyst.convertase.conversion
 
-import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.toList
-import jonathanlocke.katalyst.convertase.conversion.strings.values.StringToNumber.Companion.intConverter
-import jonathanlocke.katalyst.nucleus.language.problems.listeners.Return
+import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter.Companion.toList
+import jonathanlocke.katalyst.convertase.conversion.converters.strings.values.StringToNumber.Companion.intConverter
 import jonathanlocke.katalyst.nucleus.language.strings.parsing.Separator.Companion.COLON_SEPARATOR
+import jonathanlocke.katalyst.nucleus.problems.listeners.Return
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

@@ -2,11 +2,11 @@ package jonathanlocke.katalyst.checkpoint.validation
 
 import jonathanlocke.katalyst.checkpoint.validation.problems.ValidationError
 import jonathanlocke.katalyst.checkpoint.validation.problems.ValidationWarning
-import jonathanlocke.katalyst.nucleus.language.problems.Problem
-import jonathanlocke.katalyst.nucleus.language.problems.ProblemList
-import jonathanlocke.katalyst.nucleus.language.problems.ProblemListener
-import jonathanlocke.katalyst.nucleus.language.problems.categories.Error
-import jonathanlocke.katalyst.nucleus.language.problems.categories.Warning
+import jonathanlocke.katalyst.nucleus.problems.Problem
+import jonathanlocke.katalyst.nucleus.problems.ProblemList
+import jonathanlocke.katalyst.nucleus.problems.ProblemListener
+import jonathanlocke.katalyst.nucleus.problems.categories.Error
+import jonathanlocke.katalyst.nucleus.problems.categories.Warning
 
 /**
  * A collection of validation problems.

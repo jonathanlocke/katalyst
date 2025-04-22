@@ -1,10 +1,10 @@
 package jonathanlocke.katalyst.nucleus.values.percent
 
-import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.stringToValueConverter
-import jonathanlocke.katalyst.nucleus.language.problems.ProblemListener
-import jonathanlocke.katalyst.nucleus.language.problems.listeners.Throw
+import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter.Companion.stringToValueConverter
 import jonathanlocke.katalyst.nucleus.language.strings.formatting.StringFormatter
 import jonathanlocke.katalyst.nucleus.language.strings.formatting.StringFormatter.Companion.format
+import jonathanlocke.katalyst.nucleus.problems.ProblemListener
+import jonathanlocke.katalyst.nucleus.problems.listeners.Throw
 import jonathanlocke.katalyst.nucleus.values.percent.Percent.Companion.DecimalFormat
 import jonathanlocke.katalyst.nucleus.values.percent.Percent.Companion.IntegerFormat
 import jonathanlocke.katalyst.nucleus.values.percent.Percent.Companion.parsePercent

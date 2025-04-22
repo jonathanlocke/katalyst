@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.nucleus.values.version
 
-import jonathanlocke.katalyst.nucleus.language.problems.ProblemListener
-import jonathanlocke.katalyst.nucleus.language.problems.listeners.Throw
+import jonathanlocke.katalyst.nucleus.problems.ProblemListener
+import jonathanlocke.katalyst.nucleus.problems.listeners.Throw
 
 /**
  * Represents a [*semantic version*](https://semver.org), such as "6.3" or "1.2.1"

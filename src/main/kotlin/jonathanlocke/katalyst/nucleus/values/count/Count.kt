@@ -1,11 +1,11 @@
 package jonathanlocke.katalyst.nucleus.values.count
 
-import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.stringToValueConverter
-import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.toValue
-import jonathanlocke.katalyst.convertase.conversion.strings.values.StringToNumber.Companion.longConverter
-import jonathanlocke.katalyst.nucleus.language.problems.ProblemListener
-import jonathanlocke.katalyst.nucleus.language.problems.listeners.Throw
+import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter.Companion.stringToValueConverter
+import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter.Companion.toValue
+import jonathanlocke.katalyst.convertase.conversion.converters.strings.values.StringToNumber.Companion.longConverter
 import jonathanlocke.katalyst.nucleus.language.strings.formatting.StringFormatter
+import jonathanlocke.katalyst.nucleus.problems.ProblemListener
+import jonathanlocke.katalyst.nucleus.problems.listeners.Throw
 import jonathanlocke.katalyst.nucleus.values.count.Count.Companion.ThousandsSeparated
 import jonathanlocke.katalyst.nucleus.values.count.Count.Companion.count
 import jonathanlocke.katalyst.nucleus.values.count.Count.Companion.parseCount
