@@ -1,5 +1,7 @@
 package jonathanlocke.katalyst.nucleus.language.strings.parsing
 
-interface StringParser<T> {
-    fun parse(string: String): T
+import jonathanlocke.katalyst.nucleus.language.problems.ProblemReporter
+
+fun interface StringParser<T : Any> {
+    fun parse(string: String, reporter: ProblemReporter<T>?): T
 }

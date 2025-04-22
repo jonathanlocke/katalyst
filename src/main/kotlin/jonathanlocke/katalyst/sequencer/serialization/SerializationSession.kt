@@ -1,0 +1,3 @@
+package jonathanlocke.katalyst.sequencer.serialization
+
+class SerializationSession

@@ -8,7 +8,7 @@ package jonathanlocke.katalyst.nucleus.language.collections.maps
  *
  * @see MutableMap
  */
-class MultiMap<K, V> {
+class MultiMap<K : Any, V : Any> {
 
     private val map: MutableMap<K, MutableList<V>> = mutableMapOf()
 
@@ -20,7 +20,7 @@ class MultiMap<K, V> {
         map.getOrPut(key) { mutableListOf() }.addAll(values)
     }
 
-    fun get(key: K): List<V>? {
+    operator fun get(key: K): List<V>? {
         return map[key]
     }
 

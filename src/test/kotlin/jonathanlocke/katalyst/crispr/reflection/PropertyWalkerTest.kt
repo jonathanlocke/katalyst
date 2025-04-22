@@ -16,7 +16,7 @@ class PropertyWalkerTest {
 
     @Test
     fun testSuccess() {
-        PropertyWalker(X()).walk { property, path, value ->
+        PropertyWalker(X()).walk { property, type, path, value ->
             println("$path = $value")
         }
     }

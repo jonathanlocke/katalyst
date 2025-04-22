@@ -5,6 +5,6 @@ import jonathanlocke.katalyst.nucleus.language.strings.formatting.StringFormatte
 class NumberFormatters {
 
     companion object {
-        val ThousandsSeparated = StringFormatter<Number> { "%,d".format(it.toLong()) }
+        val ThousandsSeparatedFormat = StringFormatter<Number> { "%,d".format(it.toLong()) }
     }
 }

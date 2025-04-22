@@ -14,7 +14,6 @@ interface ResourceMetadata {
     val createdAtUtc: Instant
     val lastModifiedAtUtc: Instant
     val lastAccessedAtUtc: Instant
-    val deletable: Boolean
     val path: Path
     val uri: URI
     val scheme: ResourceScheme

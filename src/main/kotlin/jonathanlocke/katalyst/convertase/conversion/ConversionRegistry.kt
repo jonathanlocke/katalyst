@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.convertase.conversion
 
-import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry.Companion.conversionRegistry
+import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry.Companion.defaultConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry.Companion.registerConversions
 import jonathanlocke.katalyst.nucleus.language.collections.maps.MultiMap
 import kotlin.reflect.KClass
@@ -17,7 +17,7 @@ import kotlin.reflect.full.companionObjectInstance
  *
  *  **Companions**
  *
- *  - [conversionRegistry] - The singleton registry instance
+ *  - [defaultConversionRegistry] - The singleton registry instance
  *  - [registerConversions] - Registers all [Conversion] properties of the given class' companion object
  *                            by forcing each conversion property to be created. When the conversion is
  *                            created, it is registered with the registry.
@@ -46,7 +46,7 @@ import kotlin.reflect.full.companionObjectInstance
  */
 class ConversionRegistry {
 
-    /** The registry of conversions keyed by type */
+    /** The registry of conversions keyed by the From type of the forward conversion */
     private val conversions = MultiMap<KClass<*>, Conversion<*, *>>()
 
     /**
@@ -62,11 +62,27 @@ class ConversionRegistry {
         }
     }
 
+    /**
+     * Gets all conversions registered for the given type
+     */
+    operator fun get(type: KClass<*>): List<Conversion<*, *>> = synchronized(conversions) {
+        conversions[type] ?: emptyList()
+    }
+
+    /**
+     * Checks if conversion to the given type is possible
+     */
+    fun canConvertTo(type: KClass<*>): Boolean {
+        synchronized(conversions) {
+            return conversions[type]?.isNotEmpty() ?: false
+        }
+    }
+
     companion object {
 
         /** The singleton registry instance */
         @JvmStatic
-        val conversionRegistry = ConversionRegistry()
+        val defaultConversionRegistry = ConversionRegistry()
 
         /**
          * Registers all [Conversion] properties of the given class' companion object

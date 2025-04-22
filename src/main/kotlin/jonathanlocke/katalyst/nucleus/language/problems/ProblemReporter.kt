@@ -4,6 +4,7 @@ import jonathanlocke.katalyst.nucleus.language.problems.categories.Error
 import jonathanlocke.katalyst.nucleus.language.problems.categories.Warning
 import jonathanlocke.katalyst.nucleus.language.problems.reporters.ReturnNull
 import jonathanlocke.katalyst.nucleus.language.problems.reporters.Throw
+import java.util.function.Supplier
 
 /**
  * An [ProblemReporter] allows code to be flexible in how it handles problems in different usage contexts.
@@ -80,4 +81,12 @@ interface ProblemReporter<Value : Any> {
      */
     fun warning(message: String, cause: Throwable? = null, value: Value? = null) =
         report(Warning(message, cause, value))
+
+    fun guard(message: String, code: Supplier<Value>): Value? {
+        try {
+            return code.get()
+        } catch (e: Exception) {
+            return error(message, e)
+        }
+    }
 }

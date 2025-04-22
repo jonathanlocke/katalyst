@@ -11,7 +11,7 @@ import kotlin.reflect.full.memberProperties
 class PropertyWalker(val value: Any) {
 
     fun interface PropertyVisitor {
-        fun atProperty(property: KProperty<*>, path: PropertyPath, value: Any?)
+        fun atProperty(property: KProperty<*>, type: KClass<*>, path: PropertyPath, value: Any?)
     }
 
     fun interface PropertyFilter : Predicate<KProperty.Getter<Any?>> {
@@ -39,7 +39,8 @@ class PropertyWalker(val value: Any) {
                 val propertyValue = propertyValue(property, value)
                 val propertyPath = path + property.name
                 if (filter.test(property.getter)) {
-                    visitor.atProperty(property, propertyPath, propertyValue)
+                    val type = property.returnType.classifier as? KClass<*> ?: Any::class
+                    visitor.atProperty(property, type, propertyPath, propertyValue)
                 }
                 if (recursive && propertyValue != null) {
                     PropertyWalker(propertyValue).walk(propertyPath, filter, recursive, visitor)
@@ -49,10 +50,8 @@ class PropertyWalker(val value: Any) {
     }
 
     fun <T : Any> KClass<T>.declaredProperties(): List<KProperty1<T, *>> {
-        val superProperties = this.supertypes
-            .mapNotNull { it.classifier as? KClass<*> }
-            .flatMap { it.memberProperties }
-            .toSet()
+        val superProperties =
+            this.supertypes.mapNotNull { it.classifier as? KClass<*> }.flatMap { it.memberProperties }.toSet()
         return memberProperties.toList().filter { it !in superProperties }
     }
 
