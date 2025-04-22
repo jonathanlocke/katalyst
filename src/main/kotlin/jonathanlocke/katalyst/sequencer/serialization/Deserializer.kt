@@ -1,6 +1,7 @@
 package jonathanlocke.katalyst.sequencer.serialization
 
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
+import jonathanlocke.katalyst.nucleus.problems.listeners.Throw
 
 /**
  * Deserializes a string to a value
@@ -16,5 +17,5 @@ interface Deserializer<Value> {
      * @param text The string to deserialize
      * @return The deserialized value
      */
-    fun deserialize(listener: ProblemListener, text: String): Value
+    fun deserialize(text: String, listener: ProblemListener = Throw()): Value
 }

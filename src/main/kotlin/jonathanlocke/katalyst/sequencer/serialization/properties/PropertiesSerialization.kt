@@ -2,6 +2,8 @@ package jonathanlocke.katalyst.sequencer.serialization.properties
 
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry.Companion.defaultConversionRegistry
+import jonathanlocke.katalyst.nucleus.problems.ProblemListener
+import jonathanlocke.katalyst.nucleus.problems.listeners.Throw
 import jonathanlocke.katalyst.nucleus.values.bytes.Bytes
 import jonathanlocke.katalyst.nucleus.values.count.Count
 import jonathanlocke.katalyst.sequencer.serialization.*
@@ -57,9 +59,34 @@ class PropertiesSerialization<Value : Any>(
     }
 
     /**
+     * Serializes a value to a properties file
+     * @param listener A problem listener to report problems to
+     * @param value The value to serialize
+     * @return The serialized properties file as a string, with each property on a new line
+     *
+     * @see PropertiesSerializer
+     */
+    fun serialize(value: Value, listener: ProblemListener = Throw()): String {
+        return serializer().serialize(value, listener)
+    }
+
+    /**
+     * Deserializes a properties file to a value
+     * @param listener A problem listener to report problems to
+     * @param type The type to deserialize the properties file to
+     * @param text The properties file to deserialize
+     * @return The deserialized value
+     *
+     * @see PropertiesDeserializer
+     */
+    fun deserialize(type: KClass<Value>, text: String, listener: ProblemListener = Throw()): Value {
+        return deserializer(type).deserialize(text, listener)
+    }
+
+    /**
      * Serializer that serializes a value to a properties file
      */
-    override fun serializer(): Serializer<Value> = PropertiesSerializer<Value>(conversionRegistry, limiter)
+    override fun serializer(): Serializer<Value> = PropertiesSerializer(conversionRegistry, limiter)
 
     /**
      * Deserializer that deserializes a properties file to a value

@@ -132,7 +132,7 @@ class PropertiesDeserializer<Value : Any>(
      * @param text The properties file text to deserialize
      * @return The deserialized value
      */
-    override fun deserialize(listener: ProblemListener, text: String): Value {
+    override fun deserialize(text: String, listener: ProblemListener): Value {
 
         // Create a serialization session and a property deserializer,
         val session = PropertiesSerializationSession()
