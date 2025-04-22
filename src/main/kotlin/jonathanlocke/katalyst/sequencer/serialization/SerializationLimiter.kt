@@ -7,5 +7,5 @@ import jonathanlocke.katalyst.nucleus.language.problems.ProblemListener
  */
 interface SerializationLimiter {
 
-    fun isLimitExceeded(session: SerializationSession, listener: ProblemListener<*>): Boolean
+    fun isLimitExceeded(session: SerializationSession, listener: ProblemListener): Boolean
 }

@@ -1,8 +1,9 @@
 package jonathanlocke.katalyst.nucleus.language.problems
 
 import jonathanlocke.katalyst.nucleus.language.problems.categories.Error
+import jonathanlocke.katalyst.nucleus.language.problems.categories.Failure
 import jonathanlocke.katalyst.nucleus.language.problems.categories.Warning
-import jonathanlocke.katalyst.nucleus.language.problems.listeners.ReturnNull
+import jonathanlocke.katalyst.nucleus.language.problems.listeners.Return
 import jonathanlocke.katalyst.nucleus.language.problems.listeners.Throw
 import java.util.function.Supplier
 
@@ -11,7 +12,7 @@ import java.util.function.Supplier
  *
  * In one context, it might be desirable for a method to throw an exception, while in another context, it might
  * be desirable for the same method to return a null value for performance reasons. The listeners [Throw] and
- * [ReturnNull] respectively handle these situations.
+ * [Return] respectively handle these situations.
  *
  * **Integer.parseInt()**
  *
@@ -58,35 +59,44 @@ import java.util.function.Supplier
  * For another example of how [ProblemListener] can be used effectively, see [jonathanlocke.katalyst.nucleus.values.bytes.Bytes.parseBytes]
  *
  * @see Throw
- * @see ReturnNull
+ * @see Return
  * @see Problem
  * @see Error
  * @see Warning
  */
-interface ProblemListener<Value : Any> {
+interface ProblemListener {
+
+    val problems: ProblemList
 
     /**
-     * Reports a problem to the listener, returning null or throwing an exception as appropriate.
+     * Forces a failure state that throws an exception which includes all problems this listener has encountered
      */
-    fun problem(problem: Problem): Value?
+    fun fail(message: String) {
+        failure(message)
+        throw ProblemException(problems)
+    }
 
     /**
-     * Convenience method for reporting an error.
+     * Extension point for handling a problem
      */
-    fun error(message: String, cause: Throwable? = null, value: Value? = null) =
+    fun problem(problem: Problem)
+
+    fun failure(message: String, cause: Throwable? = null, value: Any? = null) =
+        problem(Failure(message, cause, value))
+
+    fun error(message: String, cause: Throwable? = null, value: Any? = null) =
         problem(Error(message, cause, value))
 
-    /**
-     * Convenience method for reporting a warning.
-     */
-    fun warning(message: String, cause: Throwable? = null, value: Value? = null) =
+    fun warning(message: String, cause: Throwable? = null, value: Any? = null) =
         problem(Warning(message, cause, value))
 
-    fun guard(message: String, code: Supplier<Value>): Value? {
-        try {
-            return code.get()
-        } catch (e: Exception) {
-            return error(message, e)
-        }
+    /**
+     * Guards the given functional code block by catching exceptions and reporting them as errors
+     */
+    fun <Value> guard(message: String, code: Supplier<Value>): Value? = try {
+        code.get()
+    } catch (e: Exception) {
+        error(message, e)
+        null
     }
 }

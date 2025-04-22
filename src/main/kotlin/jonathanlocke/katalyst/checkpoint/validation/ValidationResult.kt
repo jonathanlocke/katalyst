@@ -4,6 +4,7 @@ import jonathanlocke.katalyst.checkpoint.validation.problems.ValidationError
 import jonathanlocke.katalyst.checkpoint.validation.problems.ValidationWarning
 import jonathanlocke.katalyst.nucleus.language.problems.Problem
 import jonathanlocke.katalyst.nucleus.language.problems.ProblemListener
+import jonathanlocke.katalyst.nucleus.language.problems.ProblemListenerBase
 import jonathanlocke.katalyst.nucleus.language.problems.categories.Error
 import jonathanlocke.katalyst.nucleus.language.problems.categories.Warning
 import jonathanlocke.katalyst.nucleus.values.count.Count.Companion.toCount
@@ -47,11 +48,10 @@ class ValidationResult<Value : Any>(val value: Value) {
     fun validationWarning(message: String, cause: Throwable? = null) =
         problems.add(ValidationWarning(message, cause, value))
 
-    fun listener(): ProblemListener<Value> = object : ProblemListener<Value> {
-        override fun problem(problem: Problem): Value? {
+    fun listener(): ProblemListener = object : ProblemListenerBase() {
+        override fun onProblem(problem: Problem) {
             if (problem is Error) validationError(problem.message, problem.cause)
             if (problem is Warning) validationWarning(problem.message, problem.cause)
-            return null
         }
     }
 }

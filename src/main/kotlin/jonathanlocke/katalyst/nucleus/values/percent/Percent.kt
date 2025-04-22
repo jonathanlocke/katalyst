@@ -89,7 +89,7 @@ class Percent(val percentage: Double) : Comparable<Percent> {
          * @param listener The problem listener to use if the text cannot be parsed as a percent
          * @return The percent
          */
-        fun parsePercent(text: String, listener: ProblemListener<Percent> = Throw()): Percent? {
+        fun parsePercent(text: String, listener: ProblemListener = Throw()): Percent? {
             return listener.guard("Could not parse percentage: $text") {
                 val percentage = text.trim().trimEnd('%').toDouble()
                 percent(percentage)

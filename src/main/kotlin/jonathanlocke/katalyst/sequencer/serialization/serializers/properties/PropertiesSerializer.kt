@@ -10,7 +10,7 @@ import jonathanlocke.katalyst.sequencer.serialization.serializers.Serializer
 
 class PropertiesSerializer<Value : Any>(
     val conversionRegistry: ConversionRegistry = ConversionRegistry.defaultConversionRegistry,
-    val listener: ProblemListener<Value>,
+    val listener: ProblemListener,
     val limiter: SerializationLimiter,
 ) :
     Serializer<Value> {

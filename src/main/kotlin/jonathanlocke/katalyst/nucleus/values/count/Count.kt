@@ -48,6 +48,7 @@ value class Count private constructor(val value: Long) : Comparable<Count> {
 
         fun countConverter() = stringToValueConverter(Count::class) { text, listener ->
             text.toValue(longConverter, Throw())?.toCount() ?: listener.error("Could not parse count: $text")
+                .let { null }
         }
 
         fun Number.toCount(): Count = count(this.toLong())
@@ -58,11 +59,11 @@ value class Count private constructor(val value: Long) : Comparable<Count> {
         fun parseCount(text: String): Count = parseCount(text)
 
         fun parseCount(
-            text: String, listener: ProblemListener<Count> = Throw()
+            text: String, listener: ProblemListener = Throw()
         ): Count? {
             val value = text.replace(",", "").toLongOrNull()
             return if (value == null) {
-                listener.error("Could not parse bytes: $text", value = value)
+                listener.error("Could not parse bytes: $text", value = value).let { null }
             } else {
                 Count(value)
             }

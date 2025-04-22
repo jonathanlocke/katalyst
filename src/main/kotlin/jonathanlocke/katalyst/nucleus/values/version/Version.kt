@@ -56,7 +56,7 @@ data class Version(val major: Int, val minor: Int, val patch: Int? = 0) {
          * @return The given text, of the form [major].[minor](.[revision])?(-release)?, parsed as a [Version] object,
          * or null if the text is not of that form.
          */
-        fun parseVersion(text: String, listener: ProblemListener<Version> = Throw()): Version? {
+        fun parseVersion(text: String, listener: ProblemListener = Throw()): Version? {
 
             // If the text matches the version pattern,
             val match = pattern.matchEntire(text)
@@ -67,7 +67,7 @@ data class Version(val major: Int, val minor: Int, val patch: Int? = 0) {
                 return Version(major, minor, patch)
             }
 
-            return listener.error("Couldn't parse version '$text'")
+            return listener.error("Couldn't parse version '$text'").let { null }
         }
     }
 

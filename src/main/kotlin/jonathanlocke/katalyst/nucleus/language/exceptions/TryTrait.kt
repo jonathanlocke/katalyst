@@ -7,7 +7,6 @@ interface TryTrait {
     fun <T> tryDefault(defaultValue: T, code: Supplier<T>) = try {
         code.get()
     } catch (e: Exception) {
-
         defaultValue
     }
 }

@@ -58,7 +58,7 @@ interface StringToValueConverter<Value : Any> : Converter<String, Value> {
          */
         fun <Value : Any> stringToValueConverter(
             valueClass: KClass<Value>,
-            lambda: (String, ProblemListener<Value>) -> Value?
+            lambda: (String, ProblemListener) -> Value?
         ): StringToValueConverter<Value> = (object : StringToValueConverterBase<Value>(valueClass) {
             override fun onToValue(text: String): Value? = lambda.invoke(text, this)
         }).also {
@@ -73,7 +73,7 @@ interface StringToValueConverter<Value : Any> : Converter<String, Value> {
          */
         fun <Value : Any> String.toValue(
             converter: StringToValueConverter<Value>,
-            listener: ProblemListener<Value> = Throw()
+            listener: ProblemListener = Throw()
         ): Value? = converter.convert(this, listener)
 
         /**
@@ -86,8 +86,8 @@ interface StringToValueConverter<Value : Any> : Converter<String, Value> {
         fun <Value : Any> String.toList(
             stringToValueConverter: StringToValueConverter<Value>,
             separator: Separator = Separator(),
-            listener: ProblemListener<List<Value>> = Throw(),
-            elementToValueReporter: ProblemListener<Value> = Throw()
+            listener: ProblemListener = Throw(),
+            elementToValueReporter: ProblemListener = Throw()
         ): List<Value>? =
             ListConversion(stringToValueConverter.valueClass, stringToValueConverter, separator, elementToValueReporter)
                 .forwardConverter()

@@ -111,7 +111,7 @@ class Bytes(val bytes: Double) {
         fun parseBytes(
             text: String,
             system: MeasurementSystem = Metric,
-            listener: ProblemListener<Bytes> = Throw()
+            listener: ProblemListener = Throw()
         ): Bytes? {
 
             val match = system.pattern.matchEntire(text)
@@ -130,7 +130,7 @@ class Bytes(val bytes: Double) {
                         "terabyte", "T", "Tb", "TB" -> terabytes(number)
                         "petabyte", "P", "Pb", "PB" -> petabytes(number)
                         "exabyte", "X", "Xb", "XB" -> exabytes(number)
-                        else -> listener.error("Unsupported units format: $units")
+                        else -> listener.error("Unsupported units format: $units").let { null }
                     }
 
                     Binary -> when (units) {
@@ -141,12 +141,12 @@ class Bytes(val bytes: Double) {
                         "tebibyte", "T", "TB", "TiB" -> terabytes(number)
                         "pebibyte", "P", "PB", "PiB" -> petabytes(number)
                         "exbibyte", "X", "XB", "XiB" -> exabytes(number)
-                        else -> listener.error("Unsupported units format: $units")
+                        else -> listener.error("Unsupported units format: $units").let { null }
                     }
                 }
             }
 
-            return listener.error("Could not parse bytes: $text")
+            return listener.error("Could not parse bytes: $text").let { null }
         }
     }
 

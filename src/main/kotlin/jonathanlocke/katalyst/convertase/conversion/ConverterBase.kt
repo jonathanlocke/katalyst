@@ -1,6 +1,7 @@
 package jonathanlocke.katalyst.convertase.conversion
 
 import jonathanlocke.katalyst.nucleus.language.problems.Problem
+import jonathanlocke.katalyst.nucleus.language.problems.ProblemList
 import jonathanlocke.katalyst.nucleus.language.problems.ProblemListener
 import kotlin.reflect.KClass
 
@@ -37,16 +38,17 @@ import kotlin.reflect.KClass
  */
 abstract class ConverterBase<From : Any, To : Any>(
     override val fromClass: KClass<From>,
-    override val toClass: KClass<To>
+    override val toClass: KClass<To>,
+    override val problems: ProblemList = ProblemList()
 ) :
     Converter<From, To>,
-    ProblemListener<To> {
+    ProblemListener by problems {
 
     /** True if this converter allows null values */
     val nullAllowed: Boolean = false
 
     /** The listener to use when handling conversion problems */
-    private lateinit var listener: ProblemListener<To>
+    private lateinit var listener: ProblemListener
 
     /**
      * The value to use for nullity if (a) nulls are not allowed, or (b) a conversion fails and the
@@ -61,7 +63,7 @@ abstract class ConverterBase<From : Any, To : Any>(
      * Invokes the error handler for this object with the given message
      * @param problem The problem to report
      */
-    override fun problem(problem: Problem): To? =
+    override fun problem(problem: Problem) =
         listener.problem(problem)
 
     /**
@@ -69,7 +71,7 @@ abstract class ConverterBase<From : Any, To : Any>(
      * null values, null will be returned. If the value is null and the converter does not allow null values a problem
      * will be broadcast. Any exceptions that occur during conversion are caught and broadcast as problems.
      */
-    final override fun convert(from: From?, listener: ProblemListener<To>): To? {
+    final override fun convert(from: From?, listener: ProblemListener): To? {
 
         // Set the error handler to use for this conversion
         this.listener = listener
@@ -82,6 +84,7 @@ abstract class ConverterBase<From : Any, To : Any>(
 
                 // then it's an error
                 listener.error("Cannot convert null value")
+                nullValue()
 
             } else {
 
@@ -100,6 +103,7 @@ abstract class ConverterBase<From : Any, To : Any>(
 
                 // unless an exception occurs
                 listener.error("Cannot convert $from")
+                nullValue()
             }
         }
     }

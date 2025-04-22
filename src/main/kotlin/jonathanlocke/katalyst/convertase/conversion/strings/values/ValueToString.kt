@@ -27,6 +27,6 @@ class ValueToString<From : Any>(
 
     override val toClass: KClass<String> = String::class
 
-    override fun convert(from: From?, listener: ProblemListener<String>): String? =
+    override fun convert(from: From?, listener: ProblemListener): String? =
         if (from != null) formatter.format(from) else "?"
 }

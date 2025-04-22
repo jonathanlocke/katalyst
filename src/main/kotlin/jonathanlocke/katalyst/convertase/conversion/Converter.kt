@@ -2,7 +2,7 @@ package jonathanlocke.katalyst.convertase.conversion
 
 import jonathanlocke.katalyst.nucleus.language.problems.Problem
 import jonathanlocke.katalyst.nucleus.language.problems.ProblemListener
-import jonathanlocke.katalyst.nucleus.language.problems.listeners.ReturnNull
+import jonathanlocke.katalyst.nucleus.language.problems.listeners.Return
 import jonathanlocke.katalyst.nucleus.language.problems.listeners.Throw
 import kotlin.reflect.KClass
 
@@ -22,7 +22,7 @@ import kotlin.reflect.KClass
  * @param From Source type
  * @param To Destination type
  *
- * @see ReturnNull
+ * @see Return
  * @see Throw
  * @see Problem
  * @see ProblemListener
@@ -41,7 +41,7 @@ interface Converter<From : Any, To : Any> {
 
     /**
      * Converts the given [From] value to a [To] value. If an error occurs, the [ProblemListener] is called and
-     * that determines whether a null value is returned ([ReturnNull]) or an exception is thrown ([Throw]).
+     * that determines whether a null value is returned ([Return]) or an exception is thrown ([Throw]).
      * @param from The value to convert
      * @param listener The error handler to use when the conversion fails. Defaults to [Throw] if not provided.
      * @return Returns [To] if the conversion succeeded. If the conversion failed, returns null unless the error handler
@@ -49,10 +49,10 @@ interface Converter<From : Any, To : Any> {
      * @throws Exception Thrown by error handler if the conversion fails and the listener is [Throw]
      *
      * @see ProblemListener
-     * @see ReturnNull
+     * @see Return
      * @see Throw
      */
-    fun convert(from: From?, listener: ProblemListener<To> = Throw()): To?
+    fun convert(from: From?, listener: ProblemListener = Throw()): To?
 
     /**
      * The value to use for conversions that result in a null [To] value. Overriding this method allows failed

@@ -51,11 +51,11 @@ class ListConversion<Value : Any>(
     // String -> Value conversion
     val stringToValueConverter: StringToValueConverter<Value>,
     val separator: Separator = Separator(),
-    val stringToValueReporter: ProblemListener<Value> = Throw(),
+    val stringToValueReporter: ProblemListener = Throw(),
 
     // Value -> String conversion
     val valueToStringConverter: ValueToStringConverter<Value> = ValueToString(valueClass) as ValueToStringConverter<Value>,
-    val valueToStringReporter: ProblemListener<String> = Throw(),
+    val valueToStringReporter: ProblemListener = Throw(),
     val defaultToStringValue: String = "?"
 
 ) : ConversionBase<String, List<Value>>(String::class, List::class as KClass<List<Value>>) {

@@ -59,22 +59,22 @@ interface Conversion<From : Any, To : Any> {
         fun <From : Any, To : Any> conversion(
             fromClass: Class<From>,
             toClass: Class<To>,
-            forwardConverterLambda: (From?, ProblemListener<To>) -> To?,
-            reverseConverterLambda: (To?, ProblemListener<From>) -> From?
+            forwardConverterLambda: (From?, ProblemListener) -> To?,
+            reverseConverterLambda: (To?, ProblemListener) -> From?
         ): Conversion<From, To> =
             object : ConversionBase<From, To>(fromClass.kotlin, toClass.kotlin) {
 
                 override fun forwardConverter(): Converter<From, To> = object : Converter<From, To> {
                     override val fromClass = fromClass.kotlin
                     override val toClass = toClass.kotlin
-                    override fun convert(from: From?, listener: ProblemListener<To>): To? =
+                    override fun convert(from: From?, listener: ProblemListener): To? =
                         forwardConverterLambda(from, listener)
                 }
 
                 override fun reverseConverter(): Converter<To, From> = object : Converter<To, From> {
                     override val fromClass = toClass.kotlin
                     override val toClass = fromClass.kotlin
-                    override fun convert(from: To?, listener: ProblemListener<From>): From? =
+                    override fun convert(from: To?, listener: ProblemListener): From? =
                         reverseConverterLambda(from, listener)
                 }
             }
@@ -90,8 +90,8 @@ interface Conversion<From : Any, To : Any> {
         @Suppress("UNCHECKED_CAST")
         fun <Value : Any> stringConversion(
             valueClass: KClass<Value>,
-            valueToStringLambda: (Value?, ProblemListener<String>) -> String? = { value, listener -> value.toString() },
-            stringToValueLambda: (String, ProblemListener<Value>) -> Value?
+            valueToStringLambda: (Value?, ProblemListener) -> String? = { value, listener -> value.toString() },
+            stringToValueLambda: (String, ProblemListener) -> Value?
         ): Conversion<String, Value> =
             object : ConversionBase<String, Value>(String::class, valueClass) {
 
@@ -107,7 +107,7 @@ interface Conversion<From : Any, To : Any> {
                 override fun reverseConverter(): Converter<Value, String> = object : Converter<Value, String> {
                     override val fromClass = valueClass
                     override val toClass = String::class
-                    override fun convert(from: Value?, listener: ProblemListener<String>): String? {
+                    override fun convert(from: Value?, listener: ProblemListener): String? {
                         return valueToStringLambda(from, listener)
                     }
                 }
