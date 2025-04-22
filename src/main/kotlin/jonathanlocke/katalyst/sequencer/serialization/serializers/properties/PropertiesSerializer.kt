@@ -27,17 +27,19 @@ class PropertiesSerializer<Value : Any>(
         // then walk the properties of the value recursively,
         PropertyWalker(value).walk { property, type, path, value ->
 
-            // convert the value to a string,
+            // convert the value to text,
             val text = convertToString(type, value)
 
-            // and add a key-value pair to list of lines,
+            // create a properties line,
             val line = "$path=$text"
+
+            // add it to the list of lines,
             lines.add(line)
 
-            // increase the session line count and bytes read,
+            // tell the session that we read the line,
             session.nextLine(line)
 
-            // and check if the session limit has reached a limit,
+            // and ask the limiter if the session has reached a limit,
             if (limiter.isLimitExceeded(session, listener)) {
 
                 // and report an error if so.

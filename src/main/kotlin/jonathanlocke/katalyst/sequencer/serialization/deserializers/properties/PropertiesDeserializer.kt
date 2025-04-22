@@ -73,14 +73,34 @@ class PropertiesDeserializer<Value : Any>(
         return value
     }
 
+    /**
+     * Gets the mutable property of [type] at the given path.
+     */
     private fun propertyAtPath(path: String): KMutableProperty<*>? {
+
         var at: KClass<*> = type
         var property: KMutableProperty<*>? = null
-        for (segment in path.split('.')) {
-            property =
-                at.memberProperties.filterIsInstance<KMutableProperty<*>>().find { it.name == segment } ?: return null
-            at = property.returnType.classifier as? KClass<*> ?: return property
+
+        // For each element in the path,
+        for (element in path.split('.')) {
+
+            // find the property with the element's name,
+            property = at
+                .memberProperties
+                .filterIsInstance<KMutableProperty<*>>()
+                .find { it.name == element }
+
+            // and if it is not found,
+            if (property == null) {
+
+                // give up,
+                return null
+            }
+
+            // otherwise advance to the type of the property for the next element.
+            at = property.returnType.classifier as KClass<*>
         }
+
         return property
     }
 }
