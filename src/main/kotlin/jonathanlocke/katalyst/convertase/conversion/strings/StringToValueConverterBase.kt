@@ -27,7 +27,7 @@ import kotlin.reflect.KClass
  * - [nullValue] - The value to use for nullity if (a) nulls are not allowed, or (b) a conversion fails and the
  *                 error handler returns a null value instead of throwing an exception
  * - [nullAllowed] - True if null input values are allowed
- * - [report] - Reports an error to the error handler
+ * - [problem] - Reports an error to the error handler
  *
  * @param Value The type to convert to
  *

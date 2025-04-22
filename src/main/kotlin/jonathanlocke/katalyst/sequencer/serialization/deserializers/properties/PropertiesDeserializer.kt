@@ -3,16 +3,18 @@ package jonathanlocke.katalyst.sequencer.serialization.deserializers.properties
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.Converter
 import jonathanlocke.katalyst.nucleus.language.problems.ProblemException
-import jonathanlocke.katalyst.nucleus.language.problems.ProblemReporter
+import jonathanlocke.katalyst.nucleus.language.problems.ProblemListener
 import jonathanlocke.katalyst.sequencer.serialization.SerializationLimiter
 import jonathanlocke.katalyst.sequencer.serialization.SerializationSession
 import jonathanlocke.katalyst.sequencer.serialization.deserializers.Deserializer
 import kotlin.reflect.KClass
+import kotlin.reflect.KProperty
+import kotlin.reflect.full.memberProperties
 
 class PropertiesDeserializer<Value : Any>(
     val type: KClass<Value>,
     val conversionRegistry: ConversionRegistry = ConversionRegistry.defaultConversionRegistry,
-    val reporter: ProblemReporter<Value>,
+    val listener: ProblemListener<Value>,
     val limiter: SerializationLimiter,
 ) :
     Deserializer<Value> {
@@ -29,25 +31,43 @@ class PropertiesDeserializer<Value : Any>(
         // then for each non-blank line,
         text.lineSequence().filterNot { it.isBlank() }.forEach { line ->
 
-            val (_, valueText) = line.trim().split("=", limit = 2)
+            // split the line into a path and a value,
+            val (propertyPath, valueText) = line.trim().split("=", limit = 2)
 
-            // and if there is a conversion for the type,
-            val conversions = conversionRegistry[type]
-            if (!conversions.isEmpty()) {
+            val property = propertyAtPath(propertyPath)
+            if (property == null) {
+                listener.error("Property path '$propertyPath' does not exist in type '${type.simpleName}'")
+                return@forEach
+            } else {
 
-                // get the forward converter (String to Value),
-                val converter = conversions[0].forwardConverter() as Converter<Any, Value>
+                // and if there is a conversion for the type,
+                val conversions = conversionRegistry[property.returnType.classifier as KClass<*>]
+                if (!conversions.isEmpty()) {
 
-                // convert the value text to the type,
-                converter.convert(valueText, reporter)
+                    // get the forward converter (String to Value),
+                    val converter = conversions[0].forwardConverter() as Converter<Any, Value>
 
-                // then check if the session limit has reached a limit,
-                if (limiter.isLimitExceeded(session, reporter)) {
+                    // convert the value text to the type,
+                    converter.convert(valueText, listener)
 
-                    // and report an error if so.
-                    throw ProblemException("Serialization limit exceeded")
+                    // then check if the session limit has reached a limit,
+                    if (limiter.isLimitExceeded(session, listener)) {
+
+                        // and report an error if so.
+                        throw ProblemException("Serialization limit exceeded")
+                    }
                 }
             }
         }
+    }
+
+    private fun propertyAtPath(path: String): KProperty<*>? {
+        var at: KClass<*> = type
+        var property: KProperty<*>? = null
+        for (segment in path.split('.')) {
+            property = at.memberProperties.find { it.name == segment } ?: return null
+            at = property.returnType.classifier as? KClass<*> ?: return property
+        }
+        return property
     }
 }

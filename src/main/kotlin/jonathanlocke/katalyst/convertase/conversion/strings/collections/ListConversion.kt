@@ -8,8 +8,8 @@ import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConvert
 import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.stringToValueConverter
 import jonathanlocke.katalyst.convertase.conversion.strings.ValueToStringConverter
 import jonathanlocke.katalyst.convertase.conversion.strings.values.ValueToString
-import jonathanlocke.katalyst.nucleus.language.problems.ProblemReporter
-import jonathanlocke.katalyst.nucleus.language.problems.reporters.Throw
+import jonathanlocke.katalyst.nucleus.language.problems.ProblemListener
+import jonathanlocke.katalyst.nucleus.language.problems.listeners.Throw
 import jonathanlocke.katalyst.nucleus.language.strings.parsing.Separator
 import kotlin.reflect.KClass
 
@@ -51,11 +51,11 @@ class ListConversion<Value : Any>(
     // String -> Value conversion
     val stringToValueConverter: StringToValueConverter<Value>,
     val separator: Separator = Separator(),
-    val stringToValueReporter: ProblemReporter<Value> = Throw(),
+    val stringToValueReporter: ProblemListener<Value> = Throw(),
 
     // Value -> String conversion
     val valueToStringConverter: ValueToStringConverter<Value> = ValueToString(valueClass) as ValueToStringConverter<Value>,
-    val valueToStringReporter: ProblemReporter<String> = Throw(),
+    val valueToStringReporter: ProblemListener<String> = Throw(),
     val defaultToStringValue: String = "?"
 
 ) : ConversionBase<String, List<Value>>(String::class, List::class as KClass<List<Value>>) {
@@ -63,7 +63,7 @@ class ListConversion<Value : Any>(
     @Suppress("UNCHECKED_CAST")
     override fun forwardConverter(): StringToValueConverter<List<Value>> = stringToValueConverter(
         List::class as KClass<List<Value>>
-    ) { text, reporter ->
+    ) { text, listener ->
         separator.split(text).map { member ->
             stringToValueConverter.convert(member, stringToValueReporter)
                 ?: stringToValueReporter.error("Failed to convert element: $member")

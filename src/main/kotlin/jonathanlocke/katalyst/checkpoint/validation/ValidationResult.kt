@@ -3,7 +3,7 @@ package jonathanlocke.katalyst.checkpoint.validation
 import jonathanlocke.katalyst.checkpoint.validation.problems.ValidationError
 import jonathanlocke.katalyst.checkpoint.validation.problems.ValidationWarning
 import jonathanlocke.katalyst.nucleus.language.problems.Problem
-import jonathanlocke.katalyst.nucleus.language.problems.ProblemReporter
+import jonathanlocke.katalyst.nucleus.language.problems.ProblemListener
 import jonathanlocke.katalyst.nucleus.language.problems.categories.Error
 import jonathanlocke.katalyst.nucleus.language.problems.categories.Warning
 import jonathanlocke.katalyst.nucleus.values.count.Count.Companion.toCount
@@ -15,12 +15,12 @@ import jonathanlocke.katalyst.nucleus.values.count.Count.Companion.toCount
  *
  * - [validationError] - Reports a validation error
  * - [validationWarning] - Reports a validation warning
- * - [reporter] - Returns a [ProblemReporter] that can be used to report validation problems
+ * - [listener] - Returns a [ProblemListener] that can be used to report validation problems
  *
  * @param Value The type of the value to validate
  * @param value The value to validate
  *
- * @see ProblemReporter
+ * @see ProblemListener
  * @see ValidationError
  * @see ValidationWarning
  * @see Problem]
@@ -47,8 +47,8 @@ class ValidationResult<Value : Any>(val value: Value) {
     fun validationWarning(message: String, cause: Throwable? = null) =
         problems.add(ValidationWarning(message, cause, value))
 
-    fun reporter(): ProblemReporter<Value> = object : ProblemReporter<Value> {
-        override fun report(problem: Problem): Value? {
+    fun listener(): ProblemListener<Value> = object : ProblemListener<Value> {
+        override fun problem(problem: Problem): Value? {
             if (problem is Error) validationError(problem.message, problem.cause)
             if (problem is Warning) validationWarning(problem.message, problem.cause)
             return null

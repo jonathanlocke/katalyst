@@ -1,8 +1,8 @@
 package jonathanlocke.katalyst.nucleus.values.percent
 
 import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.stringToValueConverter
-import jonathanlocke.katalyst.nucleus.language.problems.ProblemReporter
-import jonathanlocke.katalyst.nucleus.language.problems.reporters.Throw
+import jonathanlocke.katalyst.nucleus.language.problems.ProblemListener
+import jonathanlocke.katalyst.nucleus.language.problems.listeners.Throw
 import jonathanlocke.katalyst.nucleus.language.strings.formatting.StringFormatter
 import jonathanlocke.katalyst.nucleus.language.strings.formatting.StringFormatter.Companion.format
 import jonathanlocke.katalyst.nucleus.values.percent.Percent.Companion.DecimalFormat
@@ -77,7 +77,7 @@ class Percent(val percentage: Double) : Comparable<Percent> {
     companion object {
 
         fun stringToPercentConverter() =
-            stringToValueConverter(Percent::class) { text, reporter -> parsePercent(text, reporter) }
+            stringToValueConverter(Percent::class) { text, listener -> parsePercent(text, listener) }
 
         val IntegerFormat = StringFormatter<Percent> { "${it.percentage.toLong()}%" }
         val DecimalFormat = StringFormatter<Percent> { "%.1f%%".format(it.percentage) }
@@ -86,11 +86,11 @@ class Percent(val percentage: Double) : Comparable<Percent> {
          * Parses the given text into a Percent object.
          *
          * @param text The text to parse
-         * @param reporter The problem reporter to use if the text cannot be parsed as a percent
+         * @param listener The problem listener to use if the text cannot be parsed as a percent
          * @return The percent
          */
-        fun parsePercent(text: String, reporter: ProblemReporter<Percent> = Throw()): Percent? {
-            return reporter.guard("Could not parse percentage: $text") {
+        fun parsePercent(text: String, listener: ProblemListener<Percent> = Throw()): Percent? {
+            return listener.guard("Could not parse percentage: $text") {
                 val percentage = text.trim().trimEnd('%').toDouble()
                 percent(percentage)
             }

@@ -1,9 +1,9 @@
 package jonathanlocke.katalyst.convertase.conversion
 
 import jonathanlocke.katalyst.nucleus.language.problems.Problem
-import jonathanlocke.katalyst.nucleus.language.problems.ProblemReporter
-import jonathanlocke.katalyst.nucleus.language.problems.reporters.ReturnNull
-import jonathanlocke.katalyst.nucleus.language.problems.reporters.Throw
+import jonathanlocke.katalyst.nucleus.language.problems.ProblemListener
+import jonathanlocke.katalyst.nucleus.language.problems.listeners.ReturnNull
+import jonathanlocke.katalyst.nucleus.language.problems.listeners.Throw
 import kotlin.reflect.KClass
 
 /**
@@ -16,7 +16,7 @@ import kotlin.reflect.KClass
  *
  * **Methods**
  *
- * - [convert] - Converts the given [From] value to a [To] value. If an error occurs, the [ProblemReporter] is called,
+ * - [convert] - Converts the given [From] value to a [To] value. If an error occurs, the [ProblemListener] is called,
  *               which determines whether a null value is returned or an exception is thrown.
  *
  * @param From Source type
@@ -25,7 +25,7 @@ import kotlin.reflect.KClass
  * @see ReturnNull
  * @see Throw
  * @see Problem
- * @see ProblemReporter
+ * @see ProblemListener
  */
 interface Converter<From : Any, To : Any> {
 
@@ -40,19 +40,19 @@ interface Converter<From : Any, To : Any> {
     val toClass: KClass<To>
 
     /**
-     * Converts the given [From] value to a [To] value. If an error occurs, the [ProblemReporter] is called and
+     * Converts the given [From] value to a [To] value. If an error occurs, the [ProblemListener] is called and
      * that determines whether a null value is returned ([ReturnNull]) or an exception is thrown ([Throw]).
      * @param from The value to convert
-     * @param reporter The error handler to use when the conversion fails. Defaults to [Throw] if not provided.
+     * @param listener The error handler to use when the conversion fails. Defaults to [Throw] if not provided.
      * @return Returns [To] if the conversion succeeded. If the conversion failed, returns null unless the error handler
      * throws an exception
-     * @throws Exception Thrown by error handler if the conversion fails and the reporter is [Throw]
+     * @throws Exception Thrown by error handler if the conversion fails and the listener is [Throw]
      *
-     * @see ProblemReporter
+     * @see ProblemListener
      * @see ReturnNull
      * @see Throw
      */
-    fun convert(from: From?, reporter: ProblemReporter<To> = Throw()): To?
+    fun convert(from: From?, listener: ProblemListener<To> = Throw()): To?
 
     /**
      * The value to use for conversions that result in a null [To] value. Overriding this method allows failed

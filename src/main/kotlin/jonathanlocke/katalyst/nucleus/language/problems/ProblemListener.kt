@@ -2,15 +2,15 @@ package jonathanlocke.katalyst.nucleus.language.problems
 
 import jonathanlocke.katalyst.nucleus.language.problems.categories.Error
 import jonathanlocke.katalyst.nucleus.language.problems.categories.Warning
-import jonathanlocke.katalyst.nucleus.language.problems.reporters.ReturnNull
-import jonathanlocke.katalyst.nucleus.language.problems.reporters.Throw
+import jonathanlocke.katalyst.nucleus.language.problems.listeners.ReturnNull
+import jonathanlocke.katalyst.nucleus.language.problems.listeners.Throw
 import java.util.function.Supplier
 
 /**
- * An [ProblemReporter] allows code to be flexible in how it handles problems in different usage contexts.
+ * An [ProblemListener] allows code to be flexible in how it handles problems in different usage contexts.
  *
  * In one context, it might be desirable for a method to throw an exception, while in another context, it might
- * be desirable for the same method to return a null value for performance reasons. The reporters [Throw] and
+ * be desirable for the same method to return a null value for performance reasons. The listeners [Throw] and
  * [ReturnNull] respectively handle these situations.
  *
  * **Integer.parseInt()**
@@ -23,13 +23,13 @@ import java.util.function.Supplier
  * alternative method that returns a null value in [String.toIntOrNull]. But this leaves something to be desired
  * because the functionality of integer parsing had to be duplicated.
  *
- * [ProblemReporter] provides a way to avoid this kind of duplication by allowing the caller of a method to
+ * [ProblemListener] provides a way to avoid this kind of duplication by allowing the caller of a method to
  * specify how the error handling should work.
  *
- * For example, the [Integer.parseInt] problem could be solved using [ProblemReporter] like this:
+ * For example, the [Integer.parseInt] problem could be solved using [ProblemListener] like this:
  *
  * ```
- * fun String.parseInt(reporter: ProblemReporter = Throw()): Int? { ... }
+ * fun String.parseInt(listener: ProblemReporter = Throw()): Int? { ... }
  * ```
  *
  * With this hypothetical implementation of [String.parseInt], if the caller wanted an exception thrown they can
@@ -39,7 +39,7 @@ import java.util.function.Supplier
  * "5.6".parseInt()
  * ```
  *
- * Since the default reporter is [Throw] an exception will be thrown. But if the caller needed to avoid throwing an
+ * Since the default listener is [Throw] an exception will be thrown. But if the caller needed to avoid throwing an
  * exception, the could do this, which would cause the same method to return null instead:
  *
  * ```
@@ -55,7 +55,7 @@ import java.util.function.Supplier
  *
  * **Bytes**
  *
- * For another example of how [ProblemReporter] can be used effectively, see [jonathanlocke.katalyst.nucleus.values.bytes.Bytes.parseBytes]
+ * For another example of how [ProblemListener] can be used effectively, see [jonathanlocke.katalyst.nucleus.values.bytes.Bytes.parseBytes]
  *
  * @see Throw
  * @see ReturnNull
@@ -63,24 +63,24 @@ import java.util.function.Supplier
  * @see Error
  * @see Warning
  */
-interface ProblemReporter<Value : Any> {
+interface ProblemListener<Value : Any> {
 
     /**
-     * Reports a problem, returning null or throwing an exception as appropriate.
+     * Reports a problem to the listener, returning null or throwing an exception as appropriate.
      */
-    fun report(problem: Problem): Value?
+    fun problem(problem: Problem): Value?
 
     /**
      * Convenience method for reporting an error.
      */
     fun error(message: String, cause: Throwable? = null, value: Value? = null) =
-        report(Error(message, cause, value))
+        problem(Error(message, cause, value))
 
     /**
      * Convenience method for reporting a warning.
      */
     fun warning(message: String, cause: Throwable? = null, value: Value? = null) =
-        report(Warning(message, cause, value))
+        problem(Warning(message, cause, value))
 
     fun guard(message: String, code: Supplier<Value>): Value? {
         try {

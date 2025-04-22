@@ -3,8 +3,8 @@ package jonathanlocke.katalyst.nucleus.values.count
 import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.stringToValueConverter
 import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.toValue
 import jonathanlocke.katalyst.convertase.conversion.strings.values.StringToNumber.Companion.longConverter
-import jonathanlocke.katalyst.nucleus.language.problems.ProblemReporter
-import jonathanlocke.katalyst.nucleus.language.problems.reporters.Throw
+import jonathanlocke.katalyst.nucleus.language.problems.ProblemListener
+import jonathanlocke.katalyst.nucleus.language.problems.listeners.Throw
 import jonathanlocke.katalyst.nucleus.language.strings.formatting.StringFormatter
 import jonathanlocke.katalyst.nucleus.values.count.Count.Companion.ThousandsSeparated
 import jonathanlocke.katalyst.nucleus.values.count.Count.Companion.count
@@ -16,7 +16,7 @@ import jonathanlocke.katalyst.nucleus.values.count.Count.Companion.parseCount
  *  **Creation**
  *
  *  - [count]
- *  - [parseCount] - Parses text to a [Count], handling problems as specified by the given [ProblemReporter]
+ *  - [parseCount] - Parses text to a [Count], handling problems as specified by the given [ProblemListener]
  *
  *  **Conversion**
  *
@@ -46,8 +46,8 @@ value class Count private constructor(val value: Long) : Comparable<Count> {
 
         val ThousandsSeparated = StringFormatter<Count> { "%,d".format(it.value) }
 
-        fun countConverter() = stringToValueConverter(Count::class) { text, reporter ->
-            text.toValue(longConverter, Throw())?.toCount() ?: reporter.error("Could not parse count: $text")
+        fun countConverter() = stringToValueConverter(Count::class) { text, listener ->
+            text.toValue(longConverter, Throw())?.toCount() ?: listener.error("Could not parse count: $text")
         }
 
         fun Number.toCount(): Count = count(this.toLong())
@@ -58,11 +58,11 @@ value class Count private constructor(val value: Long) : Comparable<Count> {
         fun parseCount(text: String): Count = parseCount(text)
 
         fun parseCount(
-            text: String, reporter: ProblemReporter<Count> = Throw()
+            text: String, listener: ProblemListener<Count> = Throw()
         ): Count? {
             val value = text.replace(",", "").toLongOrNull()
             return if (value == null) {
-                reporter.error("Could not parse bytes: $text", value = value)
+                listener.error("Could not parse bytes: $text", value = value)
             } else {
                 Count(value)
             }

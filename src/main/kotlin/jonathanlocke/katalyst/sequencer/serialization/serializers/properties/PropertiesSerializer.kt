@@ -3,14 +3,14 @@ package jonathanlocke.katalyst.sequencer.serialization.serializers.properties
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.Converter
 import jonathanlocke.katalyst.cripsr.reflection.PropertyWalker
-import jonathanlocke.katalyst.nucleus.language.problems.ProblemReporter
+import jonathanlocke.katalyst.nucleus.language.problems.ProblemListener
 import jonathanlocke.katalyst.sequencer.serialization.SerializationLimiter
 import jonathanlocke.katalyst.sequencer.serialization.SerializationSession
 import jonathanlocke.katalyst.sequencer.serialization.serializers.Serializer
 
 class PropertiesSerializer<Value : Any>(
     val conversionRegistry: ConversionRegistry = ConversionRegistry.defaultConversionRegistry,
-    val reporter: ProblemReporter<Value>,
+    val listener: ProblemListener<Value>,
     val limiter: SerializationLimiter,
 ) :
     Serializer<Value> {
@@ -34,16 +34,16 @@ class PropertiesSerializer<Value : Any>(
                 val converter = conversions[0].reverseConverter() as Converter<Any, Value>
 
                 // convert the value to text,
-                val text = converter.convert(value, reporter)
+                val text = converter.convert(value, listener)
 
                 // and add a line to the properties lines,
                 lines.add("$path=$text")
 
                 // then check if the session limit has reached a limit,
-                if (limiter.isLimitExceeded(session, reporter)) {
+                if (limiter.isLimitExceeded(session, listener)) {
 
                     // and report an error if so.
-                    reporter.error("Serialization limit exceeded")
+                    listener.error("Serialization limit exceeded")
                     return@walk
                 }
             }

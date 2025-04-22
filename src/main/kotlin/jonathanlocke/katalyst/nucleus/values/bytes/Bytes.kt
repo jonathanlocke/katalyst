@@ -2,8 +2,8 @@ package jonathanlocke.katalyst.nucleus.values.bytes
 
 import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter
 import jonathanlocke.katalyst.convertase.conversion.strings.StringToValueConverter.Companion.stringToValueConverter
-import jonathanlocke.katalyst.nucleus.language.problems.ProblemReporter
-import jonathanlocke.katalyst.nucleus.language.problems.reporters.Throw
+import jonathanlocke.katalyst.nucleus.language.problems.ProblemListener
+import jonathanlocke.katalyst.nucleus.language.problems.listeners.Throw
 import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.exabytes
 import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.exbibytes
 import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.gibibytes
@@ -62,7 +62,7 @@ import java.text.DecimalFormat
  *
  * @property bytes The byte count
  * @see StringToValueConverter
- * @see ProblemReporter
+ * @see ProblemListener
  */
 class Bytes(val bytes: Double) {
 
@@ -84,8 +84,8 @@ class Bytes(val bytes: Double) {
     companion object {
 
         fun stringToBytesConverter(measurementSystem: MeasurementSystem = Metric) =
-            stringToValueConverter(Bytes::class) { text, reporter ->
-                parseBytes(text, measurementSystem, reporter)
+            stringToValueConverter(Bytes::class) { text, listener ->
+                parseBytes(text, measurementSystem, listener)
             }
 
         fun bytes(value: Double) = Bytes(value)
@@ -111,7 +111,7 @@ class Bytes(val bytes: Double) {
         fun parseBytes(
             text: String,
             system: MeasurementSystem = Metric,
-            reporter: ProblemReporter<Bytes> = Throw()
+            listener: ProblemListener<Bytes> = Throw()
         ): Bytes? {
 
             val match = system.pattern.matchEntire(text)
@@ -130,7 +130,7 @@ class Bytes(val bytes: Double) {
                         "terabyte", "T", "Tb", "TB" -> terabytes(number)
                         "petabyte", "P", "Pb", "PB" -> petabytes(number)
                         "exabyte", "X", "Xb", "XB" -> exabytes(number)
-                        else -> reporter.error("Unsupported units format: $units")
+                        else -> listener.error("Unsupported units format: $units")
                     }
 
                     Binary -> when (units) {
@@ -141,12 +141,12 @@ class Bytes(val bytes: Double) {
                         "tebibyte", "T", "TB", "TiB" -> terabytes(number)
                         "pebibyte", "P", "PB", "PiB" -> petabytes(number)
                         "exbibyte", "X", "XB", "XiB" -> exabytes(number)
-                        else -> reporter.error("Unsupported units format: $units")
+                        else -> listener.error("Unsupported units format: $units")
                     }
                 }
             }
 
-            return reporter.error("Could not parse bytes: $text")
+            return listener.error("Could not parse bytes: $text")
         }
     }
 

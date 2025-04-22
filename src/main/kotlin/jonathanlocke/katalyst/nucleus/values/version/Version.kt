@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.nucleus.values.version
 
-import jonathanlocke.katalyst.nucleus.language.problems.ProblemReporter
-import jonathanlocke.katalyst.nucleus.language.problems.reporters.Throw
+import jonathanlocke.katalyst.nucleus.language.problems.ProblemListener
+import jonathanlocke.katalyst.nucleus.language.problems.listeners.Throw
 
 /**
  * Represents a [*semantic version*](https://semver.org), such as "6.3" or "1.2.1"
@@ -56,7 +56,7 @@ data class Version(val major: Int, val minor: Int, val patch: Int? = 0) {
          * @return The given text, of the form [major].[minor](.[revision])?(-release)?, parsed as a [Version] object,
          * or null if the text is not of that form.
          */
-        fun parseVersion(text: String, reporter: ProblemReporter<Version> = Throw()): Version? {
+        fun parseVersion(text: String, listener: ProblemListener<Version> = Throw()): Version? {
 
             // If the text matches the version pattern,
             val match = pattern.matchEntire(text)
@@ -67,7 +67,7 @@ data class Version(val major: Int, val minor: Int, val patch: Int? = 0) {
                 return Version(major, minor, patch)
             }
 
-            return reporter.error("Couldn't parse version '$text'")
+            return listener.error("Couldn't parse version '$text'")
         }
     }
 

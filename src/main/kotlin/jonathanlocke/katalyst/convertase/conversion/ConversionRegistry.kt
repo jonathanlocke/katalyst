@@ -34,8 +34,8 @@ import kotlin.reflect.full.companionObjectInstance
  *     companion object {
  *
  *         val byteConverter = stringToValueConverter(Byte::class) {
- *             text, reporter -> text.toByteOrNull() ?:
- *                 reporter.error("Invalid Byte value $text")
+ *             text, listener -> text.toByteOrNull() ?:
+ *                 listener.error("Invalid Byte value $text")
  *         }
  *
  *     [...]

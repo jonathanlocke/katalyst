@@ -1,11 +1,11 @@
-package jonathanlocke.katalyst.nucleus.language.problems.reporters
+package jonathanlocke.katalyst.nucleus.language.problems.listeners
 
 import jonathanlocke.katalyst.nucleus.language.problems.Problem
 import jonathanlocke.katalyst.nucleus.language.problems.ProblemException
-import jonathanlocke.katalyst.nucleus.language.problems.ProblemReporter
+import jonathanlocke.katalyst.nucleus.language.problems.ProblemListener
 
 /**
- * [ProblemReporter] that throws an exception.
+ * [ProblemListener] that throws an exception.
  *
  * ```
  * text.convert(ToInt(), Throw()))
@@ -13,11 +13,11 @@ import jonathanlocke.katalyst.nucleus.language.problems.ProblemReporter
  *
  * Note: Throw() is the default in most cases, as in this case.
  *
- * @see ProblemReporter
+ * @see ProblemListener
  * @see ProblemException
  * @see Problem
  */
-class Throw<Value : Any> : ProblemReporter<Value> {
-    override fun report(problem: Problem): Value? =
+class Throw<Value : Any> : ProblemListener<Value> {
+    override fun problem(problem: Problem): Value? =
         throw ProblemException(problem)
 }

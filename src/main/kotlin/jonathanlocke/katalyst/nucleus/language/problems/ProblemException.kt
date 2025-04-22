@@ -1,5 +1,7 @@
 package jonathanlocke.katalyst.nucleus.language.problems
 
+import jonathanlocke.katalyst.nucleus.language.problems.listeners.ProblemList
+
 /**
  * An exception that includes [Problem] information.
  *
@@ -7,6 +9,5 @@ package jonathanlocke.katalyst.nucleus.language.problems
  *
  * @see Problem
  */
-class ProblemException(val problems: List<Problem>) : Exception("A problem occurred: $problems[0]", problems[0].cause) {
-    constructor(problem: Problem) : this(listOf(problem))
-}
+class ProblemException(val problems: ProblemList<*>) :
+    Exception("A problem occurred: $problems[0]", problems[0].cause)
