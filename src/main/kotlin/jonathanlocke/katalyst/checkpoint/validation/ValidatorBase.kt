@@ -7,11 +7,6 @@ package jonathanlocke.katalyst.checkpoint.validation
  *
  *  - [validate] - Validates the given value and returns a [ValidationResult]
  *
- *  **Properties**
- *
- *  - [isValid] - True if there were no validation problems
- *  - [isInvalid] - True if there were validation problems
- *
  *  **Extension Points**
  *
  *  - [onValidate] - Called when [validate] is called
@@ -27,10 +22,10 @@ package jonathanlocke.katalyst.checkpoint.validation
  */
 abstract class ValidatorBase<Value : Any> : Validator<Value> {
 
-    val isValid = result.isValid
-    val isInvalid = result.isInvalid
-
-    private lateinit var result: ValidationResult<Value>
+    /**
+     * The validation result for the calling thread
+     */
+    private val result = ThreadLocal<ValidationResult<Value>>()
 
     /**
      * Performs validation of the given value, calling the error handler if it is not valid.
@@ -40,31 +35,31 @@ abstract class ValidatorBase<Value : Any> : Validator<Value> {
     final override fun validate(value: Value): ValidationResult<Value> {
 
         // Create the validation result for the given value,
-        this.result = ValidationResult(value)
+        this.result.set(ValidationResult(value))
 
         try {
 
             // call the subclass to validate the value
-            onValidate(value, result)
+            onValidate(value, result.get())
 
         } catch (e: Exception) {
 
             // and if an exception is thrown, record an error.
-            error("Unexpected exception: ${e.message}")
+            validationError("Unexpected exception: ${e.message}")
         }
 
-        return result
+        return result.get()
     }
 
     /**
      * Records an error to the [ValidationResult]
      */
-    protected fun validationError(message: String) = result.validationError(message)
+    protected fun validationError(message: String) = result.get().validationError(message)
 
     /**
      * Records a warning to the [ValidationResult]
      */
-    protected fun validationWarning(message: String) = result.validationWarning(message)
+    protected fun validationWarning(message: String) = result.get().validationWarning(message)
 
     /**
      * Extension point for subclasses to validate the given value.

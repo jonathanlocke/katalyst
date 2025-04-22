@@ -50,6 +50,20 @@ class ConversionRegistry {
     private val conversions = MultiMap<KClass<*>, Conversion<*, *>>()
 
     /**
+     * Merges two conversion registries by combining their conversions
+     */
+    operator fun plus(other: ConversionRegistry): ConversionRegistry {
+        val merged = ConversionRegistry()
+        synchronized(conversions) {
+            synchronized(other.conversions) {
+                merged.conversions.putAll(this.conversions)
+                merged.conversions.putAll(other.conversions)
+            }
+        }
+        return merged
+    }
+    
+    /**
      * Registers a conversion with the registry
      * @param from The source type of the conversion
      * @param to The target type of the conversion

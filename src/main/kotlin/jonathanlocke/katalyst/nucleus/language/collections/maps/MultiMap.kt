@@ -20,6 +20,8 @@ class MultiMap<K : Any, V : Any> {
         map.getOrPut(key) { mutableListOf() }.addAll(values)
     }
 
+    fun putAll(multiMap: MultiMap<K, V>) = multiMap.entries().forEach { (key, values) -> putAll(key, values) }
+
     operator fun get(key: K): List<V>? {
         return map[key]
     }

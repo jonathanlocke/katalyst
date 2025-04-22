@@ -18,7 +18,7 @@ import kotlin.reflect.KClass
 abstract class ConversionBase<From : Any, To : Any>(val from: KClass<From>, val to: KClass<To>) : Conversion<From, To> {
 
     /**
-     * Registers this conversion with the [ConversionRegistry]
+     * Registers this conversion with the default [ConversionRegistry]
      */
     override fun register() = defaultConversionRegistry.register(from, to, this)
 }

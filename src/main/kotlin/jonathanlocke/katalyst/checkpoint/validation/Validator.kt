@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.checkpoint.validation
 
-import jonathanlocke.katalyst.checkpoint.validation.Validator.Companion.ensureValid
 import jonathanlocke.katalyst.checkpoint.validation.Validator.Companion.isValid
+import jonathanlocke.katalyst.checkpoint.validation.Validator.Companion.requireValid
 import jonathanlocke.katalyst.checkpoint.validation.Validator.Companion.validator
 
 /**
@@ -9,16 +9,14 @@ import jonathanlocke.katalyst.checkpoint.validation.Validator.Companion.validato
  *
  * Validators can be implemented by subclassing [ValidatorBase] or by passing a lambda function to [validator].
  *
- * **Usage**
+ * **Extension Points**
+ *
+ * o [validate] - Validates the given value, returning a [ValidationResult]]
+ *
+ * **Companions**
  *
  * - [isValid] - Checks if a value is valid by calling [validate] on each validator in the list
- * - [ensureValid] - Checks if a value is valid and throws an exception if it is not
- * - [validator] - Creates a validator from a lambda function
- *
- * **Examples**
- *
- * - [isValid] - Checks if a value is valid by calling one or more validators
- * - [ensureValid] - Ensures that a validator is valid or an exception is thrown
+ * - [requireValid] - Checks if a value is valid and throws an exception if it is not
  * - [validator] - Creates a validator from a lambda function
  *
  * @see ValidatorBase
@@ -52,7 +50,7 @@ interface Validator<Value : Any> {
          * @param validator The validator to check
          * @return Returns this value for method chaining.
          */
-        fun <Value : Any> Value.ensureValid(vararg validators: Validator<Value>): Value {
+        fun <Value : Any> Value.requireValid(vararg validators: Validator<Value>): Value {
             validators.all { it.validate(this).isValid() }
             return this
         }

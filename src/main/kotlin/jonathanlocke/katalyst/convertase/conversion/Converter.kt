@@ -1,5 +1,7 @@
 package jonathanlocke.katalyst.convertase.conversion
 
+import jonathanlocke.katalyst.checkpoint.validation.ValidationResult
+import jonathanlocke.katalyst.checkpoint.validation.ValidatorBase
 import jonathanlocke.katalyst.nucleus.language.problems.Problem
 import jonathanlocke.katalyst.nucleus.language.problems.ProblemListener
 import jonathanlocke.katalyst.nucleus.language.problems.listeners.Return
@@ -28,6 +30,18 @@ import kotlin.reflect.KClass
  * @see ProblemListener
  */
 interface Converter<From : Any, To : Any> {
+
+    /**
+     * All converters are validators. If [convert] fails, it will report the conversion error
+     * as a [Problem] to its [ProblemListener]. Because [ValidationResult] is a [ProblemListener],
+     * simply passing the result object to [convert] will cause it to capture any errors that
+     * occur during conversion in the result.
+     */
+    fun asValidator() = object : ValidatorBase<From>() {
+        override fun onValidate(value: From, result: ValidationResult<From>) {
+            convert(value, result)
+        }
+    }
 
     /**
      * The type of the [From] class (necessary due to type erasure).
