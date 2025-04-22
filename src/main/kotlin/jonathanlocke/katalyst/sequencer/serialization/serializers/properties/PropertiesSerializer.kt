@@ -1,6 +1,7 @@
 package jonathanlocke.katalyst.sequencer.serialization.serializers.properties
 
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry
+import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry.Companion.defaultConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.Converter
 import jonathanlocke.katalyst.cripsr.reflection.PropertyWalker
 import jonathanlocke.katalyst.nucleus.language.problems.ProblemListener
@@ -10,7 +11,7 @@ import jonathanlocke.katalyst.sequencer.serialization.serializers.Serializer
 import kotlin.reflect.KClass
 
 class PropertiesSerializer<Value : Any>(
-    val conversionRegistry: ConversionRegistry = ConversionRegistry.defaultConversionRegistry,
+    val conversionRegistry: ConversionRegistry = defaultConversionRegistry,
     val listener: ProblemListener,
     val limiter: SerializationLimiter,
 ) : Serializer<Value> {
@@ -29,10 +30,14 @@ class PropertiesSerializer<Value : Any>(
             // convert the value to a string,
             val text = convertToString(type, value)
 
-            // and add a line to the properties lines,
-            lines.add("$path=$text")
+            // and add a key-value pair to list of lines,
+            val line = "$path=$text"
+            lines.add(line)
 
-            // then check if the session limit has reached a limit,
+            // increase the session line count and bytes read,
+            session.nextLine(line)
+
+            // and check if the session limit has reached a limit,
             if (limiter.isLimitExceeded(session, listener)) {
 
                 // and report an error if so.

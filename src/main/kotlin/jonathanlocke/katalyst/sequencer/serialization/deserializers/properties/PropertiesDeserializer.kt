@@ -8,6 +8,7 @@ import jonathanlocke.katalyst.sequencer.serialization.SerializationSession
 import jonathanlocke.katalyst.sequencer.serialization.deserializers.Deserializer
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
+import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.memberProperties
 
 class PropertiesDeserializer<Value : Any>(
@@ -24,14 +25,13 @@ class PropertiesDeserializer<Value : Any>(
         val session = SerializationSession()
 
         // create a new instance of the type,
-        val value = type.java.getDeclaredConstructor().newInstance()
+        val value = type.createInstance()
 
         // then for each non-blank line,
         text.lineSequence().filterNot { it.isBlank() }.forEach { line ->
 
             // increase the session line count and bytes read,
-            session.lines = session.lines + 1
-            session.bytes = session.bytes + line.length + 1
+            session.nextLine(line)
 
             // split the line into a path and a value,
             val (propertyPath, valueText) = line.trim().split("=", limit = 2)

@@ -7,4 +7,9 @@ class SerializationSession {
 
     var lines = count(0)
     var bytes = bytes(0)
+
+    fun nextLine(text: String) {
+        lines++
+        this.bytes += text.length + 1
+    }
 }
