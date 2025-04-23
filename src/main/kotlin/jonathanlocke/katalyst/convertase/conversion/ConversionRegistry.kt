@@ -2,7 +2,6 @@ package jonathanlocke.katalyst.convertase.conversion
 
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry.Companion.defaultConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter
-import jonathanlocke.katalyst.nucleus.language.collections.maps.MultiMap
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 

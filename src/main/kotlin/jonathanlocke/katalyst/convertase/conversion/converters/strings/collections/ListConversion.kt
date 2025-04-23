@@ -20,20 +20,20 @@ import kotlin.reflect.KClass
  *
  *  - [stringToValueConverter] - The converter that converts [String] -> [Value]
  *  - [separator] - The separator to use when parsing text and joining value objects
- *  - [stringToValueReporter] - The error to use problems with [String] -> [Value]
+ *  - [stringToValueProblemListener] - The error to use problems with [String] -> [Value]
  *
  * **Reverse Conversion (List<[Value]> -> [String])**
  *
  *  - [valueToStringConverter] - The converter that converts [Value] -> [String]
- *  - [valueToStringReporter] - The error to use problems with [Value] -> [String]**
+ *  - [valueToStringProblemListener] - The error to use problems with [Value] -> [String]**
  *  - [defaultToStringValue] - The value to use for null elements when converting to [String]
  *
  * @param Value The type of value to convert to and from
  * @property stringToValueConverter The converter that converts [String] -> [Value]
  * @property separator The separator to use when parsing text and joining value objects
- * @property stringToValueReporter The error to use problems with [String] -> [Value]
+ * @property stringToValueProblemListener The error to use problems with [String] -> [Value]
  * @property valueToStringConverter The converter that converts [Value] -> [String]
- * @property valueToStringReporter The error to use problems with [Value] -> [String]
+ * @property valueToStringProblemListener The error to use problems with [Value] -> [String]
  * @property defaultToStringValue The value to use for null elements when converting to [String]]
  *
  * @see Conversion
@@ -51,11 +51,11 @@ class ListConversion<Value : Any>(
     // String -> Value conversion
     val stringToValueConverter: StringToValueConverter<Value>,
     val separator: Separator = Separator(),
-    val stringToValueReporter: ProblemListener = Throw(),
+    val stringToValueProblemListener: ProblemListener = Throw(),
 
     // Value -> String conversion
     val valueToStringConverter: ValueToStringConverter<Value> = ValueToString(valueClass) as ValueToStringConverter<Value>,
-    val valueToStringReporter: ProblemListener = Throw(),
+    val valueToStringProblemListener: ProblemListener = Throw(),
     val defaultToStringValue: String = "?"
 
 ) : ConversionBase<String, List<Value>>(String::class, List::class as KClass<List<Value>>) {
@@ -65,15 +65,15 @@ class ListConversion<Value : Any>(
         List::class as KClass<List<Value>>
     ) { text, listener ->
         separator.split(text).map { member ->
-            stringToValueConverter.convert(member, stringToValueReporter)
-                ?: stringToValueReporter.error("Failed to convert element: $member")
+            stringToValueConverter.convert(member, stringToValueProblemListener)
+                ?: stringToValueProblemListener.error("Failed to convert element: $member")
         } as List<Value>?
     }
 
     override fun reverseConverter(): Converter<List<Value>, String> = object : ConverterBase<List<Value>, String>
         (List::class as KClass<List<Value>>, String::class) {
         override fun onConvert(from: List<Value>): String = separator.join(from.map {
-            valueToStringConverter.convert(it, valueToStringReporter) ?: defaultToStringValue
+            valueToStringConverter.convert(it, valueToStringProblemListener) ?: defaultToStringValue
         }.toList())
     }
 }

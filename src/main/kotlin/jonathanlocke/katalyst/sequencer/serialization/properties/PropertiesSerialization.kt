@@ -4,8 +4,8 @@ import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry.Companion.defaultConversionRegistry
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
 import jonathanlocke.katalyst.nucleus.problems.listeners.Throw
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes
-import jonathanlocke.katalyst.nucleus.values.count.Count
+import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.megabytes
+import jonathanlocke.katalyst.nucleus.values.count.Count.Companion.count
 import jonathanlocke.katalyst.sequencer.serialization.*
 import jonathanlocke.katalyst.sequencer.serialization.limiters.SizeSerializationLimiter
 import kotlin.reflect.KClass
@@ -53,8 +53,8 @@ class PropertiesSerialization<Value : Any>(
          * @see PropertiesDeserializer
          */
         val defaultPropertiesSerializationLimits = SerializationLimits(
-            SizeSerializationLimiter(Bytes.Companion.megabytes(100)),
-            PropertiesSerializationLimiter(Count.Companion.count(10_000))
+            SizeSerializationLimiter(megabytes(100)),
+            PropertiesSerializationLimiter(count(10_000))
         )
     }
 

@@ -70,6 +70,9 @@ value class Count private constructor(val value: Long) : Comparable<Count> {
         }
     }
 
+    fun max(other: Count): Count = count(this.value.coerceAtLeast(other.value))
+    fun min(other: Count): Count = count(this.value.coerceAtMost(other.value))
+    fun clamp(min: Count, max: Count): Count = count(this.value.coerceIn(min.value, max.value))
     fun loop(code: () -> Unit) = (0 until value).forEach { code() }
     fun isZero(): Boolean = this.value == 0L
     fun asLong() = value

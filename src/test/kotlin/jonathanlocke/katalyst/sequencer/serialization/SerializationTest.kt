@@ -29,7 +29,7 @@ class SerializationTest {
         value.x = 10
         value.y.y = 20
 
-        // Serialize the value, deserialize it, and ensure they are equal
+        // serialize the value, deserialize it, and ensure they are equal.
         val serialization = PropertiesSerialization<X>()
         val text = serialization.serialize(value)
         val deserialized = serialization.deserialize(X::class, text)
