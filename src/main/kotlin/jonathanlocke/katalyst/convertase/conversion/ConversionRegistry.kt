@@ -2,6 +2,7 @@ package jonathanlocke.katalyst.convertase.conversion
 
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry.Companion.defaultConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter
+import jonathanlocke.katalyst.nucleus.language.collections.SafeDataStructure.Companion.safeMutableMultiMap
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 
@@ -41,13 +42,13 @@ import kotlin.reflect.KProperty1
  * @see Conversion
  * @see ConversionBase
  */
-open class ConversionRegistry {
+open class ConversionRegistry() {
 
     /** Conversions keyed by the From type of the conversion */
-    private val from = MultiMap<KClass<*>, Conversion<*, *>>()
+    private val from = safeMutableMultiMap<KClass<*>, Conversion<*, *>>()
 
     /** Conversions keyed by the To type of the conversion */
-    private val to = MultiMap<KClass<*>, Conversion<*, *>>()
+    private val to = safeMutableMultiMap<KClass<*>, Conversion<*, *>>()
 
     companion object {
 

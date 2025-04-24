@@ -13,6 +13,11 @@ import jonathanlocke.katalyst.sequencer.serialization.SerializationSession
 class PropertiesSerializationLimiter(val maximumProperties: Count) : SerializationLimiter {
 
     /**
+     * Override this method if you want to limit the deserialization of a properties file.
+     */
+    fun canDeserialize(text: String) = true
+
+    /**
      * Determines whether or not a serialization process should continue
      * @param session The serialization session to inspect
      * @param listener A problem listener to report problems to

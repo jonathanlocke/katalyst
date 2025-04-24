@@ -9,7 +9,6 @@ import jonathanlocke.katalyst.cripsr.reflection.PropertyPath.Companion.propertyP
 import jonathanlocke.katalyst.cripsr.reflection.PropertyPath.Companion.rootPropertyPath
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
 import jonathanlocke.katalyst.sequencer.serialization.Deserializer
-import jonathanlocke.katalyst.sequencer.serialization.SerializationLimiter
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
@@ -25,7 +24,7 @@ import kotlin.reflect.full.createInstance
 class PropertiesDeserializer<Value : Any>(
     val type: KClass<Value>,
     val conversionRegistry: ConversionRegistry = defaultConversionRegistry,
-    val limiter: SerializationLimiter
+    val limiter: PropertiesSerializationLimiter
 ) : Deserializer<Value> {
 
     /**
@@ -145,7 +144,13 @@ class PropertiesDeserializer<Value : Any>(
             val (propertyPathText, valueText) = propertyText.trim().split("=", limit = 2)
 
             // deserialize the property,
-            propertyDeserializer.deserialize(propertyPath(type, propertyPathText), valueText)
+            if (limiter.canDeserialize(valueText)) {
+
+                // todo: add ValueClass.property(PropertyPath)
+                // todo: add Property.annotations support
+                
+                propertyDeserializer.deserialize(propertyPath(type, propertyPathText), valueText)
+            }
 
             // tell the session that we processed the property,
             session.processedProperty(propertyText)

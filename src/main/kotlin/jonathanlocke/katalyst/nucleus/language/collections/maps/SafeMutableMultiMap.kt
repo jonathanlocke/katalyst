@@ -28,6 +28,12 @@ class SafeMutableMultiMap<Key : Any, Value : Any>(
 
     override fun size() = totalSize.toCount()
 
+    fun entries(): List<Pair<Key, List<Value>>> = map.map { it.key to it.value.toList() }
+
+    fun containsKey(key: Key): Boolean = map.containsKey(key)
+
+    fun containsEntry(key: Key, value: Value): Boolean = map[key]?.contains(value) ?: false
+    
     fun put(key: Key, value: Value) {
         ensureSafeToAdd(1)
         map.getOrPut(key) {

@@ -1,5 +1,6 @@
 package jonathanlocke.katalyst.nucleus.problems
 
+import jonathanlocke.katalyst.nucleus.language.collections.SafeDataStructure.Companion.safeMutableList
 import jonathanlocke.katalyst.nucleus.problems.categories.Error
 import jonathanlocke.katalyst.nucleus.problems.categories.Warning
 import jonathanlocke.katalyst.nucleus.values.count.Count.Companion.toCount
@@ -11,7 +12,7 @@ import java.util.function.IntFunction
  * @see Problem
  */
 class ProblemList(
-    private val problemList: MutableList<Problem> = mutableListOf()
+    private val problemList: MutableList<Problem> = safeMutableList("problems")
 ) : MutableList<Problem> by problemList, ProblemListener {
 
     @Suppress("OVERRIDE_DEPRECATION")
