@@ -2,7 +2,9 @@ package jonathanlocke.katalyst.nucleus.problems
 
 import jonathanlocke.katalyst.nucleus.problems.categories.Failure
 
-abstract class ProblemListenerBase(override val problems: ProblemList = ProblemList()) : ProblemListener {
+abstract class ProblemListenerBase() : ProblemListener {
+
+    override val problems: ProblemList by lazy { ProblemList() }
 
     final override fun problem(problem: Problem) {
         if (problem is Failure) fail("Failure encountered")

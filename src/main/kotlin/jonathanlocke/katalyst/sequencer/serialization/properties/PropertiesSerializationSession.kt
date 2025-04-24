@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.sequencer.serialization.properties
 
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.bytes
-import jonathanlocke.katalyst.nucleus.values.count.Count.Companion.count
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes.Companion.bytes
+import jonathanlocke.katalyst.nucleus.data.values.count.Count.Companion.count
 import jonathanlocke.katalyst.sequencer.serialization.SerializationSession
 
 /**

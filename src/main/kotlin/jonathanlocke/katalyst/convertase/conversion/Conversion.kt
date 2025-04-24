@@ -4,8 +4,8 @@ import jonathanlocke.katalyst.convertase.conversion.Conversion.Companion.convers
 import jonathanlocke.katalyst.convertase.conversion.Conversion.Companion.stringConversion
 import jonathanlocke.katalyst.convertase.conversion.converters.Converter
 import jonathanlocke.katalyst.convertase.conversion.converters.ConverterBase
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass.Companion.valueClass
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
 
 /**
@@ -31,8 +31,8 @@ import jonathanlocke.katalyst.nucleus.problems.ProblemListener
  */
 interface Conversion<From : Any, To : Any> {
 
-    val from: ValueClass<From>
-    val to: ValueClass<To>
+    val from: PropertyClass<From>
+    val to: PropertyClass<To>
 
     /**
      * Registers this conversion with a [ConversionRegistry]
@@ -63,8 +63,8 @@ interface Conversion<From : Any, To : Any> {
          */
         @Suppress("UNCHECKED_CAST")
         fun <From : Any, To : Any> conversion(
-            fromClass: ValueClass<From>,
-            toClass: ValueClass<To>,
+            fromClass: PropertyClass<From>,
+            toClass: PropertyClass<To>,
             forwardConverterLambda: (From?, ProblemListener) -> To?,
             reverseConverterLambda: (To?, ProblemListener) -> From?
         ): Conversion<From, To> = object : ConversionBase<From, To>(fromClass, toClass) {
@@ -94,7 +94,7 @@ interface Conversion<From : Any, To : Any> {
          */
         @Suppress("UNCHECKED_CAST")
         fun <Value : Any> stringConversion(
-            valueClass: ValueClass<Value>,
+            valueClass: PropertyClass<Value>,
             valueToStringLambda: (Value?, ProblemListener) -> String? = { value, listener -> value.toString() },
             stringToValueLambda: (String, ProblemListener) -> Value?
         ): Conversion<String, Value> =

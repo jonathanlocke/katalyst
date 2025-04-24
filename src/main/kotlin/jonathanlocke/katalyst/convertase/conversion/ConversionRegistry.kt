@@ -2,12 +2,9 @@ package jonathanlocke.katalyst.convertase.conversion
 
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry.Companion.defaultConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter
-import jonathanlocke.katalyst.nucleus.language.collections.SafeDataStructure.Companion.safeMutableMultiMap
-import kotlin.reflect.KClass
-import kotlin.reflect.KProperty1
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
-import jonathanlocke.katalyst.nucleus.language.collections.maps.MultiMap
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass.Companion.valueClass
+import jonathanlocke.katalyst.nucleus.data.structures.SafeDataStructure.Companion.safeMutableMultiMap
 
 /**
  * Registry of [Conversion]s.
@@ -48,10 +45,10 @@ import jonathanlocke.katalyst.nucleus.language.collections.maps.MultiMap
 open class ConversionRegistry() {
 
     /** Conversions keyed by the From type of the conversion */
-    private val from = safeMutableMultiMap<KClass<*>, Conversion<*, *>>()
+    private val from = safeMutableMultiMap<PropertyClass<*>, Conversion<*, *>>()
 
     /** Conversions keyed by the To type of the conversion */
-    private val to = safeMutableMultiMap<KClass<*>, Conversion<*, *>>()
+    private val to = safeMutableMultiMap<PropertyClass<*>, Conversion<*, *>>()
 
     companion object {
 
@@ -63,15 +60,15 @@ open class ConversionRegistry() {
     override fun toString(): String {
         return synchronized(this) {
             "Conversions:\n\n" + from.entries().joinToString("\n") { (fromType, conversionsList) ->
-                "${fromType.simpleName.orEmpty()} => ${
+                "${fromType.simpleName} => ${
                     conversionsList.joinToString(", ") { it ->
-                        it.forwardConverter().to.simpleName.orEmpty()
+                        it.forwardConverter().to.simpleName
                     }
                 }\n"
             } + to.entries().joinToString("\n") { (toType, conversionsList) ->
                 "${toType.simpleName} => ${
                     conversionsList.joinToString(",") { it ->
-                        it.from.simpleName.orEmpty()
+                        it.from.simpleName
                     }
                 }"
             }
@@ -100,7 +97,7 @@ open class ConversionRegistry() {
      * @param toClass The target type of the conversion
      * @param conversion The conversion to register
      */
-    fun register(fromClass: ValueClass<*>, toClass: ValueClass<*>, conversion: Conversion<*, *>) {
+    fun register(fromClass: PropertyClass<*>, toClass: PropertyClass<*>, conversion: Conversion<*, *>) {
         synchronized(this) {
             from.put(fromClass, conversion)
             to.put(toClass, conversion)
@@ -110,28 +107,28 @@ open class ConversionRegistry() {
     /**
      * True if the registry contains a conversion from the given type to another type
      */
-    fun hasConversionFrom(fromType: ValueClass<*>): Boolean = synchronized(this) {
+    fun hasConversionFrom(fromType: PropertyClass<*>): Boolean = synchronized(this) {
         from.containsKey(fromType)
     }
 
     /**
      * True if the registry contains a conversion to the given type from another type
      */
-    fun hasConversionTo(toType: ValueClass<*>): Boolean = synchronized(this) {
+    fun hasConversionTo(toType: PropertyClass<*>): Boolean = synchronized(this) {
         to.containsKey(toType)
     }
 
     /**
      * All the conversions that convert *from* the given type to another type
      */
-    fun from(fromType: ValueClass<*>): List<Conversion<*, *>> = synchronized(this) {
+    fun from(fromType: PropertyClass<*>): List<Conversion<*, *>> = synchronized(this) {
         from[fromType] ?: emptyList()
     }
 
     /**
      * All the conversions that convert *to* the given type to another type
      */
-    fun to(toType: ValueClass<*>): List<Conversion<*, *>> = synchronized(this) {
+    fun to(toType: PropertyClass<*>): List<Conversion<*, *>> = synchronized(this) {
         to[toType] ?: emptyList()
     }
 

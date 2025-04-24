@@ -56,7 +56,7 @@ import java.util.function.Supplier
  *
  * **Bytes**
  *
- * For another example of how [ProblemListener] can be used effectively, see [jonathanlocke.katalyst.nucleus.values.bytes.Bytes.parseBytes]
+ * For another example of how [ProblemListener] can be used effectively, see [jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes.parseBytes]
  *
  * @see Throw
  * @see Return

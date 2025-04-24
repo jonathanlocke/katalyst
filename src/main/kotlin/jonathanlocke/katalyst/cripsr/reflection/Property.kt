@@ -13,7 +13,7 @@ interface Property<T : Any> {
 
     val visibility: Visibility
     val name: String
-    val valueClass: ValueClass<T>
+    val valueClass: PropertyClass<T>
     fun get(instance: Any): T?
     fun set(instance: Any, value: T?)
     fun canGet(instance: Any): Boolean

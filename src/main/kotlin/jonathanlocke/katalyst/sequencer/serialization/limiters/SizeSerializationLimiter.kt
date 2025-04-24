@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.sequencer.serialization.limiters
 
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes
 import jonathanlocke.katalyst.sequencer.serialization.SerializationLimiter
 import jonathanlocke.katalyst.sequencer.serialization.SerializationSession
 

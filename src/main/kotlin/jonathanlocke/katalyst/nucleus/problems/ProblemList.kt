@@ -1,9 +1,9 @@
 package jonathanlocke.katalyst.nucleus.problems
 
-import jonathanlocke.katalyst.nucleus.language.collections.SafeDataStructure.Companion.safeMutableList
+import jonathanlocke.katalyst.nucleus.data.structures.SafeDataStructure.Companion.safeMutableList
+import jonathanlocke.katalyst.nucleus.data.values.count.Count.Companion.toCount
 import jonathanlocke.katalyst.nucleus.problems.categories.Error
 import jonathanlocke.katalyst.nucleus.problems.categories.Warning
-import jonathanlocke.katalyst.nucleus.values.count.Count.Companion.toCount
 import java.util.function.IntFunction
 
 /**

@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.cripsr.reflection
 
 import jonathanlocke.katalyst.cripsr.reflection.Property.Visibility.PUBLIC
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass.Companion.valueClass
 import java.util.function.Predicate
 
 class PropertyWalker<Value : Any>(val rootValue: Value) {

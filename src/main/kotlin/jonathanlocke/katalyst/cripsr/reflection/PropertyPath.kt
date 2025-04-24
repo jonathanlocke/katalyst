@@ -1,14 +1,14 @@
 package jonathanlocke.katalyst.cripsr.reflection
 
-class PropertyPath(val type: ValueClass<*>) : ArrayList<String>() {
+class PropertyPath(val type: PropertyClass<*>) : ArrayList<String>() {
 
     companion object {
 
         const val SEPARATOR = "."
 
-        fun rootPropertyPath(type: ValueClass<*>): PropertyPath = PropertyPath(type)
+        fun rootPropertyPath(type: PropertyClass<*>): PropertyPath = PropertyPath(type)
 
-        fun propertyPath(type: ValueClass<*>, text: String): PropertyPath = PropertyPath(type).apply {
+        fun propertyPath(type: PropertyClass<*>, text: String): PropertyPath = PropertyPath(type).apply {
             addAll(text.split(SEPARATOR))
         }
     }
@@ -36,7 +36,7 @@ class PropertyPath(val type: ValueClass<*>) : ArrayList<String>() {
      */
     fun property(): Property<*>? {
 
-        var at: ValueClass<*> = type
+        var at: PropertyClass<*> = type
         var property: Property<*>? = null
 
         // For each element in the path,

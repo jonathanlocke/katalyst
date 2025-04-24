@@ -1,13 +1,13 @@
-package jonathanlocke.katalyst.nucleus.language.collections
+package jonathanlocke.katalyst.nucleus.data.structures
 
-import jonathanlocke.katalyst.nucleus.language.collections.lists.SafeMutableList
-import jonathanlocke.katalyst.nucleus.language.collections.lists.SafeMutableSet
-import jonathanlocke.katalyst.nucleus.language.collections.maps.SafeMutableMap
-import jonathanlocke.katalyst.nucleus.language.collections.maps.SafeMutableMultiMap
+import jonathanlocke.katalyst.nucleus.data.structures.lists.SafeMutableList
+import jonathanlocke.katalyst.nucleus.data.structures.maps.SafeMutableMap
+import jonathanlocke.katalyst.nucleus.data.structures.maps.SafeMutableMultiMap
+import jonathanlocke.katalyst.nucleus.data.structures.sets.SafeMutableSet
+import jonathanlocke.katalyst.nucleus.data.values.count.Count
+import jonathanlocke.katalyst.nucleus.data.values.count.Count.Companion.count
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
 import jonathanlocke.katalyst.nucleus.problems.listeners.Throw
-import jonathanlocke.katalyst.nucleus.values.count.Count
-import jonathanlocke.katalyst.nucleus.values.count.Count.Companion.count
 
 abstract class SafeDataStructure(
     open val metadata: SafetyMetadata,
@@ -22,12 +22,12 @@ abstract class SafeDataStructure(
 
     var warned = false
 
-    abstract fun size(): Count
+    abstract val size: Int
 
     protected fun ensureSafeToAdd(entries: Int) {
 
         // If the projected number of entries exceeds the warning size,
-        if (size() + entries <= metadata.warningSize && !warned) {
+        if (size + entries > metadata.warningSize.asLong() && !warned) {
 
             // then issue a warning,
             problemListener.warning(withContext("exceeded ${metadata.warningSize} entries"))
@@ -37,7 +37,7 @@ abstract class SafeDataStructure(
         }
 
         // If the projected number of entries exceeds the maximum size,
-        if (size() + entries > metadata.maximumSize) {
+        if (size + entries > metadata.maximumSize.asLong()) {
 
             // then fail hard.
             problemListener.fail("Maximum size exceeded")

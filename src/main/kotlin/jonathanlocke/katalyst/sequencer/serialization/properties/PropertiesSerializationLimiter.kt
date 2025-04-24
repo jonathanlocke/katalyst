@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.sequencer.serialization.properties
 
+import jonathanlocke.katalyst.nucleus.data.values.count.Count
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
-import jonathanlocke.katalyst.nucleus.values.count.Count
 import jonathanlocke.katalyst.sequencer.serialization.SerializationLimiter
 import jonathanlocke.katalyst.sequencer.serialization.SerializationSession
 
@@ -11,11 +11,6 @@ import jonathanlocke.katalyst.sequencer.serialization.SerializationSession
  * @property maximumProperties The maximum number of properties
  */
 class PropertiesSerializationLimiter(val maximumProperties: Count) : SerializationLimiter {
-
-    /**
-     * Override this method if you want to limit the deserialization of a properties file.
-     */
-    fun canDeserialize(text: String) = true
 
     /**
      * Determines whether or not a serialization process should continue

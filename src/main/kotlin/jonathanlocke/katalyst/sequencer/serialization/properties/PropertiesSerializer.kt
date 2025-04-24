@@ -3,8 +3,8 @@ package jonathanlocke.katalyst.sequencer.serialization.properties
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry.Companion.defaultConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.converters.Converter
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass.Companion.valueClass
 import jonathanlocke.katalyst.cripsr.reflection.PropertyWalker
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
 import jonathanlocke.katalyst.sequencer.serialization.SerializationLimiter
 import jonathanlocke.katalyst.sequencer.serialization.Serializer

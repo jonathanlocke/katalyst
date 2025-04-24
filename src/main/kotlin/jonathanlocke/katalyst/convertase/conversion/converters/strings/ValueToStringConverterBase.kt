@@ -1,8 +1,8 @@
 package jonathanlocke.katalyst.convertase.conversion.converters.strings
 
 import jonathanlocke.katalyst.convertase.conversion.converters.ConverterBase
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass.Companion.valueClass
 
 /**
  * Base class for implementing converters from [Value] -> [String].
@@ -22,7 +22,7 @@ import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
  * @see ConverterBase
  * @see ValueToStringConverter
  */
-abstract class ValueToStringConverterBase<Value : Any>(valueClass: ValueClass<Value>) :
+abstract class ValueToStringConverterBase<Value : Any>(valueClass: PropertyClass<Value>) :
     ConverterBase<Value, String>(valueClass, valueClass(String::class)),
     ValueToStringConverter<Value> {
 

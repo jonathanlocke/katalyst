@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.sequencer.serialization
 
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass.Companion.valueClass
 import jonathanlocke.katalyst.sequencer.serialization.properties.PropertiesSerialization
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals

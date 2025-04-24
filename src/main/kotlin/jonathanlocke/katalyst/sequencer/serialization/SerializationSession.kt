@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.sequencer.serialization
 
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.bytes
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes.Companion.bytes
 
 /**
  * A serialization session contains the state of an ongoing serialization process. A [SerializationLimiter]

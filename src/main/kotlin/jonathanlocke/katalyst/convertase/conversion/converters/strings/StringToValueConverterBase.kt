@@ -2,8 +2,8 @@ package jonathanlocke.katalyst.convertase.conversion.converters.strings
 
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.converters.ConverterBase
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass.Companion.valueClass
 
 /**
  * Base class for implementing converters from [String] -> [Value]. If the input String is non-null (or nulls
@@ -35,7 +35,7 @@ import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
  * @see ConverterBase
  * @see StringToValueConverter
  */
-abstract class StringToValueConverterBase<Value : Any>(override val valueClass: ValueClass<Value>) :
+abstract class StringToValueConverterBase<Value : Any>(override val valueClass: PropertyClass<Value>) :
     ConverterBase<String, Value>(valueClass(String::class), valueClass),
     StringToValueConverter<Value> {
 

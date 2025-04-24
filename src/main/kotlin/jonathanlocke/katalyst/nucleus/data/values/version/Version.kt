@@ -1,4 +1,4 @@
-package jonathanlocke.katalyst.nucleus.values.version
+package jonathanlocke.katalyst.nucleus.data.values.version
 
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
 import jonathanlocke.katalyst.nucleus.problems.listeners.Throw

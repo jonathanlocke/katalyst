@@ -2,11 +2,11 @@ package jonathanlocke.katalyst.sequencer.serialization.properties
 
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry.Companion.defaultConversionRegistry
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes.Companion.megabytes
+import jonathanlocke.katalyst.nucleus.data.values.count.Count.Companion.count
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
 import jonathanlocke.katalyst.nucleus.problems.listeners.Throw
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.megabytes
-import jonathanlocke.katalyst.nucleus.values.count.Count.Companion.count
 import jonathanlocke.katalyst.sequencer.serialization.*
 import jonathanlocke.katalyst.sequencer.serialization.limiters.SizeSerializationLimiter
 
@@ -79,7 +79,7 @@ class PropertiesSerialization<Value : Any>(
      *
      * @see PropertiesDeserializer
      */
-    fun deserialize(type: ValueClass<Value>, text: String, listener: ProblemListener = Throw()): Value {
+    fun deserialize(type: PropertyClass<Value>, text: String, listener: ProblemListener = Throw()): Value {
         return deserializer(type).deserialize(text, listener)
     }
 
@@ -91,7 +91,7 @@ class PropertiesSerialization<Value : Any>(
     /**
      * Deserializer that deserializes a properties file to a value
      */
-    override fun deserializer(type: ValueClass<Value>): Deserializer<Value> = PropertiesDeserializer(
+    override fun deserializer(type: PropertyClass<Value>): Deserializer<Value> = PropertiesDeserializer(
         type, conversionRegistry, limiter
     )
 }

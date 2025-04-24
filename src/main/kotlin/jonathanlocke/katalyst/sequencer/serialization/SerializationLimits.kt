@@ -5,7 +5,7 @@ import jonathanlocke.katalyst.nucleus.problems.ProblemListener
 /**
  * A [SerializationLimiter] that combines multiple other [SerializationLimiter]s.
  */
-open class SerializationLimits(vararg val limiters: SerializationLimiter) : SerializationLimiter {
+open class SerializationLimits(open vararg val limiters: SerializationLimiter) : SerializationLimiter {
 
     /**
      * Determines whether or not a serialization process should continue

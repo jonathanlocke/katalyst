@@ -2,7 +2,7 @@ package jonathanlocke.katalyst.convertase.conversion.converters
 
 import jonathanlocke.katalyst.checkpoint.validation.ValidationResult
 import jonathanlocke.katalyst.checkpoint.validation.ValidatorBase
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass
 import jonathanlocke.katalyst.nucleus.problems.Problem
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
 import jonathanlocke.katalyst.nucleus.problems.listeners.Return
@@ -46,12 +46,12 @@ interface Converter<From : Any, To : Any> {
     /**
      * The type of the [From] class (necessary due to type erasure).
      */
-    val from: ValueClass<From>
+    val from: PropertyClass<From>
 
     /**
      * The type of the [To] class (necessary due to type erasure).
      */
-    val to: ValueClass<To>
+    val to: PropertyClass<To>
 
     /**
      * Converts the given [From] value to a [To] value. If an error occurs, the [ProblemListener] is called and

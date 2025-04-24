@@ -1,4 +1,4 @@
-package jonathanlocke.katalyst.nucleus.values.version
+package jonathanlocke.katalyst.nucleus.data.values.version
 
 /**
  * An value of a particular version, used in serialization

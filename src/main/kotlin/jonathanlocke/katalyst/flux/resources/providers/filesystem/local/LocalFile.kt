@@ -13,9 +13,9 @@ import jonathanlocke.katalyst.flux.resources.streams.writing.ResourceWriter
 import jonathanlocke.katalyst.flux.resources.streams.writing.WriteMode
 import jonathanlocke.katalyst.flux.resources.streams.writing.WriteMode.DoNotOverwrite
 import jonathanlocke.katalyst.flux.resources.streams.writing.WriteMode.Overwrite
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes.Companion.bytes
 import jonathanlocke.katalyst.nucleus.language.exceptions.ExceptionTrait
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.bytes
 import java.io.*
 import java.net.URI
 import java.nio.file.Files

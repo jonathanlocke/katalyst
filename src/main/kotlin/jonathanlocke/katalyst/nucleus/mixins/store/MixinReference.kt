@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.nucleus.mixins.store
 
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass
 import java.util.*
 
 /**
@@ -9,7 +9,7 @@ import java.util.*
  * @property owner The object that owns the value
  * @property type The type of the value
  */
-internal class MixinReference(val owner: Any, val type: ValueClass<*>) {
+internal class MixinReference(val owner: Any, val type: PropertyClass<*>) {
 
     override fun toString(): String = "${System.identityHashCode(owner)}:${type.simpleName}"
 

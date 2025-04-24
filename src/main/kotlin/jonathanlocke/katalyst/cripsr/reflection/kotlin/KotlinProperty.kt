@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.cripsr.reflection.kotlin
 
 import jonathanlocke.katalyst.cripsr.reflection.Property
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass.Companion.valueClass
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty

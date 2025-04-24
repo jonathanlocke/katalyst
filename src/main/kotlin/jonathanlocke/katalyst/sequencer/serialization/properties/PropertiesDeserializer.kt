@@ -4,11 +4,11 @@ import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry.Companion.defaultConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.converters.Converter
 import jonathanlocke.katalyst.cripsr.reflection.Property
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass.Companion.valueClass
 import jonathanlocke.katalyst.cripsr.reflection.PropertyPath
 import jonathanlocke.katalyst.cripsr.reflection.PropertyPath.Companion.propertyPath
 import jonathanlocke.katalyst.cripsr.reflection.PropertyPath.Companion.rootPropertyPath
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
 import jonathanlocke.katalyst.sequencer.serialization.Deserializer
 import jonathanlocke.katalyst.sequencer.serialization.SerializationLimiter
@@ -23,9 +23,9 @@ import jonathanlocke.katalyst.sequencer.serialization.SerializationLimiter
  * @see PropertiesSerialization
  */
 class PropertiesDeserializer<Value : Any>(
-    val type: ValueClass<Value>,
+    val type: PropertyClass<Value>,
     val conversionRegistry: ConversionRegistry = defaultConversionRegistry,
-    val limiter: PropertiesSerializationLimiter
+    val limiter: SerializationLimiter
 ) : Deserializer<Value> {
 
     /**

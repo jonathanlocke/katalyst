@@ -1,8 +1,8 @@
 package jonathanlocke.katalyst.nucleus.progress
 
-import jonathanlocke.katalyst.nucleus.values.count.Count
-import jonathanlocke.katalyst.nucleus.values.count.Count.Companion.count
-import jonathanlocke.katalyst.nucleus.values.percent.Percent.Companion.percent
+import jonathanlocke.katalyst.nucleus.data.values.count.Count
+import jonathanlocke.katalyst.nucleus.data.values.count.Count.Companion.count
+import jonathanlocke.katalyst.nucleus.data.values.percent.Percent.Companion.percent
 
 /**
  * Reports the progress of an operation

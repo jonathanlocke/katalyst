@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.nucleus.language.strings.formatting.formats
 
-import jonathanlocke.katalyst.nucleus.language.strings.formatting.StringFormatter
+import jonathanlocke.katalyst.nucleus.language.strings.formatting.Formatter
 
 class AnyFormatters {
 
@@ -9,6 +9,6 @@ class AnyFormatters {
         /**
          * String formatter that produces a string value of any object by calling [toString].
          */
-        fun <T> convertToString() = StringFormatter<T> { it.toString() }
+        fun <T> convertToString() = Formatter<T> { it.toString() }
     }
 }

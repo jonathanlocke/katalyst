@@ -1,11 +1,10 @@
-package jonathanlocke.katalyst.nucleus.language.collections.maps
+package jonathanlocke.katalyst.nucleus.data.structures.maps
 
-import jonathanlocke.katalyst.nucleus.language.collections.SafeDataStructure
-import jonathanlocke.katalyst.nucleus.language.collections.lists.SafeMutableList
+import jonathanlocke.katalyst.nucleus.data.structures.SafeDataStructure
+import jonathanlocke.katalyst.nucleus.data.structures.lists.SafeMutableList
+import jonathanlocke.katalyst.nucleus.data.values.count.Count
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
 import jonathanlocke.katalyst.nucleus.problems.listeners.Throw
-import jonathanlocke.katalyst.nucleus.values.count.Count
-import jonathanlocke.katalyst.nucleus.values.count.Count.Companion.toCount
 
 /**
  * A [MutableSet] that is safe to use.
@@ -17,7 +16,7 @@ import jonathanlocke.katalyst.nucleus.values.count.Count.Companion.toCount
  * @see SafetyMetadata
  * @see ProblemListener
  */
-class SafeMutableMultiMap<Key : Any, Value : Any>(
+class SafeMutableMultiMap<Key : Any, Value : Any> internal constructor(
     override val metadata: SafetyMetadata,
     override val problemListener: ProblemListener = Throw(),
     private val newUnsafeMutableList: (Count) -> MutableList<Value> = { size -> ArrayList(size.asInt()) },
@@ -26,14 +25,14 @@ class SafeMutableMultiMap<Key : Any, Value : Any>(
 
     var totalSize = 0
 
-    override fun size() = totalSize.toCount()
+    override val size = totalSize
 
     fun entries(): List<Pair<Key, List<Value>>> = map.map { it.key to it.value.toList() }
 
     fun containsKey(key: Key): Boolean = map.containsKey(key)
 
     fun containsEntry(key: Key, value: Value): Boolean = map[key]?.contains(value) ?: false
-    
+
     fun put(key: Key, value: Value) {
         ensureSafeToAdd(1)
         map.getOrPut(key) {

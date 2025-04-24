@@ -1,4 +1,4 @@
-package jonathanlocke.katalyst.nucleus.values.version
+package jonathanlocke.katalyst.nucleus.data.values.version
 
 /**
  * An object that has a version

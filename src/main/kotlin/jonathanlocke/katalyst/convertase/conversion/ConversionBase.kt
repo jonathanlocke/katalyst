@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.convertase.conversion
 
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass
 
 /**
  * Base class for implementing a [Conversion].
@@ -15,8 +15,8 @@ import jonathanlocke.katalyst.cripsr.reflection.ValueClass
  * @see Conversion
  */
 abstract class ConversionBase<From : Any, To : Any>(
-    override val from: ValueClass<From>,
-    override val to: ValueClass<To>
+    override val from: PropertyClass<From>,
+    override val to: PropertyClass<To>
 ) :
     Conversion<From, To> {
 

@@ -11,6 +11,11 @@ import jonathanlocke.katalyst.nucleus.problems.ProblemListener
 interface SerializationLimiter {
 
     /**
+     * Override this method if you want to limit the deserialization of individual properties from text
+     */
+    fun canDeserialize(text: String) = true
+
+    /**
      * Determines whether or not a serialization process should continue
      * @param session The serialization session to inspect
      * @param listener A problem listener to report problems to

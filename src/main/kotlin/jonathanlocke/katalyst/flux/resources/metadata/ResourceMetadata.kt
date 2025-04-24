@@ -2,7 +2,7 @@ package jonathanlocke.katalyst.flux.resources.metadata
 
 import jonathanlocke.katalyst.flux.resources.creation.ResourceScheme
 import jonathanlocke.katalyst.flux.resources.proximity.ResourceProximity
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes
 import java.net.URI
 import java.nio.file.Path
 import java.time.Instant

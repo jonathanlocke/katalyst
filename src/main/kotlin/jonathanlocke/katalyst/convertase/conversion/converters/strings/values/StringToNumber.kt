@@ -2,7 +2,7 @@ package jonathanlocke.katalyst.convertase.conversion.converters.strings.values
 
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter.Companion.stringToValueConverter
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass.Companion.valueClass
 
 /**
  * Converts [Number] -> [Int] for different kinds of Numbers

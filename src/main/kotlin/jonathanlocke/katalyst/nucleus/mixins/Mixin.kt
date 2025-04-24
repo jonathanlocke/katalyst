@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.nucleus.mixins
 
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass
 import jonathanlocke.katalyst.nucleus.mixins.store.MixinReference
 import jonathanlocke.katalyst.nucleus.mixins.store.MixinStore
 
@@ -21,7 +21,7 @@ interface Mixin<T : Any> {
      * @param valueFactory A factory function to create the value if it does not exist
      * @return The value associated with *this* object
      */
-    fun mixinValue(type: ValueClass<T>, valueFactory: () -> T): T {
+    fun mixinValue(type: PropertyClass<T>, valueFactory: () -> T): T {
         return MixinStore.attach(mixinStateReference(type), valueFactory)
     }
 
@@ -29,9 +29,9 @@ interface Mixin<T : Any> {
      * Detaches the value associated with *this* object
      * @param type The type of the value
      */
-    fun mixinValueDetach(type: ValueClass<T>) {
+    fun mixinValueDetach(type: PropertyClass<T>) {
         MixinStore.detach(mixinStateReference(type))
     }
 
-    private fun mixinStateReference(type: ValueClass<T>) = MixinReference(this, type)
+    private fun mixinStateReference(type: PropertyClass<T>) = MixinReference(this, type)
 }

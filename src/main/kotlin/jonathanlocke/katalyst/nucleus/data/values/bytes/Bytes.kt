@@ -1,26 +1,28 @@
-package jonathanlocke.katalyst.nucleus.values.bytes
+package jonathanlocke.katalyst.nucleus.data.values.bytes
 
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter.Companion.stringToValueConverter
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass.Companion.valueClass
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes.Companion.bytesConverter
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes.Companion.exabytes
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes.Companion.exbibytes
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes.Companion.gibibytes
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes.Companion.gigabytes
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes.Companion.kibibytes
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes.Companion.kilobytes
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes.Companion.mebibytes
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes.Companion.megabytes
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes.Companion.parseBytes
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes.Companion.pebibytes
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes.Companion.petabytes
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes.Companion.tebibytes
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes.Companion.terabytes
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes.MeasurementSystem.Binary
+import jonathanlocke.katalyst.nucleus.data.values.bytes.Bytes.MeasurementSystem.Metric
+import jonathanlocke.katalyst.nucleus.language.strings.formatting.Formattable
+import jonathanlocke.katalyst.nucleus.language.strings.formatting.Formatter
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
 import jonathanlocke.katalyst.nucleus.problems.listeners.Throw
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.exabytes
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.exbibytes
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.gibibytes
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.gigabytes
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.kibibytes
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.kilobytes
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.mebibytes
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.megabytes
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.parseBytes
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.pebibytes
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.petabytes
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.stringToBytesConverter
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.tebibytes
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.terabytes
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.MeasurementSystem.Binary
-import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.MeasurementSystem.Metric
 import java.text.DecimalFormat
 
 /**
@@ -48,7 +50,7 @@ import java.text.DecimalFormat
  *
  * **Conversion**
  *
- *  - [stringToBytesConverter] - Returns a [StringToValueConverter] that converts a string to a [Bytes] value
+ *  - [bytesConverter] - Returns a [StringToValueConverter] that converts a string to a [Bytes] value
  *  - [asBytes], [asKilobytes], [asMegabytes], [asGigabytes], [asTerabytes], [asPetabytes], [asExabytes]
  *  - [asKibibytes], [asMebibytes], [asGibibytes], [asTebibytes], [asPebibytes], [asExbibytes]
  *  - [asMetricString], [asBinaryString]
@@ -65,17 +67,23 @@ import java.text.DecimalFormat
  * @see StringToValueConverter
  * @see ProblemListener
  */
-class Bytes(val bytes: Double) {
+class Bytes(val bytes: Double) : Formattable<Bytes> {
 
     enum class MeasurementSystem(val radix: Double, suffixPattern: String) {
 
         // SI units
-        Metric(1000.0, "((|kilo|mega|giga|tera|peta|exa)byte(s)?)(K|M|G|T|P|X)(|b|B)"),
+        Metric(
+            1000.0,
+            """(?x) ( (?i: (?: |kilo|mega|giga|tera|peta|exa) byte(?: s)? ) | (?i: (?: K|M|G|T|P|X) (?: b|B)? ) )"""
+        ),
 
         // IEC units
-        Binary(1024.0, "((|kibi|mebi|gibi|tebi|pebi|exbi)byte(s)?)(K|M|G|T|P|X)(|B|iB)");
+        Binary(
+            1024.0,
+            """(?x) ( (?i: (?: |kibi|mebi|gibi|tebi|pebi|exbi) byte(?:s)? ) | (?i: (?: K|M|G|T|P|X) (?: b|iB)? ) )"""
+        );
 
-        val pattern = Regex("""(?x) (?<value> \d+ (\.\d+)?) \s? (?<units> $suffixPattern)""")
+        val pattern = Regex("""(?x) (?<value> \d+ (\.\d+)?) \s? (?<units> $suffixPattern)?""")
     }
 
     init {
@@ -84,11 +92,15 @@ class Bytes(val bytes: Double) {
 
     companion object {
 
-        fun stringToBytesConverter(measurementSystem: MeasurementSystem = Metric) =
+        val MetricFormatter = Formatter<Bytes> { it.asMetricString() }
+        val BinaryFormatter = Formatter<Bytes> { it.asMetricString() }
+
+        fun bytesConverter(measurementSystem: MeasurementSystem = Metric) =
             stringToValueConverter(valueClass(Bytes::class)) { text, listener ->
                 parseBytes(text, measurementSystem, listener)
             }
 
+        fun Number.toBytes() = bytes(this)
         fun bytes(value: Number) = Bytes(value.toDouble())
 
         fun kilobytes(value: Number) = bytes(value.toDouble() * Metric.radix)
@@ -105,42 +117,39 @@ class Bytes(val bytes: Double) {
         fun pebibytes(value: Number) = tebibytes(value.toDouble() * Binary.radix)
         fun exbibytes(value: Number) = pebibytes(value.toDouble() * Binary.radix)
 
-        fun parseBytes(text: String, system: MeasurementSystem = Metric): Bytes =
-            parseBytes(text, system)
+        fun parseBytes(text: String, system: MeasurementSystem = Metric): Bytes = parseBytes(text, system, Throw())!!
 
         fun parseBytes(
-            text: String,
-            system: MeasurementSystem = Metric,
-            listener: ProblemListener = Throw()
+            text: String, system: MeasurementSystem = Metric, listener: ProblemListener = Throw()
         ): Bytes? {
 
             val match = system.pattern.matchEntire(text)
             if (match != null) {
 
                 val number = match.groups["value"]!!.value.replace(",", "").toDouble()
-                val units = match.groups["units"]!!.value.lowercase().removeSuffix("s")
+                val units = match.groups["units"]?.value?.lowercase()?.removeSuffix("s") ?: "byte"
 
                 return when (system) {
 
-                    Metric -> when (units) {
-                        "byte", "" -> bytes(number)
-                        "kilobyte", "K", "Kb", "KB" -> kilobytes(number)
-                        "megabyte", "M", "Mb", "MB" -> megabytes(number)
-                        "gigabyte", "G", "Gb", "GB" -> gigabytes(number)
-                        "terabyte", "T", "Tb", "TB" -> terabytes(number)
-                        "petabyte", "P", "Pb", "PB" -> petabytes(number)
-                        "exabyte", "X", "Xb", "XB" -> exabytes(number)
+                    Metric -> when (units.lowercase()) {
+                        "byte" -> bytes(number)
+                        "kilobyte", "k", "kb" -> kilobytes(number)
+                        "megabyte", "m", "mb" -> megabytes(number)
+                        "gigabyte", "g", "gb" -> gigabytes(number)
+                        "terabyte", "t", "tb" -> terabytes(number)
+                        "petabyte", "p", "pb" -> petabytes(number)
+                        "exabyte", "x", "xb" -> exabytes(number)
                         else -> listener.error("Unsupported units format: $units").let { null }
                     }
 
                     Binary -> when (units) {
-                        "byte", "" -> bytes(number)
-                        "kibibyte", "K", "KB", "KiB" -> kilobytes(number)
-                        "mebibyte", "M", "MB", "MiB" -> megabytes(number)
-                        "gibibyte", "G", "GB", "GiB" -> gigabytes(number)
-                        "tebibyte", "T", "TB", "TiB" -> terabytes(number)
-                        "pebibyte", "P", "PB", "PiB" -> petabytes(number)
-                        "exbibyte", "X", "XB", "XiB" -> exabytes(number)
+                        "byte" -> bytes(number)
+                        "kibibyte", "k", "kb", "kib" -> kilobytes(number)
+                        "mebibyte", "m", "mb", "mib" -> megabytes(number)
+                        "gibibyte", "g", "gb", "gib" -> gigabytes(number)
+                        "tebibyte", "t", "tb", "tib" -> terabytes(number)
+                        "pebibyte", "p", "pb", "pib" -> petabytes(number)
+                        "exbibyte", "x", "xb", "xib" -> exabytes(number)
                         else -> listener.error("Unsupported units format: $units").let { null }
                     }
                 }
@@ -150,7 +159,7 @@ class Bytes(val bytes: Double) {
         }
     }
 
-    val isZero = bytes == 0.0
+    fun isZero() = bytes == 0.0
 
     override fun hashCode() = bytes.hashCode()
     override fun equals(other: Any?) = other is Bytes && other.bytes == bytes
@@ -166,6 +175,14 @@ class Bytes(val bytes: Double) {
     operator fun compareTo(that: Bytes) = (asBytes() - that.asBytes()).toInt()
     operator fun compareTo(that: Number) = (asBytes() - that.toDouble()).toInt()
     operator fun plus(that: Number) = Bytes(asBytes() + that.toDouble())
+    operator fun rem(that: Number) = Bytes(asBytes() % that.toDouble())
+
+    operator fun inc(): Bytes = bytes(this.bytes + 1)
+    operator fun dec(): Bytes = bytes(this.bytes - 1)
+
+    fun max(other: Bytes): Bytes = bytes(this.bytes.coerceAtLeast(other.bytes))
+    fun min(other: Bytes): Bytes = bytes(this.bytes.coerceAtMost(other.bytes))
+    fun inRange(min: Bytes, max: Bytes): Bytes = bytes(this.bytes.coerceIn(min.bytes, max.bytes))
 
     fun asBytes() = this.bytes
 
@@ -190,7 +207,7 @@ class Bytes(val bytes: Double) {
         asMegabytes() >= Metric.radix -> format(asGigabytes(), "Gb")
         asKilobytes() >= Metric.radix -> format(asMegabytes(), "Mb")
         bytes >= Metric.radix -> format(asKilobytes(), "Kb")
-        else -> "$bytes bytes"
+        else -> format(bytes, "bytes")
     }
 
     fun asBinaryString(): String = when {
@@ -200,8 +217,12 @@ class Bytes(val bytes: Double) {
         asMegabytes() >= Binary.radix -> format(asGibibytes(), "GiB")
         asKilobytes() >= Binary.radix -> format(asMebibytes(), "MiB")
         bytes >= Binary.radix -> format(asKibibytes(), "KiB")
-        else -> "$bytes bytes"
+        else -> format(bytes, "bytes")
     }
 
-    private fun format(value: Double, units: String): String = DecimalFormat("#.##").format(value) + units
+    private fun format(value: Double, units: String): String {
+
+        val number = DecimalFormat("#.#").apply { isDecimalSeparatorAlwaysShown = false }.format(value)
+        return "$number ${if (value == 1.0) units.removeSuffix("s") else units}"
+    }
 }

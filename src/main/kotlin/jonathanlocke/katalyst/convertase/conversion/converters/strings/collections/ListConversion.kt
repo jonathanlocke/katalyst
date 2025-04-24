@@ -8,8 +8,8 @@ import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToV
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter.Companion.stringToValueConverter
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.ValueToStringConverter
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.values.ValueToString
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass.Companion.valueClass
 import jonathanlocke.katalyst.nucleus.language.strings.parsing.Separator
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
 import jonathanlocke.katalyst.nucleus.problems.listeners.Throw
@@ -47,7 +47,7 @@ import jonathanlocke.katalyst.nucleus.problems.listeners.Throw
 class ListConversion<Value : Any>(
 
     // Value class
-    val valueClass: ValueClass<Value>,
+    val valueClass: PropertyClass<Value>,
 
     // String -> Value conversion
     val stringToValueConverter: StringToValueConverter<Value>,
@@ -59,11 +59,11 @@ class ListConversion<Value : Any>(
     val valueToStringProblemListener: ProblemListener = Throw(),
     val defaultToStringValue: String = "?"
 
-) : ConversionBase<String, List<Value>>(valueClass(String::class), List::class as ValueClass<List<Value>>) {
+) : ConversionBase<String, List<Value>>(valueClass(String::class), List::class as PropertyClass<List<Value>>) {
 
     @Suppress("UNCHECKED_CAST")
     override fun forwardConverter(): StringToValueConverter<List<Value>> = stringToValueConverter(
-        List::class as ValueClass<List<Value>>
+        List::class as PropertyClass<List<Value>>
     ) { text, listener ->
         separator.split(text).map { member ->
             stringToValueConverter.convert(member, stringToValueProblemListener)
@@ -72,7 +72,7 @@ class ListConversion<Value : Any>(
     }
 
     override fun reverseConverter(): Converter<List<Value>, String> = object : ConverterBase<List<Value>, String>
-        (List::class as ValueClass<List<Value>>, valueClass(String::class)) {
+        (List::class as PropertyClass<List<Value>>, valueClass(String::class)) {
         override fun onConvert(from: List<Value>): String = separator.join(from.map {
             valueToStringConverter.convert(it, valueToStringProblemListener) ?: defaultToStringValue
         }.toList())

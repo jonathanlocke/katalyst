@@ -4,14 +4,14 @@ import jonathanlocke.katalyst.convertase.conversion.Conversion
 import jonathanlocke.katalyst.convertase.conversion.ConversionBase
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.converters.Converter
+import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter.Companion.convert
+import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter.Companion.convertToList
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter.Companion.stringToValueConverter
-import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter.Companion.toList
-import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter.Companion.toValue
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.collections.ListConversion
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.values.StringToNumber
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.values.ValueToString
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass
-import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass
+import jonathanlocke.katalyst.cripsr.reflection.PropertyClass.Companion.valueClass
 import jonathanlocke.katalyst.nucleus.language.strings.parsing.Separator
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
 import jonathanlocke.katalyst.nucleus.problems.listeners.Throw
@@ -25,8 +25,8 @@ import jonathanlocke.katalyst.nucleus.problems.listeners.Throw
  *
  * **Extension Methods**
  *
- *  - [String.toValue] - Converts a string to a value
- *  - [String.toList] - Converts a textual list to a list of values
+ *  - [String.convert] - Converts a string to a value
+ *  - [String.convertToList] - Converts a textual list to a list of values
  *
  * @param Value The value to convert to
  *
@@ -38,7 +38,7 @@ interface StringToValueConverter<Value : Any> : Converter<String, Value> {
     /**
      * The class of [Value] (necessary due to type erasure)
      */
-    val valueClass: ValueClass<Value>
+    val valueClass: PropertyClass<Value>
 
     /**
      * Registers this converter with the given [ConversionRegistry]
@@ -49,7 +49,7 @@ interface StringToValueConverter<Value : Any> : Converter<String, Value> {
      * Returns a bidirectional [Conversion] between [String] and [Value] by implementing the forward
      * conversion with this converter and the reverse conversion with a [ValueToString] converter.
      */
-    fun asStringToValueConversion(valueClass: ValueClass<Value>): Conversion<String, Value> =
+    fun asStringToValueConversion(valueClass: PropertyClass<Value>): Conversion<String, Value> =
         object : ConversionBase<String, Value>(valueClass(String::class), valueClass) {
             override fun forwardConverter(): Converter<String, Value> = this@StringToValueConverter
             override fun reverseConverter(): Converter<Value, String> = ValueToString(valueClass)
@@ -64,7 +64,7 @@ interface StringToValueConverter<Value : Any> : Converter<String, Value> {
          * @param lambda Converter from String -> [Value]
          */
         fun <Value : Any> stringToValueConverter(
-            valueClass: ValueClass<Value>,
+            valueClass: PropertyClass<Value>,
             lambda: (String, ProblemListener) -> Value?
         ): StringToValueConverter<Value> = (object : StringToValueConverterBase<Value>(valueClass) {
             override fun onToValue(text: String): Value? = lambda.invoke(text, this)
@@ -76,7 +76,7 @@ interface StringToValueConverter<Value : Any> : Converter<String, Value> {
          * @param converter Converter from String -> [Value]
          * @param listener An optional error handler to use
          */
-        fun <Value : Any> String.toValue(
+        fun <Value : Any> String.convert(
             converter: StringToValueConverter<Value>,
             listener: ProblemListener = Throw()
         ): Value? = converter.convert(this, listener)
@@ -88,7 +88,7 @@ interface StringToValueConverter<Value : Any> : Converter<String, Value> {
          * @param listener An optional error handler to use
          * @param elementToValueReporter An optional error handler to use when an element in the list fails to convert
          */
-        fun <Value : Any> String.toList(
+        fun <Value : Any> String.convertToList(
             stringToValueConverter: StringToValueConverter<Value>,
             separator: Separator = Separator(),
             listener: ProblemListener = Throw(),
