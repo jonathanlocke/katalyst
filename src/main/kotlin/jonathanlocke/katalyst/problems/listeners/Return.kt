@@ -18,6 +18,6 @@ import jonathanlocke.katalyst.problems.categories.Failure
  * @see Problem
  */
 class Return : ProblemListenerBase() {
-    override fun onProblem(problem: Problem) {
+    override fun onReceive(problem: Problem) {
     }
 }

@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.serialization.limiters
 
-import jonathanlocke.katalyst.data.values.bytes.Bytes
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes
 import jonathanlocke.katalyst.problems.ProblemListener
 import jonathanlocke.katalyst.serialization.SerializationLimiter
 import jonathanlocke.katalyst.serialization.SerializationSession

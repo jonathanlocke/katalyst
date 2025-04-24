@@ -1,10 +1,11 @@
-package jonathanlocke.katalyst.data.values.count
+package jonathanlocke.katalyst.data.values.numeric.count
 
 import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConverter.Companion.convert
 import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConverter.Companion.stringToValueConverter
 import jonathanlocke.katalyst.conversion.converters.strings.values.StringToNumber.Companion.longConverter
-import jonathanlocke.katalyst.data.values.count.Count.Companion.ThousandsSeparatedFormatter
-import jonathanlocke.katalyst.data.values.count.Count.Companion.parseCount
+import jonathanlocke.katalyst.data.values.numeric.Numeric
+import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.ThousandsSeparatedFormatter
+import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.parseCount
 import jonathanlocke.katalyst.problems.ProblemListener
 import jonathanlocke.katalyst.problems.listeners.Throw
 import jonathanlocke.katalyst.reflection.ValueType.Companion.propertyClass
@@ -41,7 +42,7 @@ import jonathanlocke.katalyst.text.formatting.Formatter
  *
  */
 @JvmInline
-value class Count private constructor(val count: Long) : Comparable<Count>, Formattable<Count> {
+value class Count private constructor(val count: Long) : Comparable<Count>, Formattable<Count>, Numeric {
 
     companion object {
 
@@ -97,6 +98,8 @@ value class Count private constructor(val count: Long) : Comparable<Count>, Form
         }
     }
 
+    override fun asNumber(): Number = count
+
     fun max(other: Count): Count = count(this.count.coerceAtLeast(other.count))
     fun min(other: Count): Count = count(this.count.coerceAtMost(other.count))
     fun inRange(min: Count, max: Count): Count = count(this.count.coerceIn(min.count, max.count))
@@ -115,12 +118,15 @@ value class Count private constructor(val count: Long) : Comparable<Count>, Form
 
     operator fun plus(other: Count): Count = count(this.count + other.count)
     operator fun plus(other: Number): Count = count(this.count + other.toLong())
+    operator fun plus(other: Numeric): Count = plus(other.asNumber())
 
     operator fun minus(other: Count): Count = count((this.count - other.count).coerceAtLeast(0))
     operator fun minus(other: Number): Count = count((this.count - other.toLong()).coerceAtLeast(0))
+    operator fun minus(other: Numeric): Count = minus(other.asNumber())
 
     operator fun times(other: Count): Count = count(this.count * other.count)
     operator fun times(other: Number): Count = count(this.count * other.toLong())
+    operator fun times(other: Numeric): Count = times(other.asNumber())
 
     operator fun inc(): Count = count(this.count + 1)
     operator fun dec(): Count = count((this.count - 1).coerceAtLeast(0))
@@ -131,9 +137,13 @@ value class Count private constructor(val count: Long) : Comparable<Count>, Form
     operator fun div(other: Number): Count =
         count(this.count / other.toLong()).also { require(other.toLong() != 0L) { "Cannot divide by zero" } }
 
+    operator fun div(other: Numeric): Count = div(other.asNumber())
+
     operator fun rem(other: Count): Count =
         count(this.count % other.count).also { require(other.count != 0L) { "Cannot mod by zero" } }
 
     operator fun rem(other: Number): Count =
         count(this.count % other.toLong()).also { require(other.toLong() != 0L) { "Cannot mod by zero" } }
+
+    operator fun rem(other: Numeric): Count = rem(other.asNumber())
 }

@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.resources.providers.filesystem.local
 
-import jonathanlocke.katalyst.data.values.bytes.Bytes
-import jonathanlocke.katalyst.data.values.bytes.Bytes.Companion.bytes
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.bytes
 import jonathanlocke.katalyst.resources.creation.ResourceFolder
 import jonathanlocke.katalyst.resources.creation.ResourceScheme
 import jonathanlocke.katalyst.resources.metadata.Filename

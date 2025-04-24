@@ -1,11 +1,12 @@
-package jonathanlocke.katalyst.data.values.percent
+package jonathanlocke.katalyst.data.values.numeric.percent
 
 import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConverter.Companion.stringToValueConverter
-import jonathanlocke.katalyst.data.values.percent.Percent.Companion.DecimalFormat
-import jonathanlocke.katalyst.data.values.percent.Percent.Companion.IntegerFormat
-import jonathanlocke.katalyst.data.values.percent.Percent.Companion.parsePercent
-import jonathanlocke.katalyst.data.values.percent.Percent.Companion.percent
-import jonathanlocke.katalyst.data.values.percent.Percent.Companion.percentConverter
+import jonathanlocke.katalyst.data.values.numeric.Numeric
+import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.DecimalFormat
+import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.IntegerFormat
+import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.parsePercent
+import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.percent
+import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.percentConverter
 import jonathanlocke.katalyst.problems.ProblemListener
 import jonathanlocke.katalyst.problems.listeners.Throw
 import jonathanlocke.katalyst.reflection.ValueType.Companion.propertyClass
@@ -47,7 +48,7 @@ import jonathanlocke.katalyst.text.formatting.Formatter
  *
  * @property percent The percentage value of this percent on the scale of 0 to 100, but potentially greater than 100 or less than 0
  */
-class Percent(val percent: Double) : Comparable<Percent>, Formattable<Percent> {
+class Percent(val percent: Double) : Comparable<Percent>, Formattable<Percent>, Numeric {
 
     /**
      * This percent as a unit value, potentially greater than 1 or less than 0 (if the percentage is greater than 100 or less than 0)
@@ -63,19 +64,27 @@ class Percent(val percent: Double) : Comparable<Percent>, Formattable<Percent> {
 
     fun isZero(): Boolean = percent == 0.0
 
-    override fun compareTo(that: Percent): Int = this.percent.compareTo(that.percent)
-    override fun toString(): String = format(IntegerFormat)
+    override fun asNumber(): Number = percent
+
     operator fun minus(that: Percent): Percent = Percent(percent - that.percent)
-    operator fun minus(that: Double): Percent = Percent(percent - that)
+    operator fun minus(that: Number): Percent = Percent(percent - that.toDouble())
+    operator fun minus(other: Numeric): Percent = minus(other.asNumber())
     operator fun plus(that: Percent): Percent = Percent(percent + that.percent)
-    operator fun plus(that: Double): Percent = Percent(percent + that)
+    operator fun plus(that: Number): Percent = Percent(percent + that.toDouble())
+    operator fun plus(other: Numeric): Percent = plus(other.asNumber())
     operator fun times(that: Percent): Percent = Percent(percent * that.percent / 100.0)
-    operator fun times(that: Double): Percent = Percent(percent * that)
+    operator fun times(that: Number): Percent = Percent(percent * that.toDouble())
+    operator fun times(other: Numeric): Percent = times(other.asNumber())
     operator fun div(that: Percent): Percent = Percent(percent / that.percent * 100.0)
-    operator fun div(that: Double): Percent = Percent(percent / that)
+    operator fun div(that: Number): Percent = Percent(percent / that.toDouble())
+    operator fun div(other: Numeric): Percent = div(other.asNumber())
+
     override fun hashCode(): Int = percent.hashCode()
     override fun equals(other: Any?): Boolean =
         (this === other) || (other is Percent && this.percent == other.percent)
+
+    override fun compareTo(that: Percent): Int = this.percent.compareTo(that.percent)
+    override fun toString(): String = format(IntegerFormat)
 
     fun min(that: Percent): Percent = if (this.percent <= that.percent) this else that
     fun max(that: Percent): Percent = if (this.percent >= that.percent) this else that
@@ -118,5 +127,12 @@ class Percent(val percent: Double) : Comparable<Percent>, Formattable<Percent> {
          * @return The percent
          */
         fun percent(percent: Number): Percent = Percent(percent.toDouble())
+
+        /**
+         * Creates a [Percent] object
+         * @param percent The percentage (can be greater than 100% or less than 0%)
+         * @return The percent
+         */
+        fun percent(percent: Numeric): Percent = percent(percent.asNumber())
     }
 }

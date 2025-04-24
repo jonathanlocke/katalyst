@@ -1,11 +1,11 @@
 package jonathanlocke.katalyst.data.values
 
-import jonathanlocke.katalyst.data.values.bytes.Bytes.Companion.IecUnitsFormatter
-import jonathanlocke.katalyst.data.values.bytes.Bytes.Companion.SiUnitsFormatter
-import jonathanlocke.katalyst.data.values.bytes.Bytes.Companion.bytes
-import jonathanlocke.katalyst.data.values.bytes.Bytes.Companion.bytesConverter
-import jonathanlocke.katalyst.data.values.bytes.Bytes.Companion.parseBytes
-import jonathanlocke.katalyst.data.values.bytes.Bytes.Companion.toBytes
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.IecUnitsFormatter
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.SiUnitsFormatter
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.bytes
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.bytesConverter
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.parseBytes
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.toBytes
 import jonathanlocke.katalyst.problems.listeners.Return
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue

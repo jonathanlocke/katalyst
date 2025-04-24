@@ -4,8 +4,8 @@ import jonathanlocke.katalyst.data.structures.lists.SafeMutableList
 import jonathanlocke.katalyst.data.structures.maps.SafeMutableMap
 import jonathanlocke.katalyst.data.structures.maps.SafeMutableMultiMap
 import jonathanlocke.katalyst.data.structures.sets.SafeMutableSet
-import jonathanlocke.katalyst.data.values.count.Count
-import jonathanlocke.katalyst.data.values.count.Count.Companion.count
+import jonathanlocke.katalyst.data.values.numeric.count.Count
+import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.count
 import jonathanlocke.katalyst.problems.ProblemListener
 import jonathanlocke.katalyst.problems.listeners.Throw
 

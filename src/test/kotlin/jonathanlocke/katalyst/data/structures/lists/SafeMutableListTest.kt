@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.data.structures.lists
 
 import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeMutableList
-import jonathanlocke.katalyst.data.values.count.Count.Companion.count
+import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.count
 import jonathanlocke.katalyst.problems.ProblemException
 import jonathanlocke.katalyst.problems.ProblemList
 import org.junit.jupiter.api.assertThrows

@@ -1,10 +1,10 @@
 package jonathanlocke.katalyst.data.values
 
-import jonathanlocke.katalyst.data.values.count.Count.Companion.ThousandsSeparatedFormatter
-import jonathanlocke.katalyst.data.values.count.Count.Companion.count
-import jonathanlocke.katalyst.data.values.count.Count.Companion.countConverter
-import jonathanlocke.katalyst.data.values.count.Count.Companion.parseCount
-import jonathanlocke.katalyst.data.values.count.Count.Companion.toCount
+import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.ThousandsSeparatedFormatter
+import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.count
+import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.countConverter
+import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.parseCount
+import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.toCount
 import jonathanlocke.katalyst.problems.listeners.Return
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue

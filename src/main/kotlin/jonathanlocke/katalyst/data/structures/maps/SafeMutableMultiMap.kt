@@ -2,7 +2,7 @@ package jonathanlocke.katalyst.data.structures.maps
 
 import jonathanlocke.katalyst.data.structures.SafeDataStructure
 import jonathanlocke.katalyst.data.structures.lists.SafeMutableList
-import jonathanlocke.katalyst.data.values.count.Count
+import jonathanlocke.katalyst.data.values.numeric.count.Count
 import jonathanlocke.katalyst.problems.ProblemListener
 import jonathanlocke.katalyst.problems.listeners.Throw
 

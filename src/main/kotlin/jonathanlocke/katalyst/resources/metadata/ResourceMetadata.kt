@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.resources.metadata
 
-import jonathanlocke.katalyst.data.values.bytes.Bytes
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes
 import jonathanlocke.katalyst.resources.creation.ResourceScheme
 import jonathanlocke.katalyst.resources.proximity.ResourceProximity
 import java.net.URI

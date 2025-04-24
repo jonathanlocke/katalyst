@@ -18,7 +18,7 @@ import jonathanlocke.katalyst.reflection.ValueType
  *
  * **Problems**
  *
- * - [problem] - Reports a problem
+ * - [receive] - Reports a problem
  *
  * **Extension Points**
  *
@@ -62,10 +62,10 @@ abstract class ConverterBase<From : Any, To : Any>(
 
     /**
      * Invokes the error handler for this object with the given message
-     * @param problem The problem to report
+     * @param receive The problem to report
      */
-    override fun problem(problem: Problem) =
-        listener.problem(problem)
+    override fun receive(problem: Problem) =
+        listener.receive(problem)
 
     /**
      * Converts from the From type to the To type. If the 'from' value is null and the converter allows

@@ -1,22 +1,23 @@
-package jonathanlocke.katalyst.data.values.bytes
+package jonathanlocke.katalyst.data.values.numeric.bytes
 
 import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConverter.Companion.stringToValueConverter
-import jonathanlocke.katalyst.data.values.bytes.Bytes.Companion.bytesConverter
-import jonathanlocke.katalyst.data.values.bytes.Bytes.Companion.exabytes
-import jonathanlocke.katalyst.data.values.bytes.Bytes.Companion.exbibytes
-import jonathanlocke.katalyst.data.values.bytes.Bytes.Companion.gibibytes
-import jonathanlocke.katalyst.data.values.bytes.Bytes.Companion.gigabytes
-import jonathanlocke.katalyst.data.values.bytes.Bytes.Companion.kibibytes
-import jonathanlocke.katalyst.data.values.bytes.Bytes.Companion.kilobytes
-import jonathanlocke.katalyst.data.values.bytes.Bytes.Companion.mebibytes
-import jonathanlocke.katalyst.data.values.bytes.Bytes.Companion.megabytes
-import jonathanlocke.katalyst.data.values.bytes.Bytes.Companion.parseBytes
-import jonathanlocke.katalyst.data.values.bytes.Bytes.Companion.pebibytes
-import jonathanlocke.katalyst.data.values.bytes.Bytes.Companion.petabytes
-import jonathanlocke.katalyst.data.values.bytes.Bytes.Companion.tebibytes
-import jonathanlocke.katalyst.data.values.bytes.Bytes.Companion.terabytes
-import jonathanlocke.katalyst.data.values.bytes.Bytes.UnitSystem.IecUnits
-import jonathanlocke.katalyst.data.values.bytes.Bytes.UnitSystem.SiUnits
+import jonathanlocke.katalyst.data.values.numeric.Numeric
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.bytesConverter
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.exabytes
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.exbibytes
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.gibibytes
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.gigabytes
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.kibibytes
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.kilobytes
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.mebibytes
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.megabytes
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.parseBytes
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.pebibytes
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.petabytes
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.tebibytes
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.terabytes
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.UnitSystem.IecUnits
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.UnitSystem.SiUnits
 import jonathanlocke.katalyst.problems.ProblemListener
 import jonathanlocke.katalyst.problems.listeners.Throw
 import jonathanlocke.katalyst.reflection.ValueType.Companion.propertyClass
@@ -66,7 +67,7 @@ import java.text.DecimalFormat
  * @see ProblemListener
  */
 @Suppress("SpellCheckingInspection")
-class Bytes(val bytes: Double) : Formattable<Bytes> {
+class Bytes(val bytes: Double) : Formattable<Bytes>, Numeric {
 
     enum class UnitSystem(val radix: Double, suffixPattern: String) {
 
@@ -158,6 +159,8 @@ class Bytes(val bytes: Double) : Formattable<Bytes> {
         }
     }
 
+    override fun asNumber(): Number = bytes
+
     fun isZero() = bytes == 0.0
 
     override fun hashCode() = bytes.hashCode()
@@ -165,16 +168,28 @@ class Bytes(val bytes: Double) : Formattable<Bytes> {
     override fun toString() = asSiUnitsString()
 
     operator fun plus(that: Bytes) = Bytes(asBytes() + that.asBytes())
+    operator fun plus(that: Number) = Bytes(asBytes() + that.toDouble())
+    operator fun plus(that: Numeric) = plus(that.asNumber())
+
     operator fun div(that: Bytes) = asBytes() / that.asBytes()
     operator fun div(that: Number) = Bytes(asBytes() / that.toDouble())
+    operator fun div(that: Numeric) = plus(that.asNumber())
+
     operator fun minus(that: Bytes) = Bytes(asBytes() - that.asBytes())
     operator fun minus(that: Number) = Bytes(asBytes() - that.toDouble())
+    operator fun minus(that: Numeric) = plus(that.asNumber())
+
     operator fun times(that: Bytes) = Bytes(asBytes() * that.asBytes())
     operator fun times(that: Number) = Bytes(asBytes() * that.toDouble())
+    operator fun times(that: Numeric) = plus(that.asNumber())
+
+    operator fun rem(that: Bytes) = Bytes(asBytes() % that.asBytes())
+    operator fun rem(that: Number) = Bytes(asBytes() % that.toDouble())
+    operator fun rem(that: Numeric) = rem(that.asNumber())
+
     operator fun compareTo(that: Bytes) = (asBytes() - that.asBytes()).toInt()
     operator fun compareTo(that: Number) = (asBytes() - that.toDouble()).toInt()
-    operator fun plus(that: Number) = Bytes(asBytes() + that.toDouble())
-    operator fun rem(that: Number) = Bytes(asBytes() % that.toDouble())
+    operator fun compareTo(that: Numeric) = (asBytes() - that.asNumber().toDouble()).toInt()
 
     operator fun inc(): Bytes = bytes(this.bytes + 1)
     operator fun dec(): Bytes = bytes(this.bytes - 1)

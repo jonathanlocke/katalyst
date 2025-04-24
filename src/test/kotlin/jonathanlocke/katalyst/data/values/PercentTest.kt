@@ -1,9 +1,9 @@
 package jonathanlocke.katalyst.data.values
 
-import jonathanlocke.katalyst.data.values.percent.Percent.Companion.DecimalFormat
-import jonathanlocke.katalyst.data.values.percent.Percent.Companion.parsePercent
-import jonathanlocke.katalyst.data.values.percent.Percent.Companion.percent
-import jonathanlocke.katalyst.data.values.percent.Percent.Companion.percentConverter
+import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.DecimalFormat
+import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.parsePercent
+import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.percent
+import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.percentConverter
 import jonathanlocke.katalyst.problems.listeners.Return
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue

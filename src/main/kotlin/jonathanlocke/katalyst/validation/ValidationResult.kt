@@ -1,12 +1,12 @@
 package jonathanlocke.katalyst.validation
 
-import jonathanlocke.katalyst.validation.problems.ValidationError
-import jonathanlocke.katalyst.validation.problems.ValidationWarning
 import jonathanlocke.katalyst.problems.Problem
 import jonathanlocke.katalyst.problems.ProblemList
 import jonathanlocke.katalyst.problems.ProblemListener
 import jonathanlocke.katalyst.problems.categories.Error
 import jonathanlocke.katalyst.problems.categories.Warning
+import jonathanlocke.katalyst.validation.problems.ValidationError
+import jonathanlocke.katalyst.validation.problems.ValidationWarning
 
 /**
  * A collection of validation problems.
@@ -39,7 +39,7 @@ class ValidationResult<Value : Any>(val value: Value) : ProblemListener {
     val errors = problems.errors()
     val warnings = problems.warnings()
 
-    override fun problem(problem: Problem) {
+    override fun receive(problem: Problem) {
         if (problem is Error) validationError(problem.message, problem.cause)
         if (problem is Warning) validationWarning(problem.message, problem.cause)
     }

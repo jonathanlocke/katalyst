@@ -1,4 +1,4 @@
-package jonathanlocke.katalyst.data.values.bytes
+package jonathanlocke.katalyst.data.values.numeric.bytes
 
 /**
  * An object that has a size in bytes.

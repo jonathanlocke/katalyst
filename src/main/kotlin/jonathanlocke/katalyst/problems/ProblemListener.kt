@@ -56,7 +56,7 @@ import java.util.function.Supplier
  *
  * **Bytes**
  *
- * For another example of how [ProblemListener] can be used effectively, see [jonathanlocke.katalyst.data.values.bytes.Bytes.parseBytes]
+ * For another example of how [ProblemListener] can be used effectively, see [jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.parseBytes]
  *
  * @see Throw
  * @see Return
@@ -78,18 +78,18 @@ interface ProblemListener {
     /**
      * Extension point for handling a problem
      */
-    fun problem(problem: Problem) {
+    fun receive(problem: Problem) {
         problems.add(problem)
     }
 
     fun failure(message: String, cause: Throwable? = null, value: Any? = null) =
-        problem(Failure(message, cause, value))
+        receive(Failure(message, cause, value))
 
     fun error(message: String, cause: Throwable? = null, value: Any? = null) =
-        problem(Error(message, cause, value))
+        receive(Error(message, cause, value))
 
     fun warning(message: String, cause: Throwable? = null, value: Any? = null) =
-        problem(Warning(message, cause, value))
+        receive(Warning(message, cause, value))
 
     /**
      * Guards the given functional code block by catching exceptions and reporting them as errors

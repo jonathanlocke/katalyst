@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.serialization.properties
 
-import jonathanlocke.katalyst.data.values.count.Count
+import jonathanlocke.katalyst.data.values.numeric.count.Count
 import jonathanlocke.katalyst.problems.ProblemListener
 import jonathanlocke.katalyst.serialization.SerializationLimiter
 import jonathanlocke.katalyst.serialization.SerializationSession

@@ -6,10 +6,10 @@ abstract class ProblemListenerBase() : ProblemListener {
 
     override val problems: ProblemList by lazy { ProblemList() }
 
-    final override fun problem(problem: Problem) {
+    final override fun receive(problem: Problem) {
         if (problem is Failure) fail("Failure encountered")
-        onProblem(problem)
+        onReceive(problem)
     }
 
-    abstract fun onProblem(problem: Problem)
+    abstract fun onReceive(problem: Problem)
 }

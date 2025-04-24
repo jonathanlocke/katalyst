@@ -22,7 +22,7 @@ import jonathanlocke.katalyst.problems.ProblemListenerBase
  */
 class Throw : ProblemListenerBase() {
 
-    override fun onProblem(problem: Problem) {
+    override fun onReceive(problem: Problem) {
         if (problem.effect == STOP) throw ProblemException("Halting execution:", problem)
     }
 }
