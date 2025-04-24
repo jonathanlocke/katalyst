@@ -1,7 +1,8 @@
 package jonathanlocke.katalyst.convertase.conversion.converters.strings
 
 import jonathanlocke.katalyst.convertase.conversion.converters.ConverterBase
-import kotlin.reflect.KClass
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
 
 /**
  * Base class for implementing converters from [Value] -> [String].
@@ -21,8 +22,8 @@ import kotlin.reflect.KClass
  * @see ConverterBase
  * @see ValueToStringConverter
  */
-abstract class ValueToStringConverterBase<Value : Any>(valueClass: KClass<Value>) :
-    ConverterBase<Value, String>(valueClass, String::class),
+abstract class ValueToStringConverterBase<Value : Any>(valueClass: ValueClass<Value>) :
+    ConverterBase<Value, String>(valueClass, valueClass(String::class)),
     ValueToStringConverter<Value> {
 
     /**

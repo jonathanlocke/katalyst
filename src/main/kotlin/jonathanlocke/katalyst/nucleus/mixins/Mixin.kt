@@ -1,8 +1,8 @@
 package jonathanlocke.katalyst.nucleus.mixins
 
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass
 import jonathanlocke.katalyst.nucleus.mixins.store.MixinReference
 import jonathanlocke.katalyst.nucleus.mixins.store.MixinStore
-import kotlin.reflect.KClass
 
 /**
  * Interface that enables the creation of mixins (stateful traits).
@@ -21,7 +21,7 @@ interface Mixin<T : Any> {
      * @param valueFactory A factory function to create the value if it does not exist
      * @return The value associated with *this* object
      */
-    fun mixinValue(type: KClass<T>, valueFactory: () -> T): T {
+    fun mixinValue(type: ValueClass<T>, valueFactory: () -> T): T {
         return MixinStore.attach(mixinStateReference(type), valueFactory)
     }
 
@@ -29,9 +29,9 @@ interface Mixin<T : Any> {
      * Detaches the value associated with *this* object
      * @param type The type of the value
      */
-    fun mixinValueDetach(type: KClass<T>) {
+    fun mixinValueDetach(type: ValueClass<T>) {
         MixinStore.detach(mixinStateReference(type))
     }
 
-    private fun mixinStateReference(type: KClass<T>) = MixinReference(this, type)
+    private fun mixinStateReference(type: ValueClass<T>) = MixinReference(this, type)
 }

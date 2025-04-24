@@ -3,6 +3,7 @@ package jonathanlocke.katalyst.nucleus.values.count
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter.Companion.stringToValueConverter
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter.Companion.toValue
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.values.StringToNumber.Companion.longConverter
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
 import jonathanlocke.katalyst.nucleus.language.strings.formatting.StringFormatter
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
 import jonathanlocke.katalyst.nucleus.problems.listeners.Throw
@@ -46,7 +47,7 @@ value class Count private constructor(val value: Long) : Comparable<Count> {
 
         val ThousandsSeparated = StringFormatter<Count> { "%,d".format(it.value) }
 
-        fun countConverter() = stringToValueConverter(Count::class) { text, listener ->
+        fun countConverter() = stringToValueConverter(valueClass(Count::class)) { text, listener ->
             text.toValue(longConverter, Throw())?.toCount() ?: listener.error("Could not parse count: $text")
                 .let { null }
         }

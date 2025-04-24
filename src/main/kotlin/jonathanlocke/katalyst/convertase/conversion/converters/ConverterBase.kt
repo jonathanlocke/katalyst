@@ -1,9 +1,9 @@
 package jonathanlocke.katalyst.convertase.conversion.converters
 
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass
 import jonathanlocke.katalyst.nucleus.problems.Problem
 import jonathanlocke.katalyst.nucleus.problems.ProblemList
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
-import kotlin.reflect.KClass
 
 /**
  * Base class for implementing a [Converter].
@@ -37,8 +37,8 @@ import kotlin.reflect.KClass
  * @see Problem
  */
 abstract class ConverterBase<From : Any, To : Any>(
-    override val from: KClass<From>,
-    override val to: KClass<To>,
+    override val from: ValueClass<From>,
+    override val to: ValueClass<To>,
     override val problems: ProblemList = ProblemList()
 ) :
     Converter<From, To>,

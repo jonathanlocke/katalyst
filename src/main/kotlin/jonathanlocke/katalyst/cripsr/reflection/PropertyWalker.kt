@@ -1,75 +1,77 @@
 package jonathanlocke.katalyst.cripsr.reflection
 
-import java.util.concurrent.ConcurrentHashMap
+import jonathanlocke.katalyst.cripsr.reflection.Property.Visibility.PUBLIC
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
 import java.util.function.Predicate
-import kotlin.reflect.KClass
-import kotlin.reflect.KProperty
-import kotlin.reflect.KProperty1
-import kotlin.reflect.KVisibility.PUBLIC
-import kotlin.reflect.full.memberProperties
 
-class PropertyWalker(val value: Any) {
-
-    fun interface PropertyVisitor {
-        fun atProperty(property: KProperty<*>, type: KClass<*>, path: PropertyPath, value: Any?)
-    }
-
-    fun interface PropertyFilter : Predicate<KProperty.Getter<Any?>> {
-        infix fun and(other: Predicate<KProperty.Getter<Any?>>): PropertyFilter =
-            PropertyFilter { this.test(it) && other.test(it) }
-
-        infix fun or(other: Predicate<KProperty.Getter<Any?>>): PropertyFilter =
-            PropertyFilter { this.test(it) || other.test(it) }
-    }
+class PropertyWalker<Value : Any>(val rootValue: Value) {
 
     companion object {
 
-        val ALL_PROPERTIES = PropertyFilter { true }
-        val PUBLIC_PROPERTIES = ALL_PROPERTIES and PropertyFilter { it.visibility == PUBLIC }
+        /**
+         * Filter that matches all properties
+         */
+        val ALL_PROPERTIES = Predicate<Property<*>> { true }
 
-        private val inaccessibleGetters = ConcurrentHashMap<KProperty.Getter<*>, Boolean>()
+        /**
+         * Filter that matches all public properties
+         */
+        val PUBLIC_PROPERTIES = ALL_PROPERTIES.and { it.visibility == PUBLIC }
     }
 
-    fun walk(filter: PropertyFilter = PUBLIC_PROPERTIES, recursive: Boolean = true, visitor: PropertyVisitor) =
-        walk(PropertyPath(value::class), filter, recursive, visitor)
+    internal class Walk(
+        val at: Any,
+        val path: PropertyPath,
+        val filter: Predicate<Property<*>>,
+        val recursive: Boolean
+    ) {
+        fun at(at: Any, path: PropertyPath): Walk =
+            Walk(at, path, filter, recursive)
+    }
 
-    private fun walk(path: PropertyPath, filter: PropertyFilter, recursive: Boolean, visitor: PropertyVisitor) {
-        for (property in value::class.declaredProperties()) {
-            if (canAccess(value, property)) {
-                val propertyValue = propertyValue(property, value)
-                val propertyPath = path + property.name
-                if (filter.test(property.getter)) {
-                    val type = property.returnType.classifier as? KClass<*> ?: Any::class
-                    visitor.atProperty(property, type, propertyPath, propertyValue)
+    /**
+     * Walks the properties of the root value recursively, calling the given [PropertyVisitor] for each property.
+     *
+     * @param filter A filter to limit the properties that are visited
+     * @param recursive Whether or not to walk the properties recursively
+     * @param visitor The visitor to call for each property
+     */
+    fun walk(filter: Predicate<Property<*>> = PUBLIC_PROPERTIES, recursive: Boolean = true, visitor: PropertyVisitor) =
+        walk(Walk(rootValue, PropertyPath(valueClass(rootValue::class)), filter, recursive), visitor)
+
+    /**
+     * Implementation of recursive property walking
+     *
+     * @param walk The state of the walk
+     */
+    private fun walk(walk: Walk, propertyVisitor: PropertyVisitor) {
+
+        // For each declared property in the current value,
+        for (property in valueClass(walk.at::class).declaredProperties()) {
+
+            // if the property can be accessed,
+            if (property.canGet(rootValue)) {
+
+                // get the value of the property,
+                val propertyValue = property.get(walk.at)
+
+                // extend the property path with the property name,
+                val propertyPath = walk.path + property.name
+
+                // and if the property passes the filter,
+                if (walk.filter.test(property)) {
+
+                    // call the visitor.
+                    propertyVisitor.atProperty(propertyPath, property, propertyValue)
                 }
-                if (recursive && propertyValue != null) {
-                    PropertyWalker(propertyValue).walk(propertyPath, filter, recursive, visitor)
+
+                // If we are walking recursively and the property has a value,
+                if (walk.recursive && propertyValue != null) {
+
+                    // then recurse into the value.
+                    walk(walk.at(propertyValue, propertyPath), propertyVisitor)
                 }
             }
         }
     }
-
-    fun <T : Any> KClass<T>.declaredProperties(): List<KProperty1<T, *>> {
-        val superProperties =
-            this.supertypes.mapNotNull { it.classifier as? KClass<*> }.flatMap { it.memberProperties }.toSet()
-        return memberProperties.toList().filter { it !in superProperties }
-    }
-
-    private fun canAccess(instance: Any, property: KProperty<*>): Boolean {
-        if (!isInternal(property)) {
-            if (!inaccessibleGetters.contains(property.getter)) {
-                try {
-                    propertyValue(property, instance)
-                    return true
-                } catch (e: Exception) {
-                    inaccessibleGetters[property.getter] = true
-                }
-            }
-        }
-        return false
-    }
-
-    private fun isInternal(property: KProperty<*>): Boolean = property.name.find { it in "$@" } != null
-
-    private fun propertyValue(property: KProperty<*>, instance: Any): Any? = property.getter.call(instance)
 }

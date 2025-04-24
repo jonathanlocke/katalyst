@@ -2,7 +2,8 @@ package jonathanlocke.katalyst.convertase.conversion.converters.strings
 
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.converters.ConverterBase
-import kotlin.reflect.KClass
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
 
 /**
  * Base class for implementing converters from [String] -> [Value]. If the input String is non-null (or nulls
@@ -34,8 +35,8 @@ import kotlin.reflect.KClass
  * @see ConverterBase
  * @see StringToValueConverter
  */
-abstract class StringToValueConverterBase<Value : Any>(override val valueClass: KClass<Value>) :
-    ConverterBase<String, Value>(String::class, valueClass),
+abstract class StringToValueConverterBase<Value : Any>(override val valueClass: ValueClass<Value>) :
+    ConverterBase<String, Value>(valueClass(String::class), valueClass),
     StringToValueConverter<Value> {
 
     /** True if blank strings are allowed */

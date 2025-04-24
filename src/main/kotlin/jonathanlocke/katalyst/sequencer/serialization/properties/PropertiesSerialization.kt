@@ -2,13 +2,13 @@ package jonathanlocke.katalyst.sequencer.serialization.properties
 
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry.Companion.defaultConversionRegistry
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
 import jonathanlocke.katalyst.nucleus.problems.listeners.Throw
 import jonathanlocke.katalyst.nucleus.values.bytes.Bytes
 import jonathanlocke.katalyst.nucleus.values.count.Count
 import jonathanlocke.katalyst.sequencer.serialization.*
 import jonathanlocke.katalyst.sequencer.serialization.limiters.SizeSerializationLimiter
-import kotlin.reflect.KClass
 
 /**
  * Serialization of a value to a properties file with the format:
@@ -79,7 +79,7 @@ class PropertiesSerialization<Value : Any>(
      *
      * @see PropertiesDeserializer
      */
-    fun deserialize(type: KClass<Value>, text: String, listener: ProblemListener = Throw()): Value {
+    fun deserialize(type: ValueClass<Value>, text: String, listener: ProblemListener = Throw()): Value {
         return deserializer(type).deserialize(text, listener)
     }
 
@@ -91,7 +91,7 @@ class PropertiesSerialization<Value : Any>(
     /**
      * Deserializer that deserializes a properties file to a value
      */
-    override fun deserializer(type: KClass<Value>): Deserializer<Value> = PropertiesDeserializer(
+    override fun deserializer(type: ValueClass<Value>): Deserializer<Value> = PropertiesDeserializer(
         type, conversionRegistry, limiter
     )
 }

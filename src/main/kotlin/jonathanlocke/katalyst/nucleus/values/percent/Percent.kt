@@ -1,6 +1,7 @@
 package jonathanlocke.katalyst.nucleus.values.percent
 
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter.Companion.stringToValueConverter
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
 import jonathanlocke.katalyst.nucleus.language.strings.formatting.StringFormatter
 import jonathanlocke.katalyst.nucleus.language.strings.formatting.StringFormatter.Companion.format
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
@@ -77,7 +78,7 @@ class Percent(val percentage: Double) : Comparable<Percent> {
     companion object {
 
         fun stringToPercentConverter() =
-            stringToValueConverter(Percent::class) { text, listener -> parsePercent(text, listener) }
+            stringToValueConverter(valueClass(Percent::class)) { text, listener -> parsePercent(text, listener) }
 
         val IntegerFormat = StringFormatter<Percent> { "${it.percentage.toLong()}%" }
         val DecimalFormat = StringFormatter<Percent> { "%.1f%%".format(it.percentage) }

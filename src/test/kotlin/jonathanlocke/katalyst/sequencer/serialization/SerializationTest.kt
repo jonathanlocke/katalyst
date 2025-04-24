@@ -1,5 +1,6 @@
 package jonathanlocke.katalyst.sequencer.serialization
 
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
 import jonathanlocke.katalyst.sequencer.serialization.properties.PropertiesSerialization
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -32,7 +33,7 @@ class SerializationTest {
         // Serialize the value, deserialize it, and ensure they are equal
         val serialization = PropertiesSerialization<X>()
         val text = serialization.serialize(value)
-        val deserialized = serialization.deserialize(X::class, text)
+        val deserialized = serialization.deserialize(valueClass(X::class), text)
         assertEquals(value, deserialized)
     }
 }

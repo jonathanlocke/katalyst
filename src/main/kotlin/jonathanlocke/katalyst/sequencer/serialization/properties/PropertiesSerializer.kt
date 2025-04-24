@@ -4,10 +4,10 @@ import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry.Companion.defaultConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.converters.Converter
 import jonathanlocke.katalyst.cripsr.reflection.PropertyWalker
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
 import jonathanlocke.katalyst.sequencer.serialization.SerializationLimiter
 import jonathanlocke.katalyst.sequencer.serialization.Serializer
-import kotlin.reflect.KClass
 
 /**
  * Serializes a value to a properties file.
@@ -45,10 +45,10 @@ class PropertiesSerializer<Value : Any>(
         val session = PropertiesSerializationSession()
 
         // then walk the properties of the value recursively,
-        PropertyWalker(value).walk { property, type, path, value ->
+        PropertyWalker(value).walk { path, property, value ->
 
             // convert the value to text,
-            val text = toText(listener, type, value)
+            val text = toText(listener, value)
 
             // and if conversion succeeded,
             if (text != null) {
@@ -73,29 +73,37 @@ class PropertiesSerializer<Value : Any>(
     /**
      * Converts a value to a properties file string with the given [conversionRegistry].
      * @param listener A problem listener to report problems to
-     * @param type The type of the value
      * @param value The value to convert
      * @return The converted value as a string
      */
     @Suppress("UNCHECKED_CAST")
-    private fun toText(listener: ProblemListener, type: KClass<*>, value: Any?): String? {
+    private fun toText(listener: ProblemListener, value: Any?): String? {
 
-        // Get the list of conversions for the type,
-        val conversions = conversionRegistry.to(type)
+        // If the value is null,
+        if (value == null) {
 
-        // and if there is a conversion,
-        return if (!conversions.isEmpty()) {
-
-            // get the reverse converter (Value to String),
-            val converter = conversions.first().reverseConverter() as Converter<Any, String?>
-
-            // and convert the value to text,
-            converter.convert(value, listener) ?: "null"
+            // then return "null"
+            return "null"
 
         } else {
 
-            // otherwise there is no conversion for this property.
-            null
+            // otherwise, get the list of conversions for the value,
+            val conversions = conversionRegistry.to(valueClass(value::class))
+
+            // and if there is a conversion,
+            return if (!conversions.isEmpty()) {
+
+                // get the reverse converter (Value to String),
+                val converter = conversions.first().reverseConverter() as Converter<Any, String?>
+
+                // and convert the value to text,
+                converter.convert(value, listener) ?: "null"
+
+            } else {
+
+                // otherwise there is no conversion for this property.
+                null
+            }
         }
     }
 }

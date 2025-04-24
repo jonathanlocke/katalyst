@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.convertase.conversion
 
-import kotlin.reflect.KClass
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass
 
 /**
  * Base class for implementing a [Conversion].
@@ -14,7 +14,10 @@ import kotlin.reflect.KClass
  *
  * @see Conversion
  */
-abstract class ConversionBase<From : Any, To : Any>(override val from: KClass<From>, override val to: KClass<To>) :
+abstract class ConversionBase<From : Any, To : Any>(
+    override val from: ValueClass<From>,
+    override val to: ValueClass<To>
+) :
     Conversion<From, To> {
 
     /**

@@ -2,9 +2,9 @@ package jonathanlocke.katalyst.convertase.conversion
 
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry.Companion.defaultConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
 import jonathanlocke.katalyst.nucleus.language.collections.maps.MultiMap
-import kotlin.reflect.KClass
-import kotlin.reflect.KProperty1
 
 /**
  * Registry of [Conversion]s.
@@ -45,10 +45,10 @@ import kotlin.reflect.KProperty1
 open class ConversionRegistry {
 
     /** Conversions keyed by the From type of the conversion */
-    private val from = MultiMap<KClass<*>, Conversion<*, *>>()
+    private val from = MultiMap<ValueClass<*>, Conversion<*, *>>()
 
     /** Conversions keyed by the To type of the conversion */
-    private val to = MultiMap<KClass<*>, Conversion<*, *>>()
+    private val to = MultiMap<ValueClass<*>, Conversion<*, *>>()
 
     companion object {
 
@@ -60,15 +60,15 @@ open class ConversionRegistry {
     override fun toString(): String {
         return synchronized(this) {
             "Conversions:\n\n" + from.entries().joinToString("\n") { (fromType, conversionsList) ->
-                "${fromType.simpleName.orEmpty()} => ${
+                "${fromType.simpleName} => ${
                     conversionsList.joinToString(", ") { it ->
-                        it.forwardConverter().to.simpleName.orEmpty()
+                        it.forwardConverter().to.simpleName
                     }
                 }\n"
             } + to.entries().joinToString("\n") { (toType, conversionsList) ->
                 "${toType.simpleName} => ${
                     conversionsList.joinToString(",") { it ->
-                        it.from.simpleName.orEmpty()
+                        it.from.simpleName
                     }
                 }"
             }
@@ -97,7 +97,7 @@ open class ConversionRegistry {
      * @param toClass The target type of the conversion
      * @param conversion The conversion to register
      */
-    fun register(fromClass: KClass<*>, toClass: KClass<*>, conversion: Conversion<*, *>) {
+    fun register(fromClass: ValueClass<*>, toClass: ValueClass<*>, conversion: Conversion<*, *>) {
         synchronized(this) {
             from.put(fromClass, conversion)
             to.put(toClass, conversion)
@@ -107,63 +107,54 @@ open class ConversionRegistry {
     /**
      * True if the registry contains a conversion from the given type to another type
      */
-    fun hasConversionFrom(fromType: KClass<*>): Boolean = synchronized(this) {
+    fun hasConversionFrom(fromType: ValueClass<*>): Boolean = synchronized(this) {
         from.containsKey(fromType)
     }
 
     /**
      * True if the registry contains a conversion to the given type from another type
      */
-    fun hasConversionTo(toType: KClass<*>): Boolean = synchronized(this) {
+    fun hasConversionTo(toType: ValueClass<*>): Boolean = synchronized(this) {
         to.containsKey(toType)
     }
 
     /**
      * All the conversions that convert *from* the given type to another type
      */
-    fun from(fromType: KClass<*>): List<Conversion<*, *>> = synchronized(this) {
+    fun from(fromType: ValueClass<*>): List<Conversion<*, *>> = synchronized(this) {
         from[fromType] ?: emptyList()
     }
 
     /**
      * All the conversions that convert *to* the given type to another type
      */
-    fun to(toType: KClass<*>): List<Conversion<*, *>> = synchronized(this) {
+    fun to(toType: ValueClass<*>): List<Conversion<*, *>> = synchronized(this) {
         to[toType] ?: emptyList()
     }
 
     /**
-     * Registers all [Conversion] properties of the companion object
-     * @param companionType The companion object type containing the conversions to register
+     * Registers all [Conversion] and [StringToValueConverter] properties of the given companion object as conversions
+     * in this conversion registry
+     * @param companionObject The value object having a companion object with conversion properties to register
      */
     @Suppress("UNCHECKED_CAST")
-    fun registerAllConversions(companionType: KClass<*>) {
+    fun registerAllConversions(companionObject: Any) {
 
-        // Make sure that the argument is a companion type,
-        require(companionType.isCompanion) { "Type must be a companion object class, was: ${companionType.qualifiedName}" }
+        // For each property of the companion object,
+        valueClass(companionObject::class).memberProperties().forEach { property ->
 
-        // For each member of the companion object,
-        companionType.members.forEach {
+            when (property.valueClass) {
 
-            // that is a property,
-            if (it is KProperty1<*, *>) {
+                // register it if it is a Conversion,
+                valueClass(Conversion::class) -> {
+                    val conversion = property.get(companionObject) as Conversion<*, *>
+                    conversion.register(this)
+                }
 
-                when {
-
-                    // register it if it is a Conversion,
-                    it.returnType.classifier == Conversion::class -> {
-                        val conversion = (it as KProperty1<Any, *>).get(it) as Conversion<*, *>
-                        conversion.register(this)
-                    }
-
-                    // or if it is a StringToValueConverter,
-                    it.returnType.classifier == StringToValueConverter::class -> {
-                        val companion = companionType.objectInstance
-                        if (companion != null) {
-                            val converter = (it as KProperty1<Any, *>).get(companion) as? StringToValueConverter<*>
-                            converter?.register(this)
-                        }
-                    }
+                // or if it is a StringToValueConverter,
+                valueClass(StringToValueConverter::class) -> {
+                    val conversion = property.get(companionObject) as StringToValueConverter<*>
+                    conversion.register(this)
                 }
             }
         }

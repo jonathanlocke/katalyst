@@ -2,6 +2,7 @@ package jonathanlocke.katalyst.nucleus.values.bytes
 
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToValueConverter.Companion.stringToValueConverter
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
 import jonathanlocke.katalyst.nucleus.problems.listeners.Throw
 import jonathanlocke.katalyst.nucleus.values.bytes.Bytes.Companion.exabytes
@@ -84,7 +85,7 @@ class Bytes(val bytes: Double) {
     companion object {
 
         fun stringToBytesConverter(measurementSystem: MeasurementSystem = Metric) =
-            stringToValueConverter(Bytes::class) { text, listener ->
+            stringToValueConverter(valueClass(Bytes::class)) { text, listener ->
                 parseBytes(text, measurementSystem, listener)
             }
 
