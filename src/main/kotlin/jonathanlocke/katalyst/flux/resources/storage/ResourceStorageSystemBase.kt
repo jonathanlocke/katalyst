@@ -1,3 +1,0 @@
-package jonathanlocke.katalyst.flux.resources.storage
-
-abstract class ResourceStorageSystemBase : ResourceStorageSystem
