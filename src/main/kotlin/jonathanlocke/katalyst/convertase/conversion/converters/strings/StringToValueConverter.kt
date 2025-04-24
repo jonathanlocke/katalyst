@@ -10,10 +10,11 @@ import jonathanlocke.katalyst.convertase.conversion.converters.strings.StringToV
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.collections.ListConversion
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.values.StringToNumber
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.values.ValueToString
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
 import jonathanlocke.katalyst.nucleus.language.strings.parsing.Separator
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
 import jonathanlocke.katalyst.nucleus.problems.listeners.Throw
-import kotlin.reflect.KClass
 
 /**
  * Converter from [String] -> [Value]
@@ -37,7 +38,7 @@ interface StringToValueConverter<Value : Any> : Converter<String, Value> {
     /**
      * The class of [Value] (necessary due to type erasure)
      */
-    val valueClass: KClass<Value>
+    val valueClass: ValueClass<Value>
 
     /**
      * Registers this converter with the given [ConversionRegistry]
@@ -48,8 +49,8 @@ interface StringToValueConverter<Value : Any> : Converter<String, Value> {
      * Returns a bidirectional [Conversion] between [String] and [Value] by implementing the forward
      * conversion with this converter and the reverse conversion with a [ValueToString] converter.
      */
-    fun asStringToValueConversion(valueClass: KClass<Value>): Conversion<String, Value> =
-        object : ConversionBase<String, Value>(String::class, valueClass) {
+    fun asStringToValueConversion(valueClass: ValueClass<Value>): Conversion<String, Value> =
+        object : ConversionBase<String, Value>(valueClass(String::class), valueClass) {
             override fun forwardConverter(): Converter<String, Value> = this@StringToValueConverter
             override fun reverseConverter(): Converter<Value, String> = ValueToString(valueClass)
         }
@@ -63,7 +64,7 @@ interface StringToValueConverter<Value : Any> : Converter<String, Value> {
          * @param lambda Converter from String -> [Value]
          */
         fun <Value : Any> stringToValueConverter(
-            valueClass: KClass<Value>,
+            valueClass: ValueClass<Value>,
             lambda: (String, ProblemListener) -> Value?
         ): StringToValueConverter<Value> = (object : StringToValueConverterBase<Value>(valueClass) {
             override fun onToValue(text: String): Value? = lambda.invoke(text, this)

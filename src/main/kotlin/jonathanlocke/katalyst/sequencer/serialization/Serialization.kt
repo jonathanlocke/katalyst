@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.sequencer.serialization
 
-import kotlin.reflect.KClass
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass
 
 /**
  * A serialization implements both a [Serializer] and a [Deserializer]
@@ -15,5 +15,5 @@ interface Serialization<Value : Any> {
     /**
      * The [Value] deserializer
      */
-    fun deserializer(type: KClass<Value>): Deserializer<Value>
+    fun deserializer(type: ValueClass<Value>): Deserializer<Value>
 }

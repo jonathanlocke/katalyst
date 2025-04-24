@@ -1,10 +1,11 @@
 package jonathanlocke.katalyst.convertase.conversion.converters.strings.values
 
 import jonathanlocke.katalyst.convertase.conversion.converters.strings.ValueToStringConverter
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
 import jonathanlocke.katalyst.nucleus.language.strings.formatting.StringFormatter
 import jonathanlocke.katalyst.nucleus.language.strings.formatting.formats.AnyFormatters.Companion.convertToString
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
-import kotlin.reflect.KClass
 
 /**
  * Converts [From] -> [String] by using the given [StringFormatter]. The default formatter is [convertToString],
@@ -21,11 +22,11 @@ import kotlin.reflect.KClass
  * @see ValueToStringConverter
  */
 class ValueToString<From : Any>(
-    override val from: KClass<From>,
+    override val from: ValueClass<From>,
     val formatter: StringFormatter<From> = convertToString()
 ) : ValueToStringConverter<From> {
 
-    override val to: KClass<String> = String::class
+    override val to: ValueClass<String> = valueClass(String::class)
 
     override fun convert(from: From?, listener: ProblemListener): String? =
         if (from != null) formatter.format(from) else "?"

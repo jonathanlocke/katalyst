@@ -3,14 +3,15 @@ package jonathanlocke.katalyst.sequencer.serialization.properties
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.ConversionRegistry.Companion.defaultConversionRegistry
 import jonathanlocke.katalyst.convertase.conversion.converters.Converter
-import jonathanlocke.katalyst.cripsr.reflection.Properties.Companion.kClass
+import jonathanlocke.katalyst.cripsr.reflection.Property
 import jonathanlocke.katalyst.cripsr.reflection.PropertyPath
 import jonathanlocke.katalyst.cripsr.reflection.PropertyPath.Companion.propertyPath
 import jonathanlocke.katalyst.cripsr.reflection.PropertyPath.Companion.rootPropertyPath
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass.Companion.valueClass
 import jonathanlocke.katalyst.nucleus.problems.ProblemListener
 import jonathanlocke.katalyst.sequencer.serialization.Deserializer
-import kotlin.reflect.KClass
-import kotlin.reflect.full.createInstance
+import jonathanlocke.katalyst.sequencer.serialization.SerializationLimiter
 
 /**
  * Deserializes a properties file to a value.
@@ -22,7 +23,7 @@ import kotlin.reflect.full.createInstance
  * @see PropertiesSerialization
  */
 class PropertiesDeserializer<Value : Any>(
-    val type: KClass<Value>,
+    val type: ValueClass<Value>,
     val conversionRegistry: ConversionRegistry = defaultConversionRegistry,
     val limiter: PropertiesSerializationLimiter
 ) : Deserializer<Value> {
@@ -40,7 +41,7 @@ class PropertiesDeserializer<Value : Any>(
         /**
          * The last property path we processed.
          */
-        var lastPath: PropertyPath = rootPropertyPath(Any::class)
+        var lastPath: PropertyPath = rootPropertyPath(valueClass(Any::class))
 
         val pathToValue = mutableMapOf<PropertyPath, Any>()
 
@@ -86,18 +87,22 @@ class PropertiesDeserializer<Value : Any>(
                     val parentProperty = parentPath.property()
                     if (parentProperty == null) {
                         listener.fail("Parent property path '$parentPath' does not exist in type '${type.simpleName}'")
-                        return
+                    } else {
+                        // and initialize it to a new value,
+                        val parentValue = parentProperty.valueClass.createInstance()
+                        val grandparentValue =
+                            pathToValue[parentPath.parent()] ?: run {
+                                listener.fail("Internal error: no path to grandparent")
+                                return
+                            }
+                        @Suppress("UNCHECKED_CAST")
+                        (parentProperty as Property<Any?>).set(grandparentValue, parentValue)
+                        pathToValue[parentPath] = parentValue
                     }
-
-                    // and initialize it to a new value,
-                    val parentValue = parentProperty.kClass().createInstance()
-                    val grandparentValue = pathToValue[parentPath.parent()]
-                    parentProperty.setter.call(grandparentValue, parentValue)
-                    pathToValue[parentPath] = parentValue
                 }
 
                 // then if there is a conversion to the property type,
-                val conversions = conversionRegistry.to(property.kClass())
+                val conversions = conversionRegistry.to(property.valueClass)
                 if (!conversions.isEmpty()) {
 
                     // get the forward converter (String to Value),
@@ -109,7 +114,13 @@ class PropertiesDeserializer<Value : Any>(
                     // set the property value
                     val instance = pathToValue[path.parent()]
                     if (instance != null) {
-                        path.value(instance, converted)
+                        val property = path.property()
+                        if (property != null) {
+                            @Suppress("UNCHECKED_CAST")
+                            (property as Property<Any?>).set(instance, converted)
+                        } else {
+                            listener.fail("Internal error: no property at path")
+                        }
                     }
                 }
 
@@ -148,7 +159,7 @@ class PropertiesDeserializer<Value : Any>(
 
                 // todo: add ValueClass.property(PropertyPath)
                 // todo: add Property.annotations support
-                
+
                 propertyDeserializer.deserialize(propertyPath(type, propertyPathText), valueText)
             }
 

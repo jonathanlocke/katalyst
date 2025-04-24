@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.nucleus.mixins.store
 
+import jonathanlocke.katalyst.cripsr.reflection.ValueClass
 import java.util.*
-import kotlin.reflect.KClass
 
 /**
  * A key used to retrieve a value from a [MixinStore].
@@ -9,7 +9,7 @@ import kotlin.reflect.KClass
  * @property owner The object that owns the value
  * @property type The type of the value
  */
-internal class MixinReference(val owner: Any, val type: KClass<*>) {
+internal class MixinReference(val owner: Any, val type: ValueClass<*>) {
 
     override fun toString(): String = "${System.identityHashCode(owner)}:${type.simpleName}"
 
