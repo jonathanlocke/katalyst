@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.logging
 
-import jonathanlocke.katalyst.logging.loggers.context.CodeContextLogger
+import jonathanlocke.katalyst.logging.loggers.contextual.ContextualLogger
 import jonathanlocke.katalyst.logging.logs.text.ColumnarFormatter
 import jonathanlocke.katalyst.logging.logs.text.ColumnarFormatter.Type.FIXED_WIDTH
 import jonathanlocke.katalyst.logging.logs.text.ColumnarFormatter.Type.VARIABLE_WIDTH
@@ -13,7 +13,7 @@ interface LoggerFactory {
     companion object {
 
         val consoleLoggerFactory: LoggerFactory = object : LoggerFactory {
-            override fun newLogger(): Logger = object : CodeContextLogger() {
+            override fun newLogger(): Logger = object : ContextualLogger() {
                 val formatter = object : ColumnarFormatter<LogEntry>(
                     listOf(
                         Column("Time", 20, FIXED_WIDTH),

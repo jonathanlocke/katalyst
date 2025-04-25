@@ -1,4 +1,4 @@
-package jonathanlocke.katalyst.logging.loggers.context
+package jonathanlocke.katalyst.logging.loggers.contextual
 
 import jonathanlocke.katalyst.logging.Log
 import jonathanlocke.katalyst.logging.LogEntry
@@ -8,17 +8,17 @@ import java.lang.Thread.currentThread
 import java.time.Instant
 import java.util.function.Predicate
 
-abstract class CodeContextLogger : Logger {
+abstract class ContextualLogger : Logger {
 
-    val codeContext = CodeContext.Companion.codeContext()
+    val codeLocation = CodeLocation.Companion.codeContext()
     val filters = mutableListOf<Predicate<LogEntry>>()
 
     override val problems = NullProblemList()
 
-    override fun receive(problem: Problem) = addToLogs(codeContext, currentThread(), problem)
+    override fun receive(problem: Problem) = addToLogs(codeLocation, currentThread(), problem)
     abstract override fun logs(): List<Log>
 
-    private fun addToLogs(context: CodeContext, thread: Thread, problem: Problem) {
+    private fun addToLogs(context: CodeLocation, thread: Thread, problem: Problem) {
         val entry = LogEntry(context, thread, Instant.now(), problem)
         if (shouldLog(entry)) {
             for (log in logs()) {

@@ -1,4 +1,4 @@
-package jonathanlocke.katalyst.logging.loggers.context
+package jonathanlocke.katalyst.logging.loggers.contextual
 
 import jonathanlocke.katalyst.problems.Problem
 
