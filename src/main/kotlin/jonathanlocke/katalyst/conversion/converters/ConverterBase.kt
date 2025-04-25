@@ -1,7 +1,6 @@
 package jonathanlocke.katalyst.conversion.converters
 
 import jonathanlocke.katalyst.problems.Problem
-import jonathanlocke.katalyst.problems.ProblemList
 import jonathanlocke.katalyst.problems.ProblemListener
 import jonathanlocke.katalyst.reflection.ValueType
 
@@ -46,7 +45,7 @@ abstract class ConverterBase<From : Any, To : Any>(
     /** True if this converter allows null values */
     val nullAllowed: Boolean = false
 
-    override val problems: ProblemList get() = listener.problems
+    override val problems: MutableList<Problem> get() = listener.problems
 
     /** The listener to use when handling conversion problems */
     private lateinit var listener: ProblemListener

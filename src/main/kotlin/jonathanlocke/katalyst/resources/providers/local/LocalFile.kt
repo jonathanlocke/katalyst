@@ -1,4 +1,4 @@
-package jonathanlocke.katalyst.resources.providers.filesystem.local
+package jonathanlocke.katalyst.resources.providers.local
 
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.bytes

@@ -66,7 +66,7 @@ import java.util.function.Supplier
  */
 interface ProblemListener {
 
-    val problems: ProblemList
+    val problems: MutableList<Problem>
 
     /**
      * Forces a failure state that throws an exception which includes all problems this listener has encountered
@@ -82,14 +82,11 @@ interface ProblemListener {
         problems.add(problem)
     }
 
-    fun failure(message: String, cause: Throwable? = null, value: Any? = null) =
-        receive(Failure(message, cause, value))
+    fun failure(message: String, cause: Throwable? = null, value: Any? = null) = receive(Failure(message, cause, value))
 
-    fun error(message: String, cause: Throwable? = null, value: Any? = null) =
-        receive(Error(message, cause, value))
+    fun error(message: String, cause: Throwable? = null, value: Any? = null) = receive(Error(message, cause, value))
 
-    fun warning(message: String, cause: Throwable? = null, value: Any? = null) =
-        receive(Warning(message, cause, value))
+    fun warning(message: String, cause: Throwable? = null, value: Any? = null) = receive(Warning(message, cause, value))
 
     /**
      * Guards the given functional code block by catching exceptions and reporting them as errors
