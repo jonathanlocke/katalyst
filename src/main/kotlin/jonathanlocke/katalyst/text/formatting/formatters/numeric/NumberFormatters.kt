@@ -1,4 +1,4 @@
-package jonathanlocke.katalyst.text.formatting.formats
+package jonathanlocke.katalyst.text.formatting.formatters.numeric
 
 import jonathanlocke.katalyst.text.formatting.Formatter
 

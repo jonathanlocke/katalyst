@@ -5,7 +5,7 @@ import jonathanlocke.katalyst.problems.ProblemListener
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.text.formatting.Formatter
-import jonathanlocke.katalyst.text.formatting.formats.AnyFormatters.Companion.convertToString
+import jonathanlocke.katalyst.text.formatting.formatters.AnyFormatters.Companion.convertToString
 
 /**
  * Converts [From] -> [String] by using the given [Formatter]. The default formatter is [convertToString],

@@ -9,6 +9,6 @@ import jonathanlocke.katalyst.problems.Problem.Effect.CONTINUE
  * @param message A message
  * @see Problem
  */
-open class Information(message: String) : Problem(message) {
+open class Info(message: String) : Problem(message) {
     override val effect = CONTINUE
 }

@@ -1,31 +1,33 @@
 package jonathanlocke.katalyst.logging
 
-import jonathanlocke.katalyst.logging.LogBase.LogMode.ASYNCHRONOUS
-import java.util.concurrent.ArrayBlockingQueue
+import jonathanlocke.katalyst.logging.Log.Mode.ASYNCHRONOUS
+import jonathanlocke.katalyst.logging.Log.Mode.SYNCHRONOUS
 
-abstract class LogBase protected constructor(private val mode: LogMode = ASYNCHRONOUS) : Log {
+abstract class LogBase : Log {
 
-    enum class LogMode {
-        SYNCHRONOUS,
-        ASYNCHRONOUS
-    }
+    private val logEntryQueue = LogEntryQueue(this)
 
-    private val queue: ArrayBlockingQueue<LogEntry> by lazy { ArrayBlockingQueue<LogEntry>(2048) }
+    override var mode: Log.Mode = SYNCHRONOUS
+        set(value) {
+            if (field != value) {
+                field = value
+                when (value) {
+                    ASYNCHRONOUS -> logEntryQueue.start()
+                    SYNCHRONOUS -> logEntryQueue.stop()
+                }
+            }
+        }
 
     init {
         if (mode == ASYNCHRONOUS) {
-            Thread {
-                while (true) {
-                    onReceive(queue.take())
-                }
-            }.start()
+            logEntryQueue.start()
         }
     }
 
     override fun receive(entry: LogEntry) {
         when (mode) {
-            LogMode.SYNCHRONOUS -> onReceive(entry)
-            ASYNCHRONOUS -> queue.offer(entry)
+            SYNCHRONOUS -> onReceive(entry)
+            ASYNCHRONOUS -> logEntryQueue.offer(entry)
         }
     }
 

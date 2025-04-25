@@ -3,23 +3,27 @@ package jonathanlocke.katalyst.logging.loggers.contextual
 import jonathanlocke.katalyst.logging.Log
 import jonathanlocke.katalyst.logging.LogEntry
 import jonathanlocke.katalyst.logging.Logger
+import jonathanlocke.katalyst.logging.loggers.contextual.CodeLocation.Companion.codeLocation
 import jonathanlocke.katalyst.problems.Problem
 import java.lang.Thread.currentThread
+import java.time.Duration.between
 import java.time.Instant
 import java.util.function.Predicate
 
-abstract class ContextualLogger : Logger {
+class ContextualLogger(val logs: List<Log>) : Logger {
 
-    val codeLocation = CodeLocation.Companion.codeContext()
+    val codeLocation = codeLocation()
     val filters = mutableListOf<Predicate<LogEntry>>()
+    val created = Instant.now()
 
-    override val problems = NullProblemList()
+    override fun problems() = NullProblemList()
 
     override fun receive(problem: Problem) = addToLogs(codeLocation, currentThread(), problem)
-    abstract override fun logs(): List<Log>
+    override fun logs(): List<Log> = logs
 
-    private fun addToLogs(context: CodeLocation, thread: Thread, problem: Problem) {
-        val entry = LogEntry(context, thread, Instant.now(), problem)
+    private fun addToLogs(location: CodeLocation, thread: Thread, problem: Problem) {
+        val now = Instant.now()
+        val entry = LogEntry(now, between(created, now), thread, location, problem)
         if (shouldLog(entry)) {
             for (log in logs()) {
                 log.receive(entry)

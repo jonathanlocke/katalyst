@@ -13,7 +13,7 @@ class ProblemList(
     private val problemList: MutableList<Problem> = safeMutableList("problems")
 ) : MutableList<Problem> by problemList, ProblemListener {
 
-    override val problems: ProblemList = this
+    override fun problems() = this
 
     fun errors() = problemList.filter { it.effect == STOP }.size
     fun warnings() = problemList.filter { it.effect == CONTINUE }.size

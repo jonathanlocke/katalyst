@@ -66,20 +66,20 @@ import java.util.function.Supplier
  */
 interface ProblemListener {
 
-    val problems: MutableList<Problem>
+    fun problems(): MutableList<Problem>
 
     /**
      * Forces a failure state that throws an exception which includes all problems this listener has encountered
      */
     fun fail(message: String) {
-        throw ProblemException(message, problems)
+        throw ProblemException(message, problems())
     }
 
     /**
      * Extension point for handling a problem
      */
     fun receive(problem: Problem) {
-        problems.add(problem)
+        problems().add(problem)
     }
 
     fun failure(message: String, cause: Throwable? = null, value: Any? = null) = receive(Failure(message, cause, value))

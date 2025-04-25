@@ -45,7 +45,7 @@ abstract class ConverterBase<From : Any, To : Any>(
     /** True if this converter allows null values */
     val nullAllowed: Boolean = false
 
-    override val problems: MutableList<Problem> get() = listener.problems
+    override fun problems() = listener.problems()
 
     /** The listener to use when handling conversion problems */
     private lateinit var listener: ProblemListener

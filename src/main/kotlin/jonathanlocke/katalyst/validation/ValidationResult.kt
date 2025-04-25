@@ -32,12 +32,12 @@ import jonathanlocke.katalyst.validation.problems.ValidationWarning
  */
 class ValidationResult<Value : Any>(val value: Value) : ProblemListener {
 
-    override val problems = ProblemList()
+    override fun problems() = ProblemList()
 
-    val isValid = problems.isValid()
-    val isInvalid = problems.isInvalid()
-    val errors = problems.errors()
-    val warnings = problems.warnings()
+    val isValid = problems().isValid()
+    val isInvalid = problems().isInvalid()
+    val errors = problems().errors()
+    val warnings = problems().warnings()
 
     override fun receive(problem: Problem) {
         if (problem is Error) validationError(problem.message, problem.cause)
@@ -45,8 +45,8 @@ class ValidationResult<Value : Any>(val value: Value) : ProblemListener {
     }
 
     fun validationError(message: String, cause: Throwable? = null) =
-        problems.add(ValidationError(message, cause, value))
+        problems().add(ValidationError(message, cause, value))
 
     fun validationWarning(message: String, cause: Throwable? = null) =
-        problems.add(ValidationWarning(message, cause, value))
+        problems().add(ValidationWarning(message, cause, value))
 }

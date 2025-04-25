@@ -4,7 +4,9 @@ import jonathanlocke.katalyst.problems.categories.Failure
 
 abstract class ProblemListenerBase() : ProblemListener {
 
-    override val problems: ProblemList by lazy { ProblemList() }
+    private val problems = lazy { ProblemList() }
+
+    override fun problems(): ProblemList = problems.value
 
     final override fun receive(problem: Problem) {
         if (problem is Failure) fail("Failure encountered")
