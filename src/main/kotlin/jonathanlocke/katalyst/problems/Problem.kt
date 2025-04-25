@@ -2,7 +2,6 @@ package jonathanlocke.katalyst.problems
 
 import jonathanlocke.katalyst.problems.categories.Error
 import jonathanlocke.katalyst.problems.categories.Warning
-import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.validation.problems.ValidationError
 import jonathanlocke.katalyst.validation.problems.ValidationWarning
 
@@ -23,8 +22,6 @@ import jonathanlocke.katalyst.validation.problems.ValidationWarning
  * @see ValidationWarning
  */
 abstract class Problem(val message: String, val cause: Throwable? = null, val value: Any? = null) {
-
-    val type = valueType(this::class)
 
     enum class Effect { STOP, CONTINUE }
 
