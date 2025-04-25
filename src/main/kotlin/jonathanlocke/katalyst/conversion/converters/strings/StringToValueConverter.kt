@@ -12,7 +12,7 @@ import jonathanlocke.katalyst.conversion.converters.strings.values.ValueToString
 import jonathanlocke.katalyst.problems.ProblemListener
 import jonathanlocke.katalyst.problems.listeners.Throw
 import jonathanlocke.katalyst.reflection.ValueType
-import jonathanlocke.katalyst.reflection.ValueType.Companion.propertyClass
+import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.text.parsing.Separator
 
 /**
@@ -48,7 +48,7 @@ interface StringToValueConverter<Value : Any> : Converter<String, Value> {
      * conversion with this converter and the reverse conversion with a [ValueToString] converter.
      */
     fun asStringToValueConversion(type: ValueType<Value>): Conversion<String, Value> =
-        object : ConversionBase<String, Value>(propertyClass(String::class), type) {
+        object : ConversionBase<String, Value>(valueType(String::class), type) {
             override fun forwardConverter(): Converter<String, Value> = this@StringToValueConverter
             override fun reverseConverter(): Converter<Value, String> = ValueToString(type)
         }

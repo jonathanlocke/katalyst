@@ -14,7 +14,7 @@ import jonathanlocke.katalyst.problems.listeners.Throw
  * @see SafetyMetadata
  * @see ProblemListener
  */
-class SafeMutableSet<Member : Any> internal constructor(
+class SafeSet<Member : Any> internal constructor(
     override val metadata: SafetyMetadata,
     override val problemListener: ProblemListener = Throw(),
     private val set: MutableSet<Member>

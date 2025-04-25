@@ -5,7 +5,7 @@ import jonathanlocke.katalyst.conversion.ConversionRegistry.Companion.defaultCon
 import jonathanlocke.katalyst.conversion.converters.Converter
 import jonathanlocke.katalyst.problems.ProblemListener
 import jonathanlocke.katalyst.reflection.ValueType
-import jonathanlocke.katalyst.reflection.ValueType.Companion.propertyClass
+import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.reflection.properties.Property
 import jonathanlocke.katalyst.reflection.properties.PropertyPath
 import jonathanlocke.katalyst.reflection.properties.PropertyPath.Companion.propertyPath
@@ -41,7 +41,7 @@ class PropertiesDeserializer<Value : Any>(
         /**
          * The last property path we processed.
          */
-        var lastPath: PropertyPath = rootPropertyPath(propertyClass(Any::class))
+        var lastPath: PropertyPath = rootPropertyPath(valueType(Any::class))
 
         val pathToValue = mutableMapOf<PropertyPath, Any>()
 

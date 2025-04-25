@@ -4,7 +4,7 @@ import jonathanlocke.katalyst.conversion.ConversionRegistry.Companion.defaultCon
 import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConverter
 import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeMutableMultiMap
 import jonathanlocke.katalyst.reflection.ValueType
-import jonathanlocke.katalyst.reflection.ValueType.Companion.propertyClass
+import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 
 /**
  * Registry of [Conversion]s.
@@ -141,18 +141,18 @@ open class ConversionRegistry() {
     fun registerAllConversions(companionObject: Any) {
 
         // For each property of the companion object,
-        propertyClass(companionObject::class).memberProperties().forEach { property ->
+        valueType(companionObject::class).memberProperties().forEach { property ->
 
             when (property.type) {
 
                 // register it if it is a Conversion,
-                propertyClass(Conversion::class) -> {
+                valueType(Conversion::class) -> {
                     val conversion = property.get(companionObject) as Conversion<*, *>
                     conversion.register(this)
                 }
 
                 // or if it is a StringToValueConverter,
-                propertyClass(StringToValueConverter::class) -> {
+                valueType(StringToValueConverter::class) -> {
                     val conversion = property.get(companionObject) as StringToValueConverter<*>
                     conversion.register(this)
                 }

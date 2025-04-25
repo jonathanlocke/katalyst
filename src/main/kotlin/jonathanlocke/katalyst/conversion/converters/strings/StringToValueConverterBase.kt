@@ -3,7 +3,7 @@ package jonathanlocke.katalyst.conversion.converters.strings
 import jonathanlocke.katalyst.conversion.ConversionRegistry
 import jonathanlocke.katalyst.conversion.converters.ConverterBase
 import jonathanlocke.katalyst.reflection.ValueType
-import jonathanlocke.katalyst.reflection.ValueType.Companion.propertyClass
+import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 
 /**
  * Base class for implementing converters from [String] -> [Value]. If the input String is non-null (or nulls
@@ -36,7 +36,7 @@ import jonathanlocke.katalyst.reflection.ValueType.Companion.propertyClass
  * @see StringToValueConverter
  */
 abstract class StringToValueConverterBase<Value : Any>(override val type: ValueType<Value>) :
-    ConverterBase<String, Value>(propertyClass(String::class), type),
+    ConverterBase<String, Value>(valueType(String::class), type),
     StringToValueConverter<Value> {
 
     /** True if blank strings are allowed */

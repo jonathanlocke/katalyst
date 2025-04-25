@@ -8,7 +8,7 @@ import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.Thousand
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.parseCount
 import jonathanlocke.katalyst.problems.ProblemListener
 import jonathanlocke.katalyst.problems.listeners.Throw
-import jonathanlocke.katalyst.reflection.ValueType.Companion.propertyClass
+import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.text.formatting.Formattable
 import jonathanlocke.katalyst.text.formatting.Formatter
 
@@ -51,7 +51,7 @@ value class Count private constructor(val count: Long) : Comparable<Count>, Form
         /**
          * Returns a converter that converts a string to a [Count], reporting any problems to the given listener.
          */
-        fun countConverter() = stringToValueConverter(propertyClass(Count::class)) { text, listener ->
+        fun countConverter() = stringToValueConverter(valueType(Count::class)) { text, listener ->
             text.convert(longConverter, Throw())?.toCount() ?: listener.error("Could not parse count: $text")
                 .let { null }
         }

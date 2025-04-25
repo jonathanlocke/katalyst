@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.reflection.properties
 
-import jonathanlocke.katalyst.reflection.ValueType.Companion.propertyClass
+import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import java.util.function.Predicate
 
 class PropertyWalker<Value : Any>(val rootValue: Value) {
@@ -36,7 +36,7 @@ class PropertyWalker<Value : Any>(val rootValue: Value) {
      * @param visitor The visitor to call for each property
      */
     fun walk(filter: Predicate<Property<*>> = PUBLIC_PROPERTIES, recursive: Boolean = true, visitor: PropertyVisitor) =
-        walk(Walk(rootValue, PropertyPath(propertyClass(rootValue::class)), filter, recursive), visitor)
+        walk(Walk(rootValue, PropertyPath(valueType(rootValue::class)), filter, recursive), visitor)
 
     /**
      * Implementation of recursive property walking
@@ -46,7 +46,7 @@ class PropertyWalker<Value : Any>(val rootValue: Value) {
     private fun walk(walk: Walk, propertyVisitor: PropertyVisitor) {
 
         // For each declared property in the current value,
-        for (property in propertyClass(walk.at::class).declaredProperties()) {
+        for (property in valueType(walk.at::class).declaredProperties()) {
 
             // if the property can be accessed,
             if (property.canGet(walk.at)) {

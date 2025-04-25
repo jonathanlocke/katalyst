@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.data.structures.maps
 
 import jonathanlocke.katalyst.data.structures.SafeDataStructure
-import jonathanlocke.katalyst.data.structures.lists.SafeMutableList
+import jonathanlocke.katalyst.data.structures.lists.SafeList
 import jonathanlocke.katalyst.data.values.numeric.count.Count
 import jonathanlocke.katalyst.problems.ProblemListener
 import jonathanlocke.katalyst.problems.listeners.Throw
@@ -16,11 +16,11 @@ import jonathanlocke.katalyst.problems.listeners.Throw
  * @see SafetyMetadata
  * @see ProblemListener
  */
-class SafeMutableMultiMap<Key : Any, Value : Any> internal constructor(
+class SafeMultiMap<Key : Any, Value : Any> internal constructor(
     override val metadata: SafetyMetadata,
     override val problemListener: ProblemListener = Throw(),
     private val newUnsafeMutableList: (Count) -> MutableList<Value> = { size -> ArrayList(size.asInt()) },
-    internal val map: SafeMutableMap<Key, SafeMutableList<Value>> = SafeMutableMap(metadata, problemListener)
+    internal val map: SafeMap<Key, SafeList<Value>> = SafeMap(metadata, problemListener)
 ) : SafeDataStructure(metadata, problemListener) {
 
     var totalSize = 0
@@ -36,7 +36,7 @@ class SafeMutableMultiMap<Key : Any, Value : Any> internal constructor(
     fun put(key: Key, value: Value) {
         ensureSafeToAdd(1)
         map.getOrPut(key) {
-            SafeMutableList(metadata, problemListener, newUnsafeMutableList.invoke(metadata.estimatedSize))
+            SafeList(metadata, problemListener, newUnsafeMutableList.invoke(metadata.estimatedSize))
         }.add(value)
         totalSize += 1
     }
@@ -44,12 +44,12 @@ class SafeMutableMultiMap<Key : Any, Value : Any> internal constructor(
     fun putAll(key: Key, values: Collection<Value>) {
         ensureSafeToAdd(values.size)
         map.getOrPut(key) {
-            SafeMutableList(metadata, problemListener, newUnsafeMutableList.invoke(metadata.estimatedSize))
+            SafeList(metadata, problemListener, newUnsafeMutableList.invoke(metadata.estimatedSize))
         }.addAll(values)
         totalSize += values.size
     }
 
-    fun putAll(multiMap: SafeMutableMultiMap<Key, Value>) = {
+    fun putAll(multiMap: SafeMultiMap<Key, Value>) = {
         ensureSafeToAdd(multiMap.totalSize)
         multiMap.map.forEach { (key, values) -> putAll(key, values) }
         totalSize += multiMap.totalSize

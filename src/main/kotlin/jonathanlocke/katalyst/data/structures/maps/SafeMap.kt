@@ -14,7 +14,7 @@ import jonathanlocke.katalyst.problems.listeners.Throw
  * @see SafetyMetadata
  * @see ProblemListener
  */
-class SafeMutableMap<Key : Any, Value> internal constructor(
+class SafeMap<Key : Any, Value> internal constructor(
     override val metadata: SafetyMetadata,
     override val problemListener: ProblemListener = Throw(),
     private val map: MutableMap<Key, Value> = HashMap(metadata.estimatedSize.asInt())

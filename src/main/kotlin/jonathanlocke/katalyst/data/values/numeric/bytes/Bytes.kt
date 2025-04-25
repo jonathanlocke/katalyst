@@ -20,7 +20,7 @@ import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.UnitSystem.IecUnit
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.UnitSystem.SiUnits
 import jonathanlocke.katalyst.problems.ProblemListener
 import jonathanlocke.katalyst.problems.listeners.Throw
-import jonathanlocke.katalyst.reflection.ValueType.Companion.propertyClass
+import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.text.formatting.Formattable
 import jonathanlocke.katalyst.text.formatting.Formatter
 import java.text.DecimalFormat
@@ -96,7 +96,7 @@ class Bytes(val bytes: Double) : Formattable<Bytes>, Numeric {
         val IecUnitsFormatter = Formatter<Bytes> { it.asIecUnitsString() }
 
         fun bytesConverter(unitSystem: UnitSystem = SiUnits) =
-            stringToValueConverter(propertyClass(Bytes::class)) { text, listener ->
+            stringToValueConverter(valueType(Bytes::class)) { text, listener ->
                 parseBytes(text, unitSystem, listener)
             }
 

@@ -11,7 +11,7 @@ import jonathanlocke.katalyst.conversion.converters.strings.values.ValueToString
 import jonathanlocke.katalyst.problems.ProblemListener
 import jonathanlocke.katalyst.problems.listeners.Throw
 import jonathanlocke.katalyst.reflection.ValueType
-import jonathanlocke.katalyst.reflection.ValueType.Companion.propertyClass
+import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.text.parsing.Separator
 
 /**
@@ -61,13 +61,13 @@ class ListConversion<Value : Any>(
     val defaultToStringValue: String = "?"
 
 ) : ConversionBase<String, List<Value>>(
-    propertyClass(String::class),
-    propertyClass(List::class) as ValueType<List<Value>>
+    valueType(String::class),
+    valueType(List::class) as ValueType<List<Value>>
 ) {
 
     @Suppress("UNCHECKED_CAST")
     override fun forwardConverter(): StringToValueConverter<List<Value>> = stringToValueConverter(
-        propertyClass(List::class) as ValueType<List<Value>>
+        valueType(List::class) as ValueType<List<Value>>
     ) { text, listener ->
         separator.split(text).map { member ->
             stringToValueConverter.convert(member, stringToValueProblemListener)
@@ -76,7 +76,7 @@ class ListConversion<Value : Any>(
     }
 
     override fun reverseConverter(): Converter<List<Value>, String> = object :
-        ConverterBase<List<Value>, String>(List::class as ValueType<List<Value>>, propertyClass(String::class)) {
+        ConverterBase<List<Value>, String>(List::class as ValueType<List<Value>>, valueType(String::class)) {
         override fun onConvert(from: List<Value>): String = separator.join(from.map {
             valueToStringConverter.convert(it, valueToStringProblemListener) ?: defaultToStringValue
         }.toList())

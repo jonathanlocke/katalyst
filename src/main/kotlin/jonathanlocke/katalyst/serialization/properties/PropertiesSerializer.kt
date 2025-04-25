@@ -4,7 +4,7 @@ import jonathanlocke.katalyst.conversion.ConversionRegistry
 import jonathanlocke.katalyst.conversion.ConversionRegistry.Companion.defaultConversionRegistry
 import jonathanlocke.katalyst.conversion.converters.Converter
 import jonathanlocke.katalyst.problems.ProblemListener
-import jonathanlocke.katalyst.reflection.ValueType.Companion.propertyClass
+import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.reflection.properties.PropertyWalker
 import jonathanlocke.katalyst.serialization.SerializationLimiter
 import jonathanlocke.katalyst.serialization.Serializer
@@ -88,7 +88,7 @@ class PropertiesSerializer<Value : Any>(
         } else {
 
             // otherwise, get the list of conversions for the value,
-            val conversions = conversionRegistry.to(propertyClass(value::class))
+            val conversions = conversionRegistry.to(valueType(value::class))
 
             // and if there is a conversion,
             return if (!conversions.isEmpty()) {

@@ -9,7 +9,7 @@ import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.perc
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.percentConverter
 import jonathanlocke.katalyst.problems.ProblemListener
 import jonathanlocke.katalyst.problems.listeners.Throw
-import jonathanlocke.katalyst.reflection.ValueType.Companion.propertyClass
+import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.text.formatting.Formattable
 import jonathanlocke.katalyst.text.formatting.Formatter
 
@@ -97,7 +97,7 @@ class Percent(val percent: Double) : Comparable<Percent>, Formattable<Percent>, 
          * Returns a converter that converts a string to a [Percent], reporting any problems to the given listener.
          */
         fun percentConverter() =
-            stringToValueConverter(propertyClass(Percent::class)) { text, listener -> parsePercent(text, listener) }
+            stringToValueConverter(valueType(Percent::class)) { text, listener -> parsePercent(text, listener) }
 
         val IntegerFormat = Formatter<Percent> { "${it.percent.toLong()}%" }
         val DecimalFormat = Formatter<Percent> { "%.1f%%".format(it.percent) }

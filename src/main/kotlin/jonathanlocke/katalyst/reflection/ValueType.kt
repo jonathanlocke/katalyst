@@ -8,7 +8,7 @@ interface ValueType<T : Any> {
 
     companion object {
 
-        fun <T : Any> propertyClass(kClass: KClass<T>) = KotlinValueType(kClass)
+        fun <T : Any> valueType(kClass: KClass<T>) = KotlinValueType(kClass)
     }
 
     val simpleName: String

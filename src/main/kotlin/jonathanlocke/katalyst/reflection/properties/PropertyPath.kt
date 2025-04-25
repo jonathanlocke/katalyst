@@ -33,7 +33,6 @@ class PropertyPath(val type: ValueType<*>) : ArrayList<String>() {
 
     /**
      * Returns the property at this path in the given type.
-     * @param type The type to search for the property.
      * @return The property at this path in the given type, or null if it does not exist.
      */
     fun property(): Property<*>? {

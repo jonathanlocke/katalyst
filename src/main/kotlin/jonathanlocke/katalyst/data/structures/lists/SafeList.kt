@@ -15,7 +15,7 @@ import jonathanlocke.katalyst.problems.listeners.Throw
  * @see ProblemListener
  * @see SafeDataStructure
  */
-class SafeMutableList<Element : Any> internal constructor(
+class SafeList<Element : Any> internal constructor(
     override val metadata: SafetyMetadata,
     override val problemListener: ProblemListener = Throw(),
     private val list: MutableList<Element>

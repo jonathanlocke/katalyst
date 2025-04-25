@@ -1,19 +1,19 @@
-package jonathanlocke.katalyst.data.structures.maps
+package jonathanlocke.katalyst.data.structures.sets
 
-import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeMutableMap
+import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeMutableSet
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.count
 import jonathanlocke.katalyst.problems.ProblemException
 import jonathanlocke.katalyst.problems.ProblemList
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.Test
 
-class SafeMutableMapTest {
+class SafeSetTest {
 
     @Test
     fun testWarning() {
         val problems = ProblemList()
-        val map = safeMutableMap<Int, String>(warningSize = count(10), problemListener = problems)
-        (1..100).forEach { map[it] = it.toString() }
+        val set = safeMutableSet<Int>(warningSize = count(10), problemListener = problems)
+        set.addAll(1..100)
         assert(problems.size == 1)
         assert(problems.isValid())
         assert(problems.warnings() == 1)
@@ -23,8 +23,8 @@ class SafeMutableMapTest {
     @Test
     fun testError() {
         assertThrows<ProblemException> {
-            val map = safeMutableMap<Int, String>(maximumSize = count(10))
-            (1..100).forEach { map[it] = it.toString() }
+            val set = safeMutableSet<Int>(maximumSize = count(10))
+            set.addAll(1..100)
         }
     }
 }

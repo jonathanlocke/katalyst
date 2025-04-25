@@ -6,7 +6,7 @@ import jonathanlocke.katalyst.conversion.converters.Converter
 import jonathanlocke.katalyst.conversion.converters.ConverterBase
 import jonathanlocke.katalyst.problems.ProblemListener
 import jonathanlocke.katalyst.reflection.ValueType
-import jonathanlocke.katalyst.reflection.ValueType.Companion.propertyClass
+import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 
 /**
  * A conversion supplies [From] -> [To] (forward) and [To] -> [From] (reverse) converters.
@@ -98,10 +98,10 @@ interface Conversion<From : Any, To : Any> {
             valueToStringLambda: (Value?, ProblemListener) -> String? = { value, listener -> value.toString() },
             stringToValueLambda: (String, ProblemListener) -> Value?
         ): Conversion<String, Value> =
-            object : ConversionBase<String, Value>(propertyClass(String::class), type) {
+            object : ConversionBase<String, Value>(valueType(String::class), type) {
 
                 override fun forwardConverter(): Converter<String, Value> = object : ConverterBase<String, Value>(
-                    propertyClass(String::class), type
+                    valueType(String::class), type
                 ) {
                     override fun onConvert(from: String): Value? {
                         return stringToValueLambda(from, this)
@@ -110,7 +110,7 @@ interface Conversion<From : Any, To : Any> {
 
                 override fun reverseConverter(): Converter<Value, String> = object : Converter<Value, String> {
                     override val from = type
-                    override val to = propertyClass(String::class)
+                    override val to = valueType(String::class)
                     override fun convert(from: Value?, listener: ProblemListener): String? {
                         return valueToStringLambda(from, listener)
                     }

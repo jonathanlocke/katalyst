@@ -1,7 +1,9 @@
 package jonathanlocke.katalyst.reflection.properties.kotlin
 
-import jonathanlocke.katalyst.reflection.ValueType.Companion.propertyClass
+import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.reflection.properties.Property
+import jonathanlocke.katalyst.reflection.properties.Property.Visibility
+import jonathanlocke.katalyst.reflection.properties.Property.Visibility.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
@@ -10,17 +12,17 @@ import kotlin.reflect.KVisibility
 
 class KotlinProperty<T : Any>(val property: KProperty<T>) : Property<T> {
 
-    override val visibility: Property.Visibility = when (property.visibility) {
-        KVisibility.PUBLIC -> Property.Visibility.PUBLIC
-        KVisibility.PRIVATE -> Property.Visibility.PRIVATE
-        KVisibility.PROTECTED -> Property.Visibility.PROTECTED
-        else -> Property.Visibility.PUBLIC
+    override val visibility: Visibility = when (property.visibility) {
+        KVisibility.PUBLIC -> PUBLIC
+        KVisibility.PRIVATE -> PRIVATE
+        KVisibility.PROTECTED -> PROTECTED
+        else -> PUBLIC
     }
 
     override val name = property.name
 
     @Suppress("UNCHECKED_CAST")
-    override val type = propertyClass(property.returnType.classifier as KClass<T>)
+    override val type = valueType(property.returnType.classifier as KClass<T>)
     override fun get(instance: Any): T? = property.getter.call(instance)
     override fun set(instance: Any, value: T?) {
         if (property is KMutableProperty<*>) {
