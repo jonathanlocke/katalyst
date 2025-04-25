@@ -5,7 +5,7 @@ import jonathanlocke.katalyst.conversion.ConversionRegistry.Companion.defaultCon
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.megabytes
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.count
 import jonathanlocke.katalyst.problems.ProblemListener
-import jonathanlocke.katalyst.problems.listeners.Throw
+import jonathanlocke.katalyst.problems.listeners.ThrowOnError.Companion.throwOnError
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.serialization.*
 import jonathanlocke.katalyst.serialization.limiters.SizeSerializationLimiter
@@ -66,8 +66,8 @@ class PropertiesSerialization<Value : Any>(
      *
      * @see PropertiesSerializer
      */
-    fun serialize(value: Value, listener: ProblemListener = Throw()): String {
-        return serializer().serialize(value, listener)
+    fun serialize(value: Value, listener: ProblemListener = throwOnError): String {
+        return serializer().serialize(listener, value)
     }
 
     /**
@@ -79,7 +79,7 @@ class PropertiesSerialization<Value : Any>(
      *
      * @see PropertiesDeserializer
      */
-    fun deserialize(type: ValueType<Value>, text: String, listener: ProblemListener = Throw()): Value {
+    fun deserialize(type: ValueType<Value>, text: String, listener: ProblemListener = throwOnError): Value {
         return deserializer(type).deserialize(text, listener)
     }
 

@@ -19,7 +19,7 @@ import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.terabyte
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.UnitSystem.IecUnits
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.UnitSystem.SiUnits
 import jonathanlocke.katalyst.problems.ProblemListener
-import jonathanlocke.katalyst.problems.listeners.Throw
+import jonathanlocke.katalyst.problems.listeners.ThrowOnError.Companion.throwOnError
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.text.formatting.Formattable
 import jonathanlocke.katalyst.text.formatting.Formatter
@@ -66,7 +66,6 @@ import java.text.DecimalFormat
  * @property bytes The byte count
  * @see ProblemListener
  */
-@Suppress("SpellCheckingInspection")
 class Bytes(val bytes: Double) : Formattable<Bytes>, Numeric {
 
     enum class UnitSystem(val radix: Double, suffixPattern: String) {
@@ -117,10 +116,10 @@ class Bytes(val bytes: Double) : Formattable<Bytes>, Numeric {
         fun pebibytes(value: Number) = tebibytes(value.toDouble() * IecUnits.radix)
         fun exbibytes(value: Number) = pebibytes(value.toDouble() * IecUnits.radix)
 
-        fun parseBytes(text: String, system: UnitSystem = SiUnits): Bytes = parseBytes(text, system, Throw())!!
+        fun parseBytes(text: String, system: UnitSystem = SiUnits): Bytes = parseBytes(text, system, throwOnError)!!
 
         fun parseBytes(
-            text: String, system: UnitSystem = SiUnits, listener: ProblemListener = Throw()
+            text: String, system: UnitSystem = SiUnits, listener: ProblemListener = throwOnError
         ): Bytes? {
 
             val match = system.pattern.matchEntire(text)

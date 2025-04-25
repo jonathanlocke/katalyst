@@ -46,7 +46,7 @@ abstract class StringToValueConverterBase<Value : Any>(override val type: ValueT
      * Registers this converter with the [ConversionRegistry]
      */
     override fun register(conversionRegistry: ConversionRegistry) =
-        asStringToValueConversion(type).register(conversionRegistry)
+        toStringToValueConversion(type).register(conversionRegistry)
 
     /**
      * {@inheritDoc}

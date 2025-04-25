@@ -10,6 +10,6 @@ class ValidationTest {
 
     @Test
     fun testSuccess() {
-        assertTrue(1.isValid(isGreaterThan(0), isLessThan(2)))
+        assertTrue(isValid(1, isGreaterThan(0), isLessThan(2)))
     }
 }

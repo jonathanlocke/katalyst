@@ -2,7 +2,8 @@ package jonathanlocke.katalyst.conversion
 
 import jonathanlocke.katalyst.conversion.ConversionRegistry.Companion.defaultConversionRegistry
 import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConverter
-import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeMutableMultiMap
+import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeList
+import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeMultiMap
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 
@@ -45,10 +46,10 @@ import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 open class ConversionRegistry() {
 
     /** Conversions keyed by the From type of the conversion */
-    private val from = safeMutableMultiMap<ValueType<*>, Conversion<*, *>>()
+    private val from = safeMultiMap<ValueType<*>, Conversion<*, *>>(newSafeList = { safeList() })
 
     /** Conversions keyed by the To type of the conversion */
-    private val to = safeMutableMultiMap<ValueType<*>, Conversion<*, *>>()
+    private val to = safeMultiMap<ValueType<*>, Conversion<*, *>>(newSafeList = { safeList() })
 
     companion object {
 

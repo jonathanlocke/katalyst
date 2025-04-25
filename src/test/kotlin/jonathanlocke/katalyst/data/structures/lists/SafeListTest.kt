@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.data.structures.lists
 
-import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeMutableList
+import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeList
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.count
 import jonathanlocke.katalyst.problems.ProblemException
 import jonathanlocke.katalyst.problems.ProblemList
@@ -12,7 +12,7 @@ class SafeListTest {
     @Test
     fun testWarning() {
         val problems = ProblemList()
-        val list = safeMutableList<Int>(warningSize = count(10), problemListener = problems)
+        val list = safeList<Int>(warningSize = count(10), problemListener = problems)
         list.addAll(1..100)
         assert(problems.size == 1)
         assert(problems.isValid())
@@ -24,7 +24,7 @@ class SafeListTest {
     fun testError() {
 
         assertThrows<ProblemException> {
-            val list = safeMutableList<Int>(maximumSize = count(10))
+            val list = safeList<Int>(maximumSize = count(10))
             list.addAll(1..100)
         }
     }

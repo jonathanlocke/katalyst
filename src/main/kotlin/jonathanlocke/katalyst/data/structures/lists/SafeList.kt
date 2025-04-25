@@ -2,7 +2,7 @@ package jonathanlocke.katalyst.data.structures.lists
 
 import jonathanlocke.katalyst.data.structures.SafeDataStructure
 import jonathanlocke.katalyst.problems.ProblemListener
-import jonathanlocke.katalyst.problems.listeners.Throw
+import jonathanlocke.katalyst.problems.listeners.ThrowOnError.Companion.throwOnError
 
 /**
  * A [MutableList] that is safe to use.
@@ -17,7 +17,7 @@ import jonathanlocke.katalyst.problems.listeners.Throw
  */
 class SafeList<Element : Any> internal constructor(
     override val metadata: SafetyMetadata,
-    override val problemListener: ProblemListener = Throw(),
+    override val problemListener: ProblemListener = throwOnError,
     private val list: MutableList<Element>
 ) : SafeDataStructure(metadata, problemListener), MutableList<Element> {
 

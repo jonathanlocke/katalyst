@@ -10,17 +10,21 @@ import jonathanlocke.katalyst.problems.ProblemListenerBase
  * [ProblemListener] that throws an exception.
  *
  * ```
- * text.convert(ToInt(), Throw()))
+ * text.convert(ToInt(), throwOnError))
  * ```
  *
- * Note: Throw() is the default in most cases, as in this case.
+ * Note: throwOnError is the default in most cases, as in this case.
  *
  * @see ProblemListener
  * @see ProblemListenerBase
  * @see ProblemException
  * @see Problem
  */
-class Throw : ProblemListenerBase() {
+class ThrowOnError : ProblemListenerBase() {
+
+    companion object {
+        val throwOnError = ThrowOnError()
+    }
 
     override fun onReceive(problem: Problem) {
         if (problem.effect == STOP) throw ProblemException("Halting execution:", problem)

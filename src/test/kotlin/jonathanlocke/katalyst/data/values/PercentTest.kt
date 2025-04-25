@@ -4,7 +4,7 @@ import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.Deci
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.parsePercent
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.percent
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.percentConverter
-import jonathanlocke.katalyst.problems.listeners.Return
+import jonathanlocke.katalyst.problems.listeners.ReturnOnError.Companion.returnOnError
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import kotlin.test.Test
@@ -38,13 +38,13 @@ class PercentTest {
     fun testConversions() {
         assertEquals(parsePercent("50%"), percent(50))
         assertEquals(parsePercent("75.5%"), percent(75.5))
-        assertNull(parsePercent("invalid", Return()))
+        assertNull(parsePercent("invalid", returnOnError))
         assertEquals(percent(50).percent, 50.0)
         assertEquals(percent(50).toString(), "50%")
         assertEquals(percent(20) + percent(30), percent(50))
         assertEquals(percentConverter().convert("50%"), percent(50))
         assertEquals(percentConverter().convert("75.5%"), percent(75.5))
-        assertNull(percentConverter().convert("invalid", Return()))
+        assertNull(percentConverter().convert("invalid", returnOnError))
         assertEquals(percent(50).asUnitValue(), 0.5)
         assertEquals(percent(150).asUnitValue(), 1.5)
         assertEquals(percent(150).asZeroToOne(), 1.0)

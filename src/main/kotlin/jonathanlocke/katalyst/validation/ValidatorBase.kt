@@ -54,12 +54,14 @@ abstract class ValidatorBase<Value : Any> : Validator<Value> {
     /**
      * Records an error to the [ValidationResult]
      */
-    protected fun validationError(message: String) = result.get().validationError(message)
+    protected fun validationError(message: String, cause: Throwable? = null) =
+        result.get().validationError(message, cause)
 
     /**
      * Records a warning to the [ValidationResult]
      */
-    protected fun validationWarning(message: String) = result.get().validationWarning(message)
+    protected fun validationWarning(message: String, cause: Throwable? = null) =
+        result.get().validationWarning(message, cause)
 
     /**
      * Extension point for subclasses to validate the given value.

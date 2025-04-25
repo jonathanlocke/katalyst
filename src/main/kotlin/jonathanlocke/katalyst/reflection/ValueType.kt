@@ -4,15 +4,15 @@ import jonathanlocke.katalyst.reflection.kotlin.KotlinValueType
 import jonathanlocke.katalyst.reflection.properties.Property
 import kotlin.reflect.KClass
 
-interface ValueType<T : Any> {
+interface ValueType<Value : Any> {
 
     companion object {
 
-        fun <T : Any> valueType(kClass: KClass<T>) = KotlinValueType(kClass)
+        fun <Value : Any> valueType(kClass: KClass<Value>) = KotlinValueType(kClass)
     }
 
     val simpleName: String
-    fun createInstance(): T
+    fun createInstance(): Value
     fun superProperties(): List<Property<*>>
     fun declaredProperties(): List<Property<*>>
     fun memberProperties(): List<Property<*>>

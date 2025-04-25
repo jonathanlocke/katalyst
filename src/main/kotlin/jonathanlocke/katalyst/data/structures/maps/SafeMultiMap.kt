@@ -2,9 +2,8 @@ package jonathanlocke.katalyst.data.structures.maps
 
 import jonathanlocke.katalyst.data.structures.SafeDataStructure
 import jonathanlocke.katalyst.data.structures.lists.SafeList
-import jonathanlocke.katalyst.data.values.numeric.count.Count
 import jonathanlocke.katalyst.problems.ProblemListener
-import jonathanlocke.katalyst.problems.listeners.Throw
+import jonathanlocke.katalyst.problems.listeners.ThrowOnError.Companion.throwOnError
 
 /**
  * A [MutableSet] that is safe to use.
@@ -18,8 +17,8 @@ import jonathanlocke.katalyst.problems.listeners.Throw
  */
 class SafeMultiMap<Key : Any, Value : Any> internal constructor(
     override val metadata: SafetyMetadata,
-    override val problemListener: ProblemListener = Throw(),
-    private val newUnsafeMutableList: (Count) -> MutableList<Value> = { size -> ArrayList(size.asInt()) },
+    override val problemListener: ProblemListener = throwOnError,
+    private val newSafeList: () -> SafeList<Value>,
     internal val map: SafeMap<Key, SafeList<Value>> = SafeMap(metadata, problemListener)
 ) : SafeDataStructure(metadata, problemListener) {
 
@@ -36,7 +35,7 @@ class SafeMultiMap<Key : Any, Value : Any> internal constructor(
     fun put(key: Key, value: Value) {
         ensureSafeToAdd(1)
         map.getOrPut(key) {
-            SafeList(metadata, problemListener, newUnsafeMutableList.invoke(metadata.estimatedSize))
+            newSafeList.invoke()
         }.add(value)
         totalSize += 1
     }
@@ -44,7 +43,7 @@ class SafeMultiMap<Key : Any, Value : Any> internal constructor(
     fun putAll(key: Key, values: Collection<Value>) {
         ensureSafeToAdd(values.size)
         map.getOrPut(key) {
-            SafeList(metadata, problemListener, newUnsafeMutableList.invoke(metadata.estimatedSize))
+            newSafeList.invoke()
         }.addAll(values)
         totalSize += values.size
     }

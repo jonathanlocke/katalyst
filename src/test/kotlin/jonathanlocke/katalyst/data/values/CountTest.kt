@@ -5,7 +5,7 @@ import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.count
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.countConverter
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.parseCount
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.toCount
-import jonathanlocke.katalyst.problems.listeners.Return
+import jonathanlocke.katalyst.problems.listeners.ReturnOnError.Companion.returnOnError
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.assertThrows
@@ -20,7 +20,7 @@ class CountTest {
         assertEquals(1.toCount().asLong(), 1)
         assertEquals(count(5), 5.toCount())
         assertThrows<Exception> { count(-1) }
-        assertNull(count(-1, Return()))
+        assertNull(count(-1, returnOnError))
     }
 
     @Test
@@ -49,7 +49,7 @@ class CountTest {
     fun testConversions() {
         assertEquals(parseCount("5000"), 5000.toCount())
         assertEquals(parseCount("4,000"), 4000.toCount())
-        assertNull(parseCount("monkey", Return()))
+        assertNull(parseCount("monkey", returnOnError))
         assertEquals(count(1).asLong(), 1)
         assertEquals(count(1).asDouble(), 1.0)
         assertEquals(count(1).asFloat(), 1.0F)

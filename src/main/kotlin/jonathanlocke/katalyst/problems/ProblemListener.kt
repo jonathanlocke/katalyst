@@ -1,18 +1,16 @@
 package jonathanlocke.katalyst.problems
 
-import jonathanlocke.katalyst.problems.categories.Error
-import jonathanlocke.katalyst.problems.categories.Failure
-import jonathanlocke.katalyst.problems.categories.Warning
-import jonathanlocke.katalyst.problems.listeners.Return
-import jonathanlocke.katalyst.problems.listeners.Throw
+import jonathanlocke.katalyst.problems.categories.*
+import jonathanlocke.katalyst.problems.listeners.ReturnOnError
+import jonathanlocke.katalyst.problems.listeners.ThrowOnError
 import java.util.function.Supplier
 
 /**
  * An [ProblemListener] allows code to be flexible in how it handles problems in different usage contexts.
  *
  * In one context, it might be desirable for a method to throw an exception, while in another context, it might
- * be desirable for the same method to return a null value for performance reasons. The listeners [Throw] and
- * [Return] respectively handle these situations.
+ * be desirable for the same method to return a null value for performance reasons. The listeners [ThrowOnError] and
+ * [ReturnOnError] respectively handle these situations.
  *
  * **Integer.parseInt()**
  *
@@ -30,17 +28,17 @@ import java.util.function.Supplier
  * For example, the [Integer.parseInt] problem could be solved using [ProblemListener] like this:
  *
  * ```
- * fun String.parseInt(listener: ProblemReporter = Throw()): Int? { ... }
+ * fun String.parseInt(listener: ProblemReporter = throwOnError): Int? { ... }
  * ```
  *
- * With this hypothetical implementation of [String.parseInt], if the caller wanted an exception thrown they can
- * could invoke the method like this:
+ * With this hypothetical implementation of [String.parseInt], if the caller wanted an exception thrown, they could
+ * invoke the method like this:
  *
  * ```
  * "5.6".parseInt()
  * ```
  *
- * Since the default listener is [Throw] an exception will be thrown. But if the caller needed to avoid throwing an
+ * Since the default listener is [ThrowOnError] an exception will be thrown. But if the caller needed to avoid throwing an
  * exception, the could do this, which would cause the same method to return null instead:
  *
  * ```
@@ -58,8 +56,8 @@ import java.util.function.Supplier
  *
  * For another example of how [ProblemListener] can be used effectively, see [jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.parseBytes]
  *
- * @see Throw
- * @see Return
+ * @see ThrowOnError
+ * @see ReturnOnError
  * @see Problem
  * @see Error
  * @see Warning
@@ -83,6 +81,10 @@ interface ProblemListener {
     }
 
     fun failure(message: String, cause: Throwable? = null, value: Any? = null) = receive(Failure(message, cause, value))
+
+    fun info(message: String, cause: Throwable? = null, value: Any? = null) = receive(Info(message))
+
+    fun trace(message: String, cause: Throwable? = null, value: Any? = null) = receive(Trace(message))
 
     fun error(message: String, cause: Throwable? = null, value: Any? = null) = receive(Error(message, cause, value))
 

@@ -7,7 +7,7 @@ import jonathanlocke.katalyst.data.structures.sets.SafeSet
 import jonathanlocke.katalyst.data.values.numeric.count.Count
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.count
 import jonathanlocke.katalyst.problems.ProblemListener
-import jonathanlocke.katalyst.problems.listeners.Throw
+import jonathanlocke.katalyst.problems.listeners.ThrowOnError.Companion.throwOnError
 
 abstract class SafeDataStructure(
     open val metadata: SafetyMetadata,
@@ -61,19 +61,19 @@ abstract class SafeDataStructure(
          * @param estimatedSize The initial size of the collection
          * @param warningSize The size at which the warning listener will be called
          * @param maximumSize The maximum size of the collection
-         * @param newUnsafeMutableList A function that creates a new mutable list with the given estimated size
+         * @param newUnsafeList A function that creates a new mutable list with the given estimated size
          * @param problemListener The problem listener to use
          */
-        fun <T : Any> safeMutableList(
+        fun <Element : Any> safeList(
             name: String = "Unknown",
             estimatedSize: Count = globalEstimatedSize,
             warningSize: Count = count(1_000_000),
             maximumSize: Count = globalMaximumSize,
-            newUnsafeMutableList: (Count) -> MutableList<T> = { size -> ArrayList(size.asInt()) },
-            problemListener: ProblemListener = Throw()
-        ): SafeList<T> {
+            newUnsafeList: (Count) -> MutableList<Element> = { size -> ArrayList(size.asInt()) },
+            problemListener: ProblemListener = throwOnError
+        ): SafeList<Element> {
             val metadata = SafetyMetadata(name, estimatedSize, warningSize, maximumSize)
-            return SafeList(metadata, problemListener, newUnsafeMutableList.invoke(estimatedSize))
+            return SafeList(metadata, problemListener, newUnsafeList.invoke(estimatedSize))
         }
 
         /**
@@ -83,19 +83,19 @@ abstract class SafeDataStructure(
          * @param estimatedSize The initial size of the collection
          * @param warningSize The size at which the warning listener will be called
          * @param maximumSize The maximum size of the collection
-         * @param newUnsafeMutableSet A function that creates a new mutable set with the given estimated size
+         * @param newUnsafeSet A function that creates a new mutable set with the given estimated size
          * @param problemListener The problem listener to use
          */
-        fun <T : Any> safeMutableSet(
+        fun <Member : Any> safeSet(
             name: String = "Unknown",
             estimatedSize: Count = globalEstimatedSize,
             warningSize: Count = count(1_000_000),
             maximumSize: Count = globalMaximumSize,
-            newUnsafeMutableSet: (Count) -> MutableSet<T> = { size -> HashSet(size.asInt()) },
-            problemListener: ProblemListener = Throw()
-        ): SafeSet<T> {
+            newUnsafeSet: (Count) -> MutableSet<Member> = { size -> HashSet(size.asInt()) },
+            problemListener: ProblemListener = throwOnError
+        ): SafeSet<Member> {
             val metadata = SafetyMetadata(name, estimatedSize, warningSize, maximumSize)
-            return SafeSet(metadata, problemListener, newUnsafeMutableSet.invoke(estimatedSize))
+            return SafeSet(metadata, problemListener, newUnsafeSet.invoke(estimatedSize))
         }
 
         /**
@@ -105,19 +105,19 @@ abstract class SafeDataStructure(
          * @param estimatedSize The initial size of the collection
          * @param warningSize The size at which the warning listener will be called
          * @param maximumSize The maximum size of the collection
-         * @param newUnsafeMutableMap A function that creates a new mutable map with the given estimated size
+         * @param newUnsafeMap A function that creates a new mutable map with the given estimated size
          * @param problemListener The problem listener to use
          */
-        fun <Key : Any, Value : Any> safeMutableMap(
+        fun <Key : Any, Value : Any> safeMap(
             name: String = "Unknown",
             estimatedSize: Count = globalEstimatedSize,
             warningSize: Count = count(1_000_000),
             maximumSize: Count = globalMaximumSize,
-            newUnsafeMutableMap: (Count) -> MutableMap<Key, Value> = { size -> HashMap(size.asInt()) },
-            problemListener: ProblemListener = Throw()
+            newUnsafeMap: (Count) -> MutableMap<Key, Value> = { size -> HashMap(size.asInt()) },
+            problemListener: ProblemListener = throwOnError
         ): SafeMap<Key, Value> {
             val metadata = SafetyMetadata(name, estimatedSize, warningSize, maximumSize)
-            return SafeMap(metadata, problemListener, newUnsafeMutableMap.invoke(estimatedSize))
+            return SafeMap(metadata, problemListener, newUnsafeMap.invoke(estimatedSize))
         }
 
         /**
@@ -127,21 +127,21 @@ abstract class SafeDataStructure(
          * @param estimatedSize The initial size of the collection
          * @param warningSize The size at which the warning listener will be called
          * @param maximumSize The maximum size of the collection
-         * @param newUnsafeMutableMap A function that creates a new mutable map with the given estimated size
-         * @param newUnsafeMutableList A function that creates a new mutable list with the given estimated size
+         * @param newUnsafeMap A function that creates a new mutable map with the given estimated size
+         * @param newSafeList A function that creates a new mutable list with the given estimated size
          * @param problemListener The problem listener to use
          */
-        fun <Key : Any, Value : Any> safeMutableMultiMap(
+        fun <Key : Any, Value : Any> safeMultiMap(
             name: String = "Unknown",
             estimatedSize: Count = globalEstimatedSize,
             warningSize: Count = count(1_000_000),
             maximumSize: Count = globalMaximumSize,
-            newUnsafeMutableMap: (Count) -> MutableMap<Key, Value> = { size -> HashMap(size.asInt()) },
-            newUnsafeMutableList: (Count) -> MutableList<Value> = { size -> ArrayList(size.asInt()) },
-            problemListener: ProblemListener = Throw()
+            newUnsafeMap: (Count) -> MutableMap<Key, Value> = { size -> HashMap(size.asInt()) },
+            newSafeList: () -> SafeList<Value>,
+            problemListener: ProblemListener = throwOnError
         ): SafeMultiMap<Key, Value> {
             val metadata = SafetyMetadata(name, estimatedSize, warningSize, maximumSize)
-            return SafeMultiMap(metadata, problemListener, newUnsafeMutableList)
+            return SafeMultiMap(metadata, problemListener, newSafeList)
         }
     }
 

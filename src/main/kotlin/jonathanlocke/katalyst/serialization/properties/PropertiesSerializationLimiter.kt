@@ -22,7 +22,7 @@ class PropertiesSerializationLimiter(val maximumProperties: Count) : Serializati
         session: SerializationSession,
         listener: ProblemListener
     ): Boolean {
-        if ((session as PropertiesSerializationSession).properties > maximumProperties) {
+        if ((session as PropertiesSerializationSession).processedProperties > maximumProperties) {
             listener.error("Serialization exceeded the maximum of $maximumProperties properties")
             return true
         }

@@ -37,7 +37,7 @@ class PropertiesSerializer<Value : Any>(
      * @return The serialized properties file as a string, with each property on a new line
      */
     @Suppress("UNCHECKED_CAST")
-    override fun serialize(value: Value, listener: ProblemListener): String {
+    override fun serialize(listener: ProblemListener, value: Value): String {
 
         val lines = mutableListOf<String>()
 

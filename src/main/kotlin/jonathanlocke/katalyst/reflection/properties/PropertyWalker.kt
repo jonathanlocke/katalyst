@@ -3,7 +3,7 @@ package jonathanlocke.katalyst.reflection.properties
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import java.util.function.Predicate
 
-class PropertyWalker<Value : Any>(val rootValue: Value) {
+class PropertyWalker(val rootValue: Any) {
 
     companion object {
 

@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.serialization
 
 import jonathanlocke.katalyst.problems.ProblemListener
-import jonathanlocke.katalyst.problems.listeners.Throw
+import jonathanlocke.katalyst.problems.listeners.ThrowOnError.Companion.throwOnError
 
 /**
  * Deserializes a string to a value
@@ -17,5 +17,5 @@ interface Deserializer<Value> {
      * @param text The string to deserialize
      * @return The deserialized value
      */
-    fun deserialize(text: String, listener: ProblemListener = Throw()): Value
+    fun deserialize(text: String, listener: ProblemListener = throwOnError): Value
 }

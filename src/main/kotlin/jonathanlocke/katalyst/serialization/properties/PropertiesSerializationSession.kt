@@ -12,7 +12,7 @@ class PropertiesSerializationSession : SerializationSession() {
     /**
      * The number of properties serialized/deserialized so far
      */
-    var properties = count(0)
+    var processedProperties = count(0)
 
     /**
      * Increments the number of properties serialized/deserialized
@@ -21,7 +21,7 @@ class PropertiesSerializationSession : SerializationSession() {
     fun processedProperty(propertyText: String) {
 
         // Increase the number of properties processed,
-        properties++
+        processedProperties++
 
         // and the number of bytes processed.
         processed(bytes(propertyText.length + 1))

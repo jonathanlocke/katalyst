@@ -9,10 +9,11 @@ import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConvert
 import jonathanlocke.katalyst.conversion.converters.strings.ValueToStringConverter
 import jonathanlocke.katalyst.conversion.converters.strings.values.ValueToString
 import jonathanlocke.katalyst.problems.ProblemListener
-import jonathanlocke.katalyst.problems.listeners.Throw
+import jonathanlocke.katalyst.problems.listeners.ThrowOnError.Companion.throwOnError
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.text.parsing.Separator
+import jonathanlocke.katalyst.text.parsing.Separator.Companion.commaSeparator
 
 /**
  * A bidirectional [String] <-> List<[Value]> conversion.
@@ -52,12 +53,12 @@ class ListConversion<Value : Any>(
 
     // String -> Value conversion
     val stringToValueConverter: StringToValueConverter<Value>,
-    val separator: Separator = Separator(),
-    val stringToValueProblemListener: ProblemListener = Throw(),
+    val separator: Separator = commaSeparator,
+    val stringToValueProblemListener: ProblemListener = throwOnError,
 
     // Value -> String conversion
     val valueToStringConverter: ValueToStringConverter<Value> = ValueToString(type) as ValueToStringConverter<Value>,
-    val valueToStringProblemListener: ProblemListener = Throw(),
+    val valueToStringProblemListener: ProblemListener = throwOnError,
     val defaultToStringValue: String = "?"
 
 ) : ConversionBase<String, List<Value>>(

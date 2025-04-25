@@ -10,15 +10,16 @@ import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConvert
 import jonathanlocke.katalyst.conversion.converters.strings.collections.ListConversion
 import jonathanlocke.katalyst.conversion.converters.strings.values.ValueToString
 import jonathanlocke.katalyst.problems.ProblemListener
-import jonathanlocke.katalyst.problems.listeners.Throw
+import jonathanlocke.katalyst.problems.listeners.ThrowOnError.Companion.throwOnError
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.text.parsing.Separator
+import jonathanlocke.katalyst.text.parsing.Separator.Companion.commaSeparator
 
 /**
  * Converter from [String] -> [Value]
  *
- *  - [asStringToValueConversion] - Returns a bidirectional [String] <-> [Value] [Conversion]
+ *  - [toStringToValueConversion] - Returns a bidirectional [String] <-> [Value] [Conversion]
  *  - [stringToValueConverter] - Returns a [StringToValueConverter] that converts from [String] to [Value] using the
  *                               given lambda. This makes it more concise to implement a [StringToValueConverter].
  *
@@ -47,7 +48,7 @@ interface StringToValueConverter<Value : Any> : Converter<String, Value> {
      * Returns a bidirectional [Conversion] between [String] and [Value] by implementing the forward
      * conversion with this converter and the reverse conversion with a [ValueToString] converter.
      */
-    fun asStringToValueConversion(type: ValueType<Value>): Conversion<String, Value> =
+    fun toStringToValueConversion(type: ValueType<Value>): Conversion<String, Value> =
         object : ConversionBase<String, Value>(valueType(String::class), type) {
             override fun forwardConverter(): Converter<String, Value> = this@StringToValueConverter
             override fun reverseConverter(): Converter<Value, String> = ValueToString(type)
@@ -76,24 +77,24 @@ interface StringToValueConverter<Value : Any> : Converter<String, Value> {
          */
         fun <Value : Any> String.convert(
             converter: StringToValueConverter<Value>,
-            listener: ProblemListener = Throw()
+            listener: ProblemListener = throwOnError
         ): Value? = converter.convert(this, listener)
 
         /**
          * Converts any string to a list of objects of type [Value]
          * @param stringToValueConverter The converter to use to convert each element in the list
          * @param separator The separator to use when parsing text and joining value objects
-         * @param listener An optional error handler to use
-         * @param elementToValueReporter An optional error handler to use when an element in the list fails to convert
+         * @param problemListener An optional error handler to use
+         * @param elementProblemListener An optional error handler to use when an element in the list fails to convert
          */
         fun <Value : Any> String.convertToList(
             stringToValueConverter: StringToValueConverter<Value>,
-            separator: Separator = Separator(),
-            listener: ProblemListener = Throw(),
-            elementToValueReporter: ProblemListener = Throw()
+            separator: Separator = commaSeparator,
+            problemListener: ProblemListener = throwOnError,
+            elementProblemListener: ProblemListener = throwOnError
         ): List<Value>? =
-            ListConversion(stringToValueConverter.type, stringToValueConverter, separator, elementToValueReporter)
+            ListConversion(stringToValueConverter.type, stringToValueConverter, separator, elementProblemListener)
                 .forwardConverter()
-                .convert(this, listener)
+                .convert(this, problemListener)
     }
 }

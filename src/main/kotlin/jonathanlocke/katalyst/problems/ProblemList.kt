@@ -1,6 +1,8 @@
 package jonathanlocke.katalyst.problems
 
-import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeMutableList
+import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeList
+import jonathanlocke.katalyst.data.values.numeric.count.Count
+import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.countMaximum
 import jonathanlocke.katalyst.problems.Problem.Effect.CONTINUE
 import jonathanlocke.katalyst.problems.Problem.Effect.STOP
 
@@ -10,7 +12,8 @@ import jonathanlocke.katalyst.problems.Problem.Effect.STOP
  * @see Problem
  */
 class ProblemList(
-    private val problemList: MutableList<Problem> = safeMutableList("problems")
+    val maximumProblems: Count = countMaximum(),
+    private val problemList: MutableList<Problem> = safeList("problems", maximumSize = maximumProblems)
 ) : MutableList<Problem> by problemList, ProblemListener {
 
     override fun problems() = this

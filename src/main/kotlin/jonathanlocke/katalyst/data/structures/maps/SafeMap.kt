@@ -2,7 +2,7 @@ package jonathanlocke.katalyst.data.structures.maps
 
 import jonathanlocke.katalyst.data.structures.SafeDataStructure
 import jonathanlocke.katalyst.problems.ProblemListener
-import jonathanlocke.katalyst.problems.listeners.Throw
+import jonathanlocke.katalyst.problems.listeners.ThrowOnError.Companion.throwOnError
 
 /**
  * A [MutableSet] that is safe to use.
@@ -16,7 +16,7 @@ import jonathanlocke.katalyst.problems.listeners.Throw
  */
 class SafeMap<Key : Any, Value> internal constructor(
     override val metadata: SafetyMetadata,
-    override val problemListener: ProblemListener = Throw(),
+    override val problemListener: ProblemListener = throwOnError,
     private val map: MutableMap<Key, Value> = HashMap(metadata.estimatedSize.asInt())
 ) : SafeDataStructure(metadata, problemListener), MutableMap<Key, Value> {
 

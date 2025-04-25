@@ -9,8 +9,9 @@ class Separator(val parseSeparator: Regex = Regex(",\\s*"), val joinSeparator: S
 
     companion object {
 
-        val COLON_SEPARATOR = Separator(":")
-        val SLASH_SEPARATOR = Separator("/")
+        val commaSeparator = Separator()
+        val colonSeparator = Separator(":")
+        val slashSeparator = Separator("/")
     }
 
     fun split(text: String) = text.split(parseSeparator)

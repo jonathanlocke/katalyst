@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.data.values.version
 
 import jonathanlocke.katalyst.problems.ProblemListener
-import jonathanlocke.katalyst.problems.listeners.Throw
+import jonathanlocke.katalyst.problems.listeners.ThrowOnError.Companion.throwOnError
 
 /**
  * Represents a [*semantic version*](https://semver.org), such as "6.3" or "1.2.1"
@@ -31,7 +31,7 @@ import jonathanlocke.katalyst.problems.listeners.Throw
  *
  * @see [*Semantic Versioning*](https://semver.org)
  */
-data class Version(val major: Int, val minor: Int, val patch: Int? = 0) {
+data class Version(val major: Int, val minor: Int, val patch: Int = 0) {
 
     fun version(text: String): Version = parseVersion(text)!!
 
@@ -43,7 +43,7 @@ data class Version(val major: Int, val minor: Int, val patch: Int? = 0) {
     fun newer(that: Version): Version = if (isNewerThan(that)) this else that
     fun older(that: Version): Version? = if (isOlderThan(that)) this else that
 
-    override fun toString(): String = "${major}.${minor}${if (patch != null) ".$patch" else ""}"
+    override fun toString(): String = "$major.$minor.$patch"
 
     companion object {
 
@@ -56,14 +56,14 @@ data class Version(val major: Int, val minor: Int, val patch: Int? = 0) {
          * @return The given text, of the form [major].[minor](.[revision])?(-release)?, parsed as a [Version] object,
          * or null if the text is not of that form.
          */
-        fun parseVersion(text: String, listener: ProblemListener = Throw()): Version? {
+        fun parseVersion(text: String, listener: ProblemListener = throwOnError): Version? {
 
             // If the text matches the version pattern,
             val match = pattern.matchEntire(text)
             if (match != null) {
                 val major = match.groups["major"]!!.value.toInt()
                 val minor = match.groups["minor"]!!.value.toInt()
-                val patch = match.groups["patch"]?.value?.toInt()
+                val patch = match.groups["patch"]!!.value.toInt()
                 return Version(major, minor, patch)
             }
 
@@ -71,5 +71,5 @@ data class Version(val major: Int, val minor: Int, val patch: Int? = 0) {
         }
     }
 
-    private fun asInt(): Int = major * 10_000 + minor * 100 + (patch ?: 0)
+    private fun asInt(): Int = major * 10_000 + minor * 100 + patch
 }

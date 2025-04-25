@@ -40,19 +40,19 @@ interface Validator<Value : Any> {
          * @param validators The list of validators to check
          * @return Returns true if all validators validate successfully. If a validator encounters a problem,
          *         the [ErrorHandler] is called, which determines whether a null value is returned ([ReturnNull]) or
-         *         an exception is thrown ([Throw]).
+         *         an exception is thrown ([ThrowOnError]).
          */
-        fun <Value : Any> Value.isValid(vararg validators: Validator<Value>): Boolean =
-            validators.all { it.validate(this).isValid }
+        fun <Value : Any> isValid(value: Value, vararg validators: Validator<Value>): Boolean =
+            validators.all { it.validate(value).isValid }
 
         /**
          * Checks if this value is valid by calling [validate] on each validator in the list.
          * @param validator The validator to check
          * @return Returns this value for method chaining.
          */
-        fun <Value : Any> Value.requireValid(vararg validators: Validator<Value>): Value {
-            validators.all { it.validate(this).isValid() }
-            return this
+        fun <Value : Any> requireValid(value: Value, vararg validators: Validator<Value>): Value {
+            validators.all { it.validate(value).isValid }
+            return value
         }
 
         /**

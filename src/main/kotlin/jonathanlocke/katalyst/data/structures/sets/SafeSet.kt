@@ -2,7 +2,7 @@ package jonathanlocke.katalyst.data.structures.sets
 
 import jonathanlocke.katalyst.data.structures.SafeDataStructure
 import jonathanlocke.katalyst.problems.ProblemListener
-import jonathanlocke.katalyst.problems.listeners.Throw
+import jonathanlocke.katalyst.problems.listeners.ThrowOnError.Companion.throwOnError
 
 /**
  * A [MutableSet] that is safe to use.
@@ -16,7 +16,7 @@ import jonathanlocke.katalyst.problems.listeners.Throw
  */
 class SafeSet<Member : Any> internal constructor(
     override val metadata: SafetyMetadata,
-    override val problemListener: ProblemListener = Throw(),
+    override val problemListener: ProblemListener = throwOnError,
     private val set: MutableSet<Member>
 ) : SafeDataStructure(metadata, problemListener), MutableSet<Member> {
 

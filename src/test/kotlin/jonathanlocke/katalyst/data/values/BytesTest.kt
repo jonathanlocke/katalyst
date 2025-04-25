@@ -6,7 +6,7 @@ import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.bytes
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.bytesConverter
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.parseBytes
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.toBytes
-import jonathanlocke.katalyst.problems.listeners.Return
+import jonathanlocke.katalyst.problems.listeners.ReturnOnError.Companion.returnOnError
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.assertThrows
@@ -51,7 +51,7 @@ class BytesTest {
     fun testConversions() {
         assertEquals(parseBytes("5000"), 5000.toBytes())
         assertEquals(parseBytes("4K"), 4000.toBytes())
-        assertNull(parseBytes("monkey", listener = Return()))
+        assertNull(parseBytes("monkey", listener = returnOnError))
         assertEquals(bytes(1).toString(), "1 byte")
         assertEquals(bytes(2).toString(), "2 bytes")
         assertEquals(bytes(1) + bytes(2), bytes(3))

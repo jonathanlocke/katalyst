@@ -10,14 +10,19 @@ import jonathanlocke.katalyst.problems.categories.Failure
  * encountered. When a failure is received, this listener will throw an exception.
  *
  * ```
- * text.convert(ToInt(), Return())
+ * text.convert(ToInt(), returnOnError)
  * ```
  *
  * @see ProblemListener
  * @see ProblemListenerBase
  * @see Problem
  */
-class Return : ProblemListenerBase() {
+class ReturnOnError : ProblemListenerBase() {
+
+    companion object {
+        val returnOnError = ReturnOnError()
+    }
+
     override fun onReceive(problem: Problem) {
     }
 }
