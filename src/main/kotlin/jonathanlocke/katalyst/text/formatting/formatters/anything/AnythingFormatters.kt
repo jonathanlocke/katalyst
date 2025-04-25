@@ -1,8 +1,8 @@
-package jonathanlocke.katalyst.text.formatting.formatters
+package jonathanlocke.katalyst.text.formatting.formatters.anything
 
 import jonathanlocke.katalyst.text.formatting.Formatter
 
-class AnyFormatters {
+class AnythingFormatters {
 
     companion object {
 

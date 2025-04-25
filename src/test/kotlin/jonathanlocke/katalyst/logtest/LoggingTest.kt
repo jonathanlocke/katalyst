@@ -23,7 +23,6 @@ class LoggingTest : LoggerMixin {
     fun test() {
         warning("warning")
         error("this is a test of the emergency broadcast system")
-        // memoryLog.problemCounts().forEach { (level, count) -> println("${level.simpleName}: $count") }
         assertEquals(count(1), memoryLog.problems(Warning::class.java))
         assertEquals(count(1), memoryLog.problems(Error::class.java))
         assertEquals(count(0), memoryLog.problems(Failure::class.java))
