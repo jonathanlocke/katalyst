@@ -69,15 +69,15 @@ value class Count private constructor(val count: Long) : Comparable<Count>, Form
         /**
          * Creates a [Count] object with the given value.
          */
-        fun count(value: Long): Count = count(value, Throw())!!
+        fun count(value: Number): Count = count(value, Throw())!!
 
         /**
          * Creates a [Count] object with the given value.
          */
-        fun count(value: Long, problemListener: ProblemListener = Throw()): Count? = if (value < 0) {
+        fun count(value: Number, problemListener: ProblemListener = Throw()): Count? = if (value.toLong() < 0) {
             problemListener.error("Count must be non-negative, was $value").let { null }
         } else {
-            Count(value)
+            Count(value.toLong())
         }
 
         /**
