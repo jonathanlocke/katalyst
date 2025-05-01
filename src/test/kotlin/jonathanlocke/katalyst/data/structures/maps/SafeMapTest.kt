@@ -12,7 +12,7 @@ class SafeMapTest {
     @Test
     fun testWarning() {
         val problems = ProblemList()
-        val map = safeMap<Int, String>(warningSize = count(10), problemListener = problems)
+        val map = safeMap<Int, String>(warningSize = count(10), problemHandler = problems)
         (1..100).forEach { map[it] = it.toString() }
         assert(problems.size == 1)
         assert(problems.isValid())

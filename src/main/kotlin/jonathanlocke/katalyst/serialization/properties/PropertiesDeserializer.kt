@@ -3,7 +3,7 @@ package jonathanlocke.katalyst.serialization.properties
 import jonathanlocke.katalyst.conversion.ConversionRegistry
 import jonathanlocke.katalyst.conversion.ConversionRegistry.Companion.defaultConversionRegistry
 import jonathanlocke.katalyst.conversion.converters.Converter
-import jonathanlocke.katalyst.problems.ProblemListener
+import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.reflection.properties.Property
@@ -31,7 +31,7 @@ class PropertiesDeserializer<Value : Any>(
     /**
      * Deserializes individual properties
      */
-    internal inner class PropertyDeserializer(val listener: ProblemListener) {
+    internal inner class PropertyDeserializer(val problemHandler: ProblemHandler) {
 
         /**
          * The root value we're deserializing
@@ -67,7 +67,7 @@ class PropertiesDeserializer<Value : Any>(
             if (property == null) {
 
                 // fail
-                listener.fail("Property path does not exist: $path")
+                problemHandler.fail("Property path does not exist: $path")
 
             } else {
 
@@ -79,20 +79,20 @@ class PropertiesDeserializer<Value : Any>(
 
                     // first ensure the path only increases by one level at a time,
                     if (path.size > lastPath.size + 1) {
-                        listener.fail("Property path '$path' skips levels - can only increase depth by one level at a time")
+                        problemHandler.fail("Property path '$path' skips levels - can only increase depth by one level at a time")
                         return
                     }
 
                     // then get the parent property,
                     val parentProperty = parentPath.property()
                     if (parentProperty == null) {
-                        listener.fail("Parent property path '$parentPath' does not exist in type '${type.simpleName}'")
+                        problemHandler.fail("Parent property path '$parentPath' does not exist in type '${type.simpleName}'")
                     } else {
                         // and initialize it to a new value,
                         val parentValue = parentProperty.type.createInstance()
                         val grandparentValue =
                             pathToValue[parentPath.parent()] ?: run {
-                                listener.fail("Internal error: no path to grandparent")
+                                problemHandler.fail("Internal error: no path to grandparent")
                                 return
                             }
                         @Suppress("UNCHECKED_CAST")
@@ -109,7 +109,7 @@ class PropertiesDeserializer<Value : Any>(
                     val converter = conversions.first().forwardConverter() as Converter<Any, *>
 
                     // convert the value text to the type,
-                    val converted = converter.convert(valueText, listener)
+                    val converted = converter.convert(valueText, problemHandler)
 
                     // set the property value
                     val instance = pathToValue[path.parent()]
@@ -119,7 +119,7 @@ class PropertiesDeserializer<Value : Any>(
                             @Suppress("UNCHECKED_CAST")
                             (property as Property<Any?>).set(instance, converted)
                         } else {
-                            listener.fail("Internal error: no property at path")
+                            problemHandler.fail("Internal error: no property at path")
                         }
                     }
                 }
@@ -138,15 +138,15 @@ class PropertiesDeserializer<Value : Any>(
      * 4. Tell the serialization session that we processed a property
      * 5. If the serialization session limit has reached any limit, report an error and fail the deserialization
      *
-     * @param listener A problem listener to report problems to
+     * @param problemHandler A problem handler to report problems to
      * @param text The properties file text to deserialize
      * @return The deserialized value
      */
-    override fun deserialize(text: String, listener: ProblemListener): Value {
+    override fun deserialize(text: String, problemHandler: ProblemHandler): Value {
 
         // Create a serialization session and a property deserializer,
         val session = PropertiesSerializationSession()
-        val propertyDeserializer = PropertyDeserializer(listener)
+        val propertyDeserializer = PropertyDeserializer(problemHandler)
 
         // then for each non-blank line,
         text.lineSequence().filterNot { it.isBlank() }.forEach { propertyText ->
@@ -167,7 +167,7 @@ class PropertiesDeserializer<Value : Any>(
             session.processedProperty(propertyText)
 
             // then ensure that the session limit has not been reached
-            limiter.ensureLimitNotReached(session, listener)
+            limiter.ensureLimitNotReached(session, problemHandler)
         }
 
         return propertyDeserializer.value

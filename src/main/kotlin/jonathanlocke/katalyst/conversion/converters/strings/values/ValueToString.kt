@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.conversion.converters.strings.values
 
 import jonathanlocke.katalyst.conversion.converters.strings.ValueToStringConverter
-import jonathanlocke.katalyst.problems.ProblemListener
+import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.text.formatting.Formatter
@@ -28,6 +28,6 @@ class ValueToString<From : Any>(
 
     override val to: ValueType<String> = valueType(String::class)
 
-    override fun convert(from: From?, listener: ProblemListener): String? =
+    override fun convert(from: From?, problemHandler: ProblemHandler): String? =
         if (from != null) formatter.format(from) else "?"
 }

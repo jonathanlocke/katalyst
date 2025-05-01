@@ -7,13 +7,13 @@ import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.perc
 /**
  * Reports the progress of an operation
  */
-class ProgressReporter(val listener: ProgressListener, val steps: Count = count(100)) {
+class ProgressReporter(val progressListener: ProgressListener, val steps: Count = count(100)) {
 
     var at = count(0)
     fun percentComplete() = percent(at * 100.0 / steps)
 
     fun next() {
-        listener.at(percentComplete())
+        progressListener.at(percentComplete())
         at++
     }
 

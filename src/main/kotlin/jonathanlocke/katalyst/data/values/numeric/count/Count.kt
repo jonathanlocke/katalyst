@@ -6,8 +6,8 @@ import jonathanlocke.katalyst.conversion.converters.strings.values.StringToNumbe
 import jonathanlocke.katalyst.data.values.numeric.Numeric
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.ThousandsSeparatedFormatter
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.parseCount
-import jonathanlocke.katalyst.problems.ProblemListener
-import jonathanlocke.katalyst.problems.listeners.ThrowOnError.Companion.throwOnError
+import jonathanlocke.katalyst.problems.ProblemHandler
+import jonathanlocke.katalyst.problems.handlers.ThrowOnError.Companion.throwOnError
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.text.formatting.Formattable
 import jonathanlocke.katalyst.text.formatting.Formatter
@@ -18,7 +18,7 @@ import jonathanlocke.katalyst.text.formatting.Formatter
  *  **Creation**
  *
  *  - [count]
- *  - [parseCount] - Parses text to a [Count], handling problems as specified by the given [ProblemListener]
+ *  - [parseCount] - Parses text to a [Count], handling problems as specified by the given [ProblemHandler]
  *
  *  **Conversion**
  *
@@ -51,10 +51,10 @@ value class Count private constructor(val count: Long) : Comparable<Count>, Form
         fun countMaximum() = count(Long.MAX_VALUE)
 
         /**
-         * Returns a converter that converts a string to a [Count], reporting any problems to the given listener.
+         * Returns a converter that converts a string to a [Count], reporting any problems to the given handler.
          */
-        fun countConverter() = stringToValueConverter(valueType(Count::class)) { text, listener ->
-            text.convert(longConverter, throwOnError)?.toCount() ?: listener.error("Could not parse count: $text")
+        fun countConverter() = stringToValueConverter(valueType(Count::class)) { text, handler ->
+            text.convert(longConverter, throwOnError)?.toCount() ?: handler.error("Could not parse count: $text")
                 .let { null }
         }
 
@@ -66,8 +66,8 @@ value class Count private constructor(val count: Long) : Comparable<Count>, Form
         /**
          * Converts the given number to a [Count].
          */
-        fun Number.toCount(problemListener: ProblemListener = throwOnError): Count? =
-            count(this.toLong(), problemListener)
+        fun Number.toCount(problemHandler: ProblemHandler = throwOnError): Count? =
+            count(this.toLong(), problemHandler)
 
         /**
          * Creates a [Count] object with the given value.
@@ -77,8 +77,8 @@ value class Count private constructor(val count: Long) : Comparable<Count>, Form
         /**
          * Creates a [Count] object with the given value.
          */
-        fun count(value: Number, problemListener: ProblemListener = throwOnError): Count? = if (value.toLong() < 0) {
-            problemListener.error("Count must be non-negative, was $value").let { null }
+        fun count(value: Number, problemHandler: ProblemHandler = throwOnError): Count? = if (value.toLong() < 0) {
+            problemHandler.error("Count must be non-negative, was $value").let { null }
         } else {
             Count(value.toLong())
         }
@@ -89,12 +89,12 @@ value class Count private constructor(val count: Long) : Comparable<Count>, Form
         fun parseCount(text: String): Count = parseCount(text, throwOnError)!!
 
         /**
-         * Parses the given text into a [Count], reporting any problems to the given listener.
+         * Parses the given text into a [Count], reporting any problems to the given handler.
          */
-        fun parseCount(text: String, listener: ProblemListener = throwOnError): Count? {
+        fun parseCount(text: String, problemHandler: ProblemHandler = throwOnError): Count? {
             val value = text.replace(",", "").toLongOrNull()
             return if (value == null) {
-                listener.error("Could not parse bytes: $text", value = value).let { null }
+                problemHandler.error("Could not parse bytes: $text", value = value).let { null }
             } else {
                 Count(value)
             }

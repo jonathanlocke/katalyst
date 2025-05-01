@@ -8,8 +8,8 @@ import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConvert
 import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConverter.Companion.stringToValueConverter
 import jonathanlocke.katalyst.conversion.converters.strings.ValueToStringConverter
 import jonathanlocke.katalyst.conversion.converters.strings.values.ValueToString
-import jonathanlocke.katalyst.problems.ProblemListener
-import jonathanlocke.katalyst.problems.listeners.ThrowOnError.Companion.throwOnError
+import jonathanlocke.katalyst.problems.ProblemHandler
+import jonathanlocke.katalyst.problems.handlers.ThrowOnError.Companion.throwOnError
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.text.parsing.Separator
@@ -22,20 +22,20 @@ import jonathanlocke.katalyst.text.parsing.Separator.Companion.commaSeparator
  *
  *  - [stringToValueConverter] - The converter that converts [String] -> [Value]
  *  - [separator] - The separator to use when parsing text and joining value objects
- *  - [stringToValueProblemListener] - The error to use problems with [String] -> [Value]
+ *  - [stringToValueProblemHandler] - The error to use problems with [String] -> [Value]
  *
  * **Reverse Conversion (List<[Value]> -> [String])**
  *
  *  - [valueToStringConverter] - The converter that converts [Value] -> [String]
- *  - [valueToStringProblemListener] - The error to use problems with [Value] -> [String]**
+ *  - [valueToStringProblemHandler] - The error to use problems with [Value] -> [String]**
  *  - [defaultToStringValue] - The value to use for null elements when converting to [String]
  *
  * @param Value The type of value to convert to and from
  * @property stringToValueConverter The converter that converts [String] -> [Value]
  * @property separator The separator to use when parsing text and joining value objects
- * @property stringToValueProblemListener The error to use problems with [String] -> [Value]
+ * @property stringToValueProblemHandler The error to use problems with [String] -> [Value]
  * @property valueToStringConverter The converter that converts [Value] -> [String]
- * @property valueToStringProblemListener The error to use problems with [Value] -> [String]
+ * @property valueToStringProblemHandler The error to use problems with [Value] -> [String]
  * @property defaultToStringValue The value to use for null elements when converting to [String]]
  *
  * @see Conversion
@@ -54,11 +54,11 @@ class ListConversion<Value : Any>(
     // String -> Value conversion
     val stringToValueConverter: StringToValueConverter<Value>,
     val separator: Separator = commaSeparator,
-    val stringToValueProblemListener: ProblemListener = throwOnError,
+    val stringToValueProblemHandler: ProblemHandler = throwOnError,
 
     // Value -> String conversion
     val valueToStringConverter: ValueToStringConverter<Value> = ValueToString(type) as ValueToStringConverter<Value>,
-    val valueToStringProblemListener: ProblemListener = throwOnError,
+    val valueToStringProblemHandler: ProblemHandler = throwOnError,
     val defaultToStringValue: String = "?"
 
 ) : ConversionBase<String, List<Value>>(
@@ -69,17 +69,17 @@ class ListConversion<Value : Any>(
     @Suppress("UNCHECKED_CAST")
     override fun forwardConverter(): StringToValueConverter<List<Value>> = stringToValueConverter(
         valueType(List::class) as ValueType<List<Value>>
-    ) { text, listener ->
+    ) { text, problemHandler ->
         separator.split(text).map { member ->
-            stringToValueConverter.convert(member, stringToValueProblemListener)
-                ?: stringToValueProblemListener.error("Failed to convert element: $member")
+            stringToValueConverter.convert(member, stringToValueProblemHandler)
+                ?: stringToValueProblemHandler.error("Failed to convert element: $member")
         } as List<Value>?
     }
 
     override fun reverseConverter(): Converter<List<Value>, String> = object :
         ConverterBase<List<Value>, String>(List::class as ValueType<List<Value>>, valueType(String::class)) {
         override fun onConvert(from: List<Value>): String = separator.join(from.map {
-            valueToStringConverter.convert(it, valueToStringProblemListener) ?: defaultToStringValue
+            valueToStringConverter.convert(it, valueToStringProblemHandler) ?: defaultToStringValue
         }.toList())
     }
 }

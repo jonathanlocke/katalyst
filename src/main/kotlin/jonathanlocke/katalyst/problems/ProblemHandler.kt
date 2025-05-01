@@ -1,16 +1,16 @@
 package jonathanlocke.katalyst.problems
 
 import jonathanlocke.katalyst.problems.categories.*
-import jonathanlocke.katalyst.problems.listeners.ReturnOnError
-import jonathanlocke.katalyst.problems.listeners.ThrowOnError
+import jonathanlocke.katalyst.problems.handlers.ReturnOnError
+import jonathanlocke.katalyst.problems.handlers.ThrowOnError
 import java.util.function.Supplier
 
 /**
- * An [ProblemListener] allows code to be flexible in how it handles problems in different usage contexts.
+ * An [ProblemHandler] allows code to be flexible in how it handles problems in different usage contexts.
  *
  * In one context, it might be desirable for a method to throw an exception, while in another context, it might
- * be desirable for the same method to return a null value for performance reasons. The listeners [ThrowOnError] and
- * [ReturnOnError] respectively handle these situations.
+ * be desirable for the same method to return a null value for performance reasons. The problem handlers [ThrowOnError]
+ * and [ReturnOnError] respectively handle these situations.
  *
  * **Integer.parseInt()**
  *
@@ -22,13 +22,13 @@ import java.util.function.Supplier
  * alternative method that returns a null value in [String.toIntOrNull]. But this leaves something to be desired
  * because the functionality of integer parsing had to be duplicated.
  *
- * [ProblemListener] provides a way to avoid this kind of duplication by allowing the caller of a method to
+ * [ProblemHandler] provides a way to avoid this kind of duplication by allowing the caller of a method to
  * specify how the error handling should work.
  *
- * For example, the [Integer.parseInt] problem could be solved using [ProblemListener] like this:
+ * For example, the [Integer.parseInt] problem could be solved using [ProblemHandler] like this:
  *
  * ```
- * fun String.parseInt(listener: ProblemReporter = throwOnError): Int? { ... }
+ * fun String.parseInt(problemHandler: ProblemHandler = throwOnError): Int? { ... }
  * ```
  *
  * With this hypothetical implementation of [String.parseInt], if the caller wanted an exception thrown, they could
@@ -38,8 +38,8 @@ import java.util.function.Supplier
  * "5.6".parseInt()
  * ```
  *
- * Since the default listener is [ThrowOnError] an exception will be thrown. But if the caller needed to avoid throwing an
- * exception, the could do this, which would cause the same method to return null instead:
+ * Since the default problem handler is [ThrowOnError] an exception will be thrown. But if the caller needed to avoid
+ * throwing an exception, the could do this, which would cause the same method to return null instead:
  *
  * ```
  * dirtyText.parseInt(ReturnNull())
@@ -54,7 +54,7 @@ import java.util.function.Supplier
  *
  * **Bytes**
  *
- * For another example of how [ProblemListener] can be used effectively, see [jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.parseBytes]
+ * For another example of how [ProblemHandler] can be used effectively, see [jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.parseBytes]
  *
  * @see ThrowOnError
  * @see ReturnOnError
@@ -62,12 +62,12 @@ import java.util.function.Supplier
  * @see Error
  * @see Warning
  */
-interface ProblemListener {
+interface ProblemHandler {
 
     fun problems(): MutableList<Problem>
 
     /**
-     * Forces a failure state that throws an exception which includes all problems this listener has encountered
+     * Forces a failure state that throws an exception which includes all problems this handler has encountered
      */
     fun fail(message: String) {
         throw ProblemException(message, problems())

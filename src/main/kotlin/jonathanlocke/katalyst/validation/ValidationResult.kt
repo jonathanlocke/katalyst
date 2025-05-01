@@ -1,8 +1,8 @@
 package jonathanlocke.katalyst.validation
 
 import jonathanlocke.katalyst.problems.Problem
+import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.problems.ProblemList
-import jonathanlocke.katalyst.problems.ProblemListener
 import jonathanlocke.katalyst.problems.categories.Error
 import jonathanlocke.katalyst.problems.categories.Warning
 import jonathanlocke.katalyst.validation.problems.ValidationError
@@ -19,7 +19,7 @@ import jonathanlocke.katalyst.validation.problems.ValidationWarning
  * @param Value The type of the value to validate
  * @param value The value to validate
  *
- * @see ProblemListener
+ * @see ProblemHandler
  * @see ValidationError
  * @see ValidationWarning
  * @see Problem]
@@ -30,7 +30,7 @@ import jonathanlocke.katalyst.validation.problems.ValidationWarning
  * @see ValidationError
  * @see ValidationWarning
  */
-class ValidationResult<Value : Any>(val value: Value) : ProblemListener {
+class ValidationResult<Value : Any>(val value: Value) : ProblemHandler {
 
     override fun problems() = ProblemList()
 

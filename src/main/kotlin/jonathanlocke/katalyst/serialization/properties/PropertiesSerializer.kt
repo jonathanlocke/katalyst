@@ -3,7 +3,7 @@ package jonathanlocke.katalyst.serialization.properties
 import jonathanlocke.katalyst.conversion.ConversionRegistry
 import jonathanlocke.katalyst.conversion.ConversionRegistry.Companion.defaultConversionRegistry
 import jonathanlocke.katalyst.conversion.converters.Converter
-import jonathanlocke.katalyst.problems.ProblemListener
+import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.reflection.properties.PropertyWalker
 import jonathanlocke.katalyst.serialization.SerializationLimiter
@@ -32,12 +32,12 @@ class PropertiesSerializer<Value : Any>(
      *
      * Serializes a value to a properties file by reflecting on the value's properties and converting them to text
      * with the given [conversionRegistry].
-     * @param listener A problem listener to report problems to
+     * @param problemHandler A problem handler to report problems to
      * @param value The value to serialize
      * @return The serialized properties file as a string, with each property on a new line
      */
     @Suppress("UNCHECKED_CAST")
-    override fun serialize(listener: ProblemListener, value: Value): String {
+    override fun serialize(problemHandler: ProblemHandler, value: Value): String {
 
         val lines = mutableListOf<String>()
 
@@ -48,7 +48,7 @@ class PropertiesSerializer<Value : Any>(
         PropertyWalker(value).walk { path, property, value ->
 
             // convert the value to text,
-            val text = toText(listener, value)
+            val text = toText(problemHandler, value)
 
             // and if conversion succeeded,
             if (text != null) {
@@ -63,7 +63,7 @@ class PropertiesSerializer<Value : Any>(
                 session.processedProperty(line)
 
                 // then ensure that the session limit has not been reached
-                limiter.ensureLimitNotReached(session, listener)
+                limiter.ensureLimitNotReached(session, problemHandler)
             }
         }
 
@@ -72,12 +72,12 @@ class PropertiesSerializer<Value : Any>(
 
     /**
      * Converts a value to a properties file string with the given [conversionRegistry].
-     * @param listener A problem listener to report problems to
+     * @param problemHandler A problem handler to report problems to
      * @param value The value to convert
      * @return The converted value as a string
      */
     @Suppress("UNCHECKED_CAST")
-    private fun toText(listener: ProblemListener, value: Any?): String? {
+    private fun toText(problemHandler: ProblemHandler, value: Any?): String? {
 
         // If the value is null,
         if (value == null) {
@@ -97,7 +97,7 @@ class PropertiesSerializer<Value : Any>(
                 val converter = conversions.first().reverseConverter() as Converter<Any, String?>
 
                 // and convert the value to text,
-                converter.convert(value, listener) ?: "null"
+                converter.convert(value, problemHandler) ?: "null"
 
             } else {
 

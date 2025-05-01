@@ -13,7 +13,7 @@ import jonathanlocke.katalyst.reflection.ValueType
  * @see MixinReference
  * @see MixinStore
  */
-interface Mixin<T : Any> {
+interface Mixin {
 
     /**
      * Retrieves or creates a value associated with *this* object
@@ -21,17 +21,15 @@ interface Mixin<T : Any> {
      * @param valueFactory A factory function to create the value if it does not exist
      * @return The value associated with *this* object
      */
-    fun mixinValue(type: ValueType<T>, valueFactory: () -> T): T {
-        return MixinStore.attach(mixinStateReference(type), valueFactory)
-    }
+    fun <T : Any> mixinValue(type: ValueType<T>, valueFactory: () -> T): T =
+        MixinStore.attach(mixinStateReference(type), valueFactory)
 
     /**
      * Detaches the value associated with *this* object
      * @param type The type of the value
      */
-    fun mixinValueDetach(type: ValueType<T>) {
+    fun <T : Any> mixinValueDetach(type: ValueType<T>) =
         MixinStore.detach(mixinStateReference(type))
-    }
 
-    private fun mixinStateReference(type: ValueType<T>) = MixinReference(this, type)
+    private fun <T : Any> mixinStateReference(type: ValueType<T>) = MixinReference(this, type)
 }

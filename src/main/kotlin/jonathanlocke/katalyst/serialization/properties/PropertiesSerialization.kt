@@ -4,8 +4,8 @@ import jonathanlocke.katalyst.conversion.ConversionRegistry
 import jonathanlocke.katalyst.conversion.ConversionRegistry.Companion.defaultConversionRegistry
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.megabytes
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.count
-import jonathanlocke.katalyst.problems.ProblemListener
-import jonathanlocke.katalyst.problems.listeners.ThrowOnError.Companion.throwOnError
+import jonathanlocke.katalyst.problems.ProblemHandler
+import jonathanlocke.katalyst.problems.handlers.ThrowOnError.Companion.throwOnError
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.serialization.*
 import jonathanlocke.katalyst.serialization.limiters.SizeSerializationLimiter
@@ -60,27 +60,27 @@ class PropertiesSerialization<Value : Any>(
 
     /**
      * Serializes a value to a properties file
-     * @param listener A problem listener to report problems to
+     * @param problemHandler A problem handler to report problems to
      * @param value The value to serialize
      * @return The serialized properties file as a string, with each property on a new line
      *
      * @see PropertiesSerializer
      */
-    fun serialize(value: Value, listener: ProblemListener = throwOnError): String {
-        return serializer().serialize(listener, value)
+    fun serialize(value: Value, problemHandler: ProblemHandler = throwOnError): String {
+        return serializer().serialize(problemHandler, value)
     }
 
     /**
      * Deserializes a properties file to a value
-     * @param listener A problem listener to report problems to
+     * @param problemHandler A problem handler to report problems to
      * @param type The type to deserialize the properties file to
      * @param text The properties file to deserialize
      * @return The deserialized value
      *
      * @see PropertiesDeserializer
      */
-    fun deserialize(type: ValueType<Value>, text: String, listener: ProblemListener = throwOnError): Value {
-        return deserializer(type).deserialize(text, listener)
+    fun deserialize(type: ValueType<Value>, text: String, problemHandler: ProblemHandler = throwOnError): Value {
+        return deserializer(type).deserialize(text, problemHandler)
     }
 
     /**

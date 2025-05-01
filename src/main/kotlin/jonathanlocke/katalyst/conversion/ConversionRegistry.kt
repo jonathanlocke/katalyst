@@ -33,8 +33,8 @@ import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
  *     companion object {
  *
  *         val byteConverter = stringToValueConverter(Byte::class) {
- *             text, listener -> text.toByteOrNull() ?:
- *                 listener.error("Invalid Byte value $text")
+ *             text, problemHandler -> text.toByteOrNull() ?:
+ *                 problemHandler.error("Invalid Byte value $text")
  *         }
  *
  *     [...]

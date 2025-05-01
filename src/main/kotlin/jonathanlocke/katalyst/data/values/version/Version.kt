@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.data.values.version
 
-import jonathanlocke.katalyst.problems.ProblemListener
-import jonathanlocke.katalyst.problems.listeners.ThrowOnError.Companion.throwOnError
+import jonathanlocke.katalyst.problems.ProblemHandler
+import jonathanlocke.katalyst.problems.handlers.ThrowOnError.Companion.throwOnError
 
 /**
  * Represents a [*semantic version*](https://semver.org), such as "6.3" or "1.2.1"
@@ -9,7 +9,7 @@ import jonathanlocke.katalyst.problems.listeners.ThrowOnError.Companion.throwOnE
  * **Creation**
  *
  * - [version] - Creates a version from the given string, throwing an exception if the string can't be parsed
- * - [Version.parseVersion] - Parses the given text into a version, reporting any problems to the given listener
+ * - [Version.parseVersion] - Parses the given text into a version, reporting any problems to the given handler
  *
  * **Comparison**
  *
@@ -51,12 +51,12 @@ data class Version(val major: Int, val minor: Int, val patch: Int = 0) {
             Regex("(?x) (?<major> \\d+) (\\. (?<minor> \\d+)) (\\. (?<patch> \\d+))?", RegexOption.IGNORE_CASE)
 
         /**
-         * Parses the given text into a version, reporting any problems to the given listener
+         * Parses the given text into a version, reporting any problems to the given handler
          *
          * @return The given text, of the form [major].[minor](.[revision])?(-release)?, parsed as a [Version] object,
          * or null if the text is not of that form.
          */
-        fun parseVersion(text: String, listener: ProblemListener = throwOnError): Version? {
+        fun parseVersion(text: String, problemHandler: ProblemHandler = throwOnError): Version? {
 
             // If the text matches the version pattern,
             val match = pattern.matchEntire(text)
@@ -67,7 +67,7 @@ data class Version(val major: Int, val minor: Int, val patch: Int = 0) {
                 return Version(major, minor, patch)
             }
 
-            return listener.error("Couldn't parse version '$text'").let { null }
+            return problemHandler.error("Couldn't parse version '$text'").let { null }
         }
     }
 

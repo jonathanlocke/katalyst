@@ -14,7 +14,7 @@ import jonathanlocke.katalyst.problems.Problem.Effect.STOP
 class ProblemList(
     val maximumProblems: Count = countMaximum(),
     private val problemList: MutableList<Problem> = safeList("problems", maximumSize = maximumProblems)
-) : MutableList<Problem> by problemList, ProblemListener {
+) : MutableList<Problem> by problemList, ProblemHandler {
 
     override fun problems() = this
 

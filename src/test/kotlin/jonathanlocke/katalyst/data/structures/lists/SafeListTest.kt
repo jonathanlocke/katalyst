@@ -12,7 +12,7 @@ class SafeListTest {
     @Test
     fun testWarning() {
         val problems = ProblemList()
-        val list = safeList<Int>(warningSize = count(10), problemListener = problems)
+        val list = safeList<Int>(warningSize = count(10), problemHandler = problems)
         list.addAll(1..100)
         assert(problems.size == 1)
         assert(problems.isValid())

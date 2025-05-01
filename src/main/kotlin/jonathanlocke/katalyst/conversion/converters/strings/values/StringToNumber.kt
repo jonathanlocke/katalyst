@@ -15,28 +15,28 @@ class StringToNumber {
             conversionRegistry.registerAllConversions(this)
         }
 
-        val byteConverter = stringToValueConverter(valueType(Byte::class)) { text, listener ->
-            text.toByteOrNull() ?: listener.error("Invalid Byte value $text").let { null }
+        val byteConverter = stringToValueConverter(valueType(Byte::class)) { text, problemHandler ->
+            text.toByteOrNull() ?: problemHandler.error("Invalid Byte value $text").let { null }
         }
 
-        val intConverter = stringToValueConverter(valueType(Int::class)) { text, listener ->
-            text.toIntOrNull() ?: listener.error("Invalid Int value $text").let { null }
+        val intConverter = stringToValueConverter(valueType(Int::class)) { text, problemHandler ->
+            text.toIntOrNull() ?: problemHandler.error("Invalid Int value $text").let { null }
         }
 
-        val longConverter = stringToValueConverter(valueType(Long::class)) { text, listener ->
-            text.toLongOrNull() ?: listener.error("Invalid Long value $text").let { null }
+        val longConverter = stringToValueConverter(valueType(Long::class)) { text, problemHandler ->
+            text.toLongOrNull() ?: problemHandler.error("Invalid Long value $text").let { null }
         }
 
-        val floatConverter = stringToValueConverter(valueType(Float::class)) { text, listener ->
-            text.toFloatOrNull() ?: listener.error("Invalid Float value $text").let { null }
+        val floatConverter = stringToValueConverter(valueType(Float::class)) { text, problemHandler ->
+            text.toFloatOrNull() ?: problemHandler.error("Invalid Float value $text").let { null }
         }
 
-        val doubleConverter = stringToValueConverter(valueType(Double::class)) { text, listener ->
-            text.toDoubleOrNull() ?: listener.error("Invalid Double value $text").let { null }
+        val doubleConverter = stringToValueConverter(valueType(Double::class)) { text, problemHandler ->
+            text.toDoubleOrNull() ?: problemHandler.error("Invalid Double value $text").let { null }
         }
 
-        val shortConverter = stringToValueConverter(valueType(Short::class)) { text, listener ->
-            text.toShortOrNull() ?: listener.error("Invalid Short value $text").let { null }
+        val shortConverter = stringToValueConverter(valueType(Short::class)) { text, problemHandler ->
+            text.toShortOrNull() ?: problemHandler.error("Invalid Short value $text").let { null }
         }
     }
 }

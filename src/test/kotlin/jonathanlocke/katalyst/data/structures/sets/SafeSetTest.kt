@@ -12,7 +12,7 @@ class SafeSetTest {
     @Test
     fun testWarning() {
         val problems = ProblemList()
-        val set = safeSet<Int>(warningSize = count(10), problemListener = problems)
+        val set = safeSet<Int>(warningSize = count(10), problemHandler = problems)
         set.addAll(1..100)
         assert(problems.size == 1)
         assert(problems.isValid())

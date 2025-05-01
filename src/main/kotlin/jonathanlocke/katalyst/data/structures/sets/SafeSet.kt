@@ -1,24 +1,24 @@
 package jonathanlocke.katalyst.data.structures.sets
 
 import jonathanlocke.katalyst.data.structures.SafeDataStructure
-import jonathanlocke.katalyst.problems.ProblemListener
-import jonathanlocke.katalyst.problems.listeners.ThrowOnError.Companion.throwOnError
+import jonathanlocke.katalyst.problems.ProblemHandler
+import jonathanlocke.katalyst.problems.handlers.ThrowOnError.Companion.throwOnError
 
 /**
  * A [MutableSet] that is safe to use.
  *
  * @param metadata Metadata about the collection
- * @param problemListener The problem listener to use
+ * @param problemHandler The problem handler to use
  * @param set The underlying set
  *
  * @see SafetyMetadata
- * @see ProblemListener
+ * @see ProblemHandler
  */
 class SafeSet<Member : Any> internal constructor(
     override val metadata: SafetyMetadata,
-    override val problemListener: ProblemListener = throwOnError,
+    override val problemHandler: ProblemHandler = throwOnError,
     private val set: MutableSet<Member>
-) : SafeDataStructure(metadata, problemListener), MutableSet<Member> {
+) : SafeDataStructure(metadata, problemHandler), MutableSet<Member> {
 
     fun toImmutableSet(): Set<Member> = set.toSet()
 

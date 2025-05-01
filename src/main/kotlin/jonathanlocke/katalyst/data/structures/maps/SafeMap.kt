@@ -1,24 +1,24 @@
 package jonathanlocke.katalyst.data.structures.maps
 
 import jonathanlocke.katalyst.data.structures.SafeDataStructure
-import jonathanlocke.katalyst.problems.ProblemListener
-import jonathanlocke.katalyst.problems.listeners.ThrowOnError.Companion.throwOnError
+import jonathanlocke.katalyst.problems.ProblemHandler
+import jonathanlocke.katalyst.problems.handlers.ThrowOnError.Companion.throwOnError
 
 /**
  * A [MutableSet] that is safe to use.
  *
  * @param metadata Metadata about the collection
- * @param problemListener The problem listener to use
+ * @param problemHandler The problem handler to use
  * @param map The underlying set
  *
  * @see SafetyMetadata
- * @see ProblemListener
+ * @see ProblemHandler
  */
 class SafeMap<Key : Any, Value> internal constructor(
     override val metadata: SafetyMetadata,
-    override val problemListener: ProblemListener = throwOnError,
+    override val problemHandler: ProblemHandler = throwOnError,
     private val map: MutableMap<Key, Value> = HashMap(metadata.estimatedSize.asInt())
-) : SafeDataStructure(metadata, problemListener), MutableMap<Key, Value> {
+) : SafeDataStructure(metadata, problemHandler), MutableMap<Key, Value> {
 
     fun toImmutableMap(): Map<Key, Value> = map.toMap()
 

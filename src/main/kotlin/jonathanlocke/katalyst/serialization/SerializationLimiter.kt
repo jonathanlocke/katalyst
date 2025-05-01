@@ -1,12 +1,12 @@
 package jonathanlocke.katalyst.serialization
 
-import jonathanlocke.katalyst.problems.ProblemListener
+import jonathanlocke.katalyst.problems.ProblemHandler
 
 /**
  * Provides the ability to limit the size of a serialization.
  *
  * @see SerializationSession
- * @see ProblemListener
+ * @see ProblemHandler
  */
 interface SerializationLimiter {
 
@@ -18,23 +18,23 @@ interface SerializationLimiter {
     /**
      * Determines whether or not a serialization process should continue
      * @param session The serialization session to inspect
-     * @param listener A problem listener to report problems to
+     * @param problemHandler A problem handler to report problems to
      * @return True if the serialization should continue, false otherwise
      */
-    fun limitReached(session: SerializationSession, listener: ProblemListener): Boolean
+    fun limitReached(session: SerializationSession, problemHandler: ProblemHandler): Boolean
 
     /**
      * Ensures that the serialization limit has not been reached.
      * @param session The serialization session to inspect
-     * @param listener A problem listener to report problems to
+     * @param problemHandler A problem handler to report problems to
      */
-    fun ensureLimitNotReached(session: SerializationSession, listener: ProblemListener) {
+    fun ensureLimitNotReached(session: SerializationSession, problemHandler: ProblemHandler) {
 
         // If the session limit has reached its limit,
-        if (limitReached(session, listener)) {
+        if (limitReached(session, problemHandler)) {
 
             // fail the serialization process entirely.
-            listener.fail("Serialization limit exceeded")
+            problemHandler.fail("Serialization limit exceeded")
         }
     }
 }

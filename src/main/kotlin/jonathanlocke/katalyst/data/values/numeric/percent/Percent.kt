@@ -7,8 +7,8 @@ import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.Inte
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.parsePercent
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.percent
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.percentConverter
-import jonathanlocke.katalyst.problems.ProblemListener
-import jonathanlocke.katalyst.problems.listeners.ThrowOnError.Companion.throwOnError
+import jonathanlocke.katalyst.problems.ProblemHandler
+import jonathanlocke.katalyst.problems.handlers.ThrowOnError.Companion.throwOnError
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.text.formatting.Formattable
 import jonathanlocke.katalyst.text.formatting.Formatter
@@ -19,7 +19,7 @@ import jonathanlocke.katalyst.text.formatting.Formatter
  * **Creation**
  *
  *  - [percent] - Creates a percent object from a percentage value
- *  - [parsePercent] - Parses a text into a percent object, reporting any problems to the given listener
+ *  - [parsePercent] - Parses a text into a percent object, reporting any problems to the given handler
  *
  * **Comparison**
  *
@@ -94,10 +94,15 @@ class Percent(val percent: Double) : Comparable<Percent>, Formattable<Percent>, 
     companion object {
 
         /**
-         * Returns a converter that converts a string to a [Percent], reporting any problems to the given listener.
+         * Returns a converter that converts a string to a [Percent], reporting any problems to the given handler.
          */
         fun percentConverter() =
-            stringToValueConverter(valueType(Percent::class)) { text, listener -> parsePercent(text, listener) }
+            stringToValueConverter(valueType(Percent::class)) { text, problemHandler ->
+                parsePercent(
+                    text,
+                    problemHandler
+                )
+            }
 
         val IntegerFormat = Formatter<Percent> { "${it.percent.toLong()}%" }
         val DecimalFormat = Formatter<Percent> { "%.1f%%".format(it.percent) }
@@ -111,11 +116,11 @@ class Percent(val percent: Double) : Comparable<Percent>, Formattable<Percent>, 
          * Parses the given text into a Percent object.
          *
          * @param text The text to parse
-         * @param listener The problem listener to use if the text cannot be parsed as a percent
+         * @param problemHandler The problem handler to use if the text cannot be parsed as a percent
          * @return The percent
          */
-        fun parsePercent(text: String, listener: ProblemListener = throwOnError): Percent? {
-            return listener.guard("Could not parse percentage: $text") {
+        fun parsePercent(text: String, problemHandler: ProblemHandler = throwOnError): Percent? {
+            return problemHandler.guard("Could not parse percentage: $text") {
                 val percentage = text.trim().trimEnd('%').toDouble()
                 percent(percentage)
             }

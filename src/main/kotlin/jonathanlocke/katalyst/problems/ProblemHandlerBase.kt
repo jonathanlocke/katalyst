@@ -2,7 +2,7 @@ package jonathanlocke.katalyst.problems
 
 import jonathanlocke.katalyst.problems.categories.Failure
 
-abstract class ProblemListenerBase() : ProblemListener {
+abstract class ProblemHandlerBase() : ProblemHandler {
 
     private val problems = lazy { ProblemList() }
 
