@@ -2,7 +2,7 @@ package jonathanlocke.katalyst.data.structures.lists
 
 import jonathanlocke.katalyst.data.structures.SafeDataStructure
 import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.handlers.ThrowOnError.Companion.throwOnError
+import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
 
 /**
  * A [MutableList] that is safe to use.

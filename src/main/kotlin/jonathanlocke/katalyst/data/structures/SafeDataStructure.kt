@@ -7,7 +7,7 @@ import jonathanlocke.katalyst.data.structures.sets.SafeSet
 import jonathanlocke.katalyst.data.values.numeric.count.Count
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.count
 import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.handlers.ThrowOnError.Companion.throwOnError
+import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
 
 abstract class SafeDataStructure(
     open val metadata: SafetyMetadata,

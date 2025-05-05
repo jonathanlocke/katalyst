@@ -1,4 +1,4 @@
-package jonathanlocke.katalyst.serialization.properties
+package jonathanlocke.katalyst.serialization.formats.properties
 
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.bytes
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.count

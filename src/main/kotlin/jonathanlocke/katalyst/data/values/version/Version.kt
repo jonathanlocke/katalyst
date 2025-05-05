@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.data.values.version
 
 import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.handlers.ThrowOnError.Companion.throwOnError
+import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
 
 /**
  * Represents a [*semantic version*](https://semver.org), such as "6.3" or "1.2.1"

@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.serialization
 
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
-import jonathanlocke.katalyst.serialization.properties.PropertiesSerialization
+import jonathanlocke.katalyst.serialization.formats.properties.PropertiesSerialization
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 

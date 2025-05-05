@@ -5,6 +5,7 @@ import jonathanlocke.katalyst.logging.LogEntry
 import jonathanlocke.katalyst.logging.Logger
 import jonathanlocke.katalyst.logging.loggers.contextual.CodeLocation.Companion.codeLocation
 import jonathanlocke.katalyst.problems.Problem
+import jonathanlocke.katalyst.problems.lists.NullProblemList
 import java.lang.Thread.currentThread
 import java.time.Duration.between
 import java.time.Instant

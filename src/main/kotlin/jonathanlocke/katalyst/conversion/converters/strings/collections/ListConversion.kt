@@ -9,7 +9,7 @@ import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConvert
 import jonathanlocke.katalyst.conversion.converters.strings.ValueToStringConverter
 import jonathanlocke.katalyst.conversion.converters.strings.values.ValueToString
 import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.handlers.ThrowOnError.Companion.throwOnError
+import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.text.parsing.Separator

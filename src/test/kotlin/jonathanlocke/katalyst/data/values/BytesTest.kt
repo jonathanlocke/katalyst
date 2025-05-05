@@ -6,7 +6,7 @@ import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.bytes
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.bytesConverter
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.parseBytes
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.toBytes
-import jonathanlocke.katalyst.problems.handlers.ReturnOnError.Companion.returnOnError
+import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.returnOnError
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.assertThrows

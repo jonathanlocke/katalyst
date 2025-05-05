@@ -13,7 +13,7 @@ import jonathanlocke.katalyst.text.formatting.Formattable
  *
  * @see Problem
  */
-class ProblemList(
+open class ProblemList(
     val maximumProblems: Count = countMaximum(),
     private val problemList: MutableList<Problem> = safeList("problems", maximumSize = maximumProblems)
 ) : MutableList<Problem> by problemList, ProblemHandler, Formattable<ProblemList> {
@@ -27,3 +27,4 @@ class ProblemList(
 
     override fun toString(): String = problemListDetailsFormatter.format(this)
 }
+

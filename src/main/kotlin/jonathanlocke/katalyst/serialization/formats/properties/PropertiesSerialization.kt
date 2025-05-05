@@ -1,11 +1,11 @@
-package jonathanlocke.katalyst.serialization.properties
+package jonathanlocke.katalyst.serialization.formats.properties
 
 import jonathanlocke.katalyst.conversion.ConversionRegistry
 import jonathanlocke.katalyst.conversion.ConversionRegistry.Companion.defaultConversionRegistry
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.megabytes
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.count
 import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.handlers.ThrowOnError.Companion.throwOnError
+import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.serialization.*
 import jonathanlocke.katalyst.serialization.limiters.SizeSerializationLimiter
@@ -30,8 +30,8 @@ import jonathanlocke.katalyst.serialization.limiters.SizeSerializationLimiter
  * @see PropertiesSerializer
  * @see PropertiesDeserializer
  * @see ConversionRegistry
- * @see jonathanlocke.katalyst.serialization.SerializationLimiter
- * @see jonathanlocke.katalyst.serialization.SerializationLimits
+ * @see SerializationLimiter
+ * @see SerializationLimits
  */
 class PropertiesSerialization<Value : Any>(
     val conversionRegistry: ConversionRegistry = defaultConversionRegistry,
@@ -48,7 +48,7 @@ class PropertiesSerialization<Value : Any>(
          *
          * @see SizeSerializationLimiter
          * @see PropertiesSerializationLimiter
-         * @see jonathanlocke.katalyst.serialization.SerializationLimits
+         * @see SerializationLimits
          * @see PropertiesSerializer
          * @see PropertiesDeserializer
          */

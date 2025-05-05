@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.serialization
 
 import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.handlers.ThrowOnError.Companion.throwOnError
+import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
 
 /**
  * Serializes a value to a string

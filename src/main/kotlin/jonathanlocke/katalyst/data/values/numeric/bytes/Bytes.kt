@@ -19,7 +19,7 @@ import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.terabyte
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.UnitSystem.IecUnits
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.UnitSystem.SiUnits
 import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.handlers.ThrowOnError.Companion.throwOnError
+import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.text.formatting.Formattable
 import jonathanlocke.katalyst.text.formatting.Formatter

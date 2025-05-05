@@ -3,7 +3,7 @@ package jonathanlocke.katalyst.data.structures.maps
 import jonathanlocke.katalyst.data.structures.SafeDataStructure
 import jonathanlocke.katalyst.data.structures.lists.SafeList
 import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.handlers.ThrowOnError.Companion.throwOnError
+import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
 
 /**
  * A [MutableSet] that is safe to use.

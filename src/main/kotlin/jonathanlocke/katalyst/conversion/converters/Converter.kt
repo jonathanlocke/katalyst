@@ -3,9 +3,9 @@ package jonathanlocke.katalyst.conversion.converters
 import jonathanlocke.katalyst.problems.Problem
 import jonathanlocke.katalyst.problems.ProblemException
 import jonathanlocke.katalyst.problems.ProblemHandler
+import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
 import jonathanlocke.katalyst.problems.handlers.ReturnOnError
 import jonathanlocke.katalyst.problems.handlers.ThrowOnError
-import jonathanlocke.katalyst.problems.handlers.ThrowOnError.Companion.throwOnError
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.validation.ValidationResult
 import jonathanlocke.katalyst.validation.ValidatorBase

@@ -1,4 +1,4 @@
-package jonathanlocke.katalyst.serialization.properties
+package jonathanlocke.katalyst.serialization.formats.properties
 
 import jonathanlocke.katalyst.conversion.ConversionRegistry
 import jonathanlocke.katalyst.conversion.ConversionRegistry.Companion.defaultConversionRegistry

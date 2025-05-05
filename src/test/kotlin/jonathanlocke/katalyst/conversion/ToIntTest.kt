@@ -2,7 +2,7 @@ package jonathanlocke.katalyst.conversion
 
 import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConverter.Companion.convert
 import jonathanlocke.katalyst.conversion.converters.strings.values.StringToNumber.Companion.intConverter
-import jonathanlocke.katalyst.problems.handlers.ReturnOnError.Companion.returnOnError
+import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.returnOnError
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

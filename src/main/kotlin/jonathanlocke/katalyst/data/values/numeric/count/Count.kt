@@ -7,7 +7,7 @@ import jonathanlocke.katalyst.data.values.numeric.Numeric
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.ThousandsSeparatedFormatter
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.parseCount
 import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.handlers.ThrowOnError.Companion.throwOnError
+import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.text.formatting.Formattable
 import jonathanlocke.katalyst.text.formatting.Formatter
