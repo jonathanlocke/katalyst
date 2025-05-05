@@ -38,8 +38,8 @@ import java.util.function.Supplier
  * "5.6".parseInt()
  * ```
  *
- * Since the default problem handler is [ThrowOnError] an exception will be thrown. But if the caller needed to avoid
- * throwing an exception, the could do this, which would cause the same method to return null instead:
+ * Since the default problem handler is [ThrowOnError], an exception will be thrown. But if the caller needed to avoid
+ * throwing an exception, they could do this, which would cause the same method to return null instead:
  *
  * ```
  * dirtyText.parseInt(ReturnNull())
@@ -64,7 +64,7 @@ import java.util.function.Supplier
  */
 interface ProblemHandler {
 
-    fun problems(): MutableList<Problem>
+    fun problems(): ProblemList
 
     /**
      * Forces a failure state that throws an exception which includes all problems this handler has encountered
@@ -93,7 +93,7 @@ interface ProblemHandler {
     /**
      * Guards the given functional code block by catching exceptions and reporting them as errors
      */
-    fun <Value> guard(message: String, code: Supplier<Value>): Value? = try {
+    fun <Value> tryCatch(message: String, code: Supplier<Value>): Value? = try {
         code.get()
     } catch (e: Exception) {
         error(message, e)

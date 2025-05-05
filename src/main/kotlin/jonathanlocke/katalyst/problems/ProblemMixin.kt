@@ -3,11 +3,15 @@ package jonathanlocke.katalyst.problems
 import jonathanlocke.katalyst.mixins.Mixin
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 
-interface ProblemMixin : Mixin, ProblemHandler {
+interface ProblemMixin : Mixin, ProblemSource, ProblemHandler {
 
-    fun repeater() = mixinValue(valueType(ProblemSource::class), { ProblemSource() })
-    fun problemHandlers() = repeater().problemHandlers
+    fun problemSource() = mixinValue(valueType(ProblemSource::class), { ProblemRepeater() })
+
+    override fun problems() = problemSource().problems()
+
+    override fun problemHandlers() = problemSource().problemHandlers()
+
     override fun receive(problem: Problem) {
-        repeater().receive(problem)
+        problemSource().receive(problem)
     }
 }

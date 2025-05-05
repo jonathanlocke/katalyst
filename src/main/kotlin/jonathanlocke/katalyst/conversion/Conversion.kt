@@ -3,10 +3,10 @@ package jonathanlocke.katalyst.conversion
 import jonathanlocke.katalyst.conversion.Conversion.Companion.conversion
 import jonathanlocke.katalyst.conversion.Conversion.Companion.stringConversion
 import jonathanlocke.katalyst.conversion.converters.Converter
-import jonathanlocke.katalyst.conversion.converters.ConverterBase
+import jonathanlocke.katalyst.conversion.converters.ConverterLambda
+import jonathanlocke.katalyst.conversion.converters.strings.StringConversion
 import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.reflection.ValueType
-import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 
 /**
  * A conversion supplies [From] -> [To] (forward) and [To] -> [From] (reverse) converters.
@@ -92,29 +92,12 @@ interface Conversion<From : Any, To : Any> {
          * @param stringToValueLambda Converter from [String] -> [Value]
          * @return A bidirectional [String] <-> [Value] conversion
          */
-        @Suppress("UNCHECKED_CAST")
         fun <Value : Any> stringConversion(
             type: ValueType<Value>,
-            valueToStringLambda: (Value?, ProblemHandler) -> String? = { value, problemHandler -> value.toString() },
-            stringToValueLambda: (String, ProblemHandler) -> Value?
-        ): Conversion<String, Value> =
-            object : ConversionBase<String, Value>(valueType(String::class), type) {
-
-                override fun forwardConverter(): Converter<String, Value> = object : ConverterBase<String, Value>(
-                    valueType(String::class), type
-                ) {
-                    override fun onConvert(from: String): Value? {
-                        return stringToValueLambda(from, this)
-                    }
-                }
-
-                override fun reverseConverter(): Converter<Value, String> = object : Converter<Value, String> {
-                    override val from = type
-                    override val to = valueType(String::class)
-                    override fun convert(from: Value?, problemHandler: ProblemHandler): String? {
-                        return valueToStringLambda(from, problemHandler)
-                    }
-                }
-            }
+            valueToStringLambda: ConverterLambda<String, Value>,
+            stringToValueLambda: ConverterLambda<Value, String>
+        ): Conversion<String, Value> {
+            return StringConversion(type, valueToStringLambda, stringToValueLambda)
+        }
     }
 }

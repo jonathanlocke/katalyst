@@ -8,7 +8,7 @@ import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.pars
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.percent
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.percentConverter
 import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.handlers.ThrowOnError.Companion.throwOnError
+import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.text.formatting.Formattable
 import jonathanlocke.katalyst.text.formatting.Formatter
@@ -120,7 +120,7 @@ class Percent(val percent: Double) : Comparable<Percent>, Formattable<Percent>, 
          * @return The percent
          */
         fun parsePercent(text: String, problemHandler: ProblemHandler = throwOnError): Percent? {
-            return problemHandler.guard("Could not parse percentage: $text") {
+            return problemHandler.tryCatch("Could not parse percentage: $text") {
                 val percentage = text.trim().trimEnd('%').toDouble()
                 percent(percentage)
             }

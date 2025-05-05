@@ -2,7 +2,9 @@ package jonathanlocke.katalyst.validation
 
 import jonathanlocke.katalyst.validation.Validator.Companion.isValid
 import jonathanlocke.katalyst.validation.Validator.Companion.requireValid
+import jonathanlocke.katalyst.validation.Validator.Companion.validate
 import jonathanlocke.katalyst.validation.Validator.Companion.validator
+import java.util.*
 
 /**
  * A validator checks values and returns a [ValidationResult].
@@ -53,6 +55,25 @@ interface Validator<Value : Any> {
         fun <Value : Any> requireValid(value: Value, vararg validators: Validator<Value>): Value {
             validators.all { it.validate(value).isValid }
             return value
+        }
+
+        /**
+         * Calls each validator on the given value merging the validation result of each validator into a composite
+         *
+         * @param value The value to validate
+         * @param validators The list of validators to check
+         * @return The merged validation result
+         */
+        @SafeVarargs
+        fun <Value : Any> validate(
+            value: Value,
+            vararg validators: Validator<Value>
+        ): ValidationResult<Value> {
+            val result = ValidationResult(value)
+            Arrays.stream<Validator<Value>>(validators)
+                .map { it: Validator<Value> -> it.validate(value) }
+                .forEach { it -> it.problems().forEach(result::receive) }
+            return result
         }
 
         /**

@@ -2,6 +2,7 @@ package jonathanlocke.katalyst.problems
 
 import jonathanlocke.katalyst.problems.categories.Error
 import jonathanlocke.katalyst.problems.categories.Warning
+import jonathanlocke.katalyst.text.formatting.Formattable
 import jonathanlocke.katalyst.validation.problems.ValidationError
 import jonathanlocke.katalyst.validation.problems.ValidationWarning
 
@@ -21,7 +22,8 @@ import jonathanlocke.katalyst.validation.problems.ValidationWarning
  * @see ValidationError
  * @see ValidationWarning
  */
-abstract class Problem(val message: String, val cause: Throwable? = null, val value: Any? = null) {
+abstract class Problem(val message: String, val cause: Throwable? = null, val value: Any? = null) :
+    Formattable<Problem> {
 
     enum class Effect { STOP, CONTINUE }
 

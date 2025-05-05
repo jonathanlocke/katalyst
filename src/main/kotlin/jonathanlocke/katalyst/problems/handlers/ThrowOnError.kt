@@ -22,11 +22,7 @@ import jonathanlocke.katalyst.problems.ProblemHandlerBase
  */
 class ThrowOnError : ProblemHandlerBase() {
 
-    companion object {
-        val throwOnError = ThrowOnError()
-    }
-
     override fun onReceive(problem: Problem) {
-        if (problem.effect == STOP) throw ProblemException("Halting execution:", problem)
+        if (problem.effect == STOP) throw ProblemException("Halting execution:", problems())
     }
 }

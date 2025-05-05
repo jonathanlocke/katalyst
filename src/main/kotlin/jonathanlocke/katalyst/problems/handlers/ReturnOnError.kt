@@ -19,10 +19,6 @@ import jonathanlocke.katalyst.problems.categories.Failure
  */
 class ReturnOnError : ProblemHandlerBase() {
 
-    companion object {
-        val returnOnError = ReturnOnError()
-    }
-
     override fun onReceive(problem: Problem) {
     }
 }

@@ -9,6 +9,7 @@ abstract class ProblemHandlerBase() : ProblemHandler {
     override fun problems(): ProblemList = problems.value
 
     final override fun receive(problem: Problem) {
+        problems.value.add(problem)
         if (problem is Failure) fail("Failure encountered")
         onReceive(problem)
     }
