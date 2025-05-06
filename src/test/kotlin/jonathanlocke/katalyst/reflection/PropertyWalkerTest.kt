@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.reflection
 
 import jonathanlocke.katalyst.reflection.properties.PropertyPath
-import jonathanlocke.katalyst.reflection.properties.PropertyWalker
+import jonathanlocke.katalyst.reflection.properties.walker.PropertyWalker
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -20,9 +20,9 @@ class PropertyWalkerTest {
     fun testSuccess() {
         val paths = mutableListOf<PropertyPath>()
         val values = mutableListOf<Any?>()
-        PropertyWalker(X()).walk { path, property, value ->
-            paths.add(path)
-            values.add(value)
+        PropertyWalker(X()).walk { property ->
+            paths.add(property.path)
+            values.add(property.value)
         }
         assertEquals("X:x", paths[0].toString())
         assertEquals("X:y", paths[1].toString())

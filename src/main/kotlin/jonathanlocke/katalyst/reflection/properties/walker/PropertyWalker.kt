@@ -1,6 +1,8 @@
-package jonathanlocke.katalyst.reflection.properties
+package jonathanlocke.katalyst.reflection.properties.walker
 
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
+import jonathanlocke.katalyst.reflection.properties.Property
+import jonathanlocke.katalyst.reflection.properties.PropertyPath
 import java.util.function.Predicate
 
 class PropertyWalker(val rootValue: Any) {
@@ -61,7 +63,7 @@ class PropertyWalker(val rootValue: Any) {
                 if (walk.filter.test(property)) {
 
                     // call the visitor.
-                    propertyVisitor.atProperty(propertyPath, property, propertyValue)
+                    propertyVisitor.atProperty(PropertyInformation(propertyPath, property, propertyValue))
                 }
 
                 // If we are walking recursively and the property has a value,

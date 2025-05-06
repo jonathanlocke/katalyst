@@ -5,7 +5,7 @@ import jonathanlocke.katalyst.conversion.ConversionRegistry.Companion.defaultCon
 import jonathanlocke.katalyst.conversion.converters.Converter
 import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
-import jonathanlocke.katalyst.reflection.properties.PropertyWalker
+import jonathanlocke.katalyst.reflection.properties.walker.PropertyWalker
 import jonathanlocke.katalyst.serialization.SerializationLimiter
 import jonathanlocke.katalyst.serialization.Serializer
 
@@ -45,7 +45,7 @@ class PropertiesSerializer<Value : Any>(
         val session = PropertiesSerializationSession()
 
         // then walk the properties of the value recursively,
-        PropertyWalker(value).walk { path, property, value ->
+        PropertyWalker(value).walk { property ->
 
             // convert the value to text,
             val text = toText(problemHandler, value)
@@ -54,7 +54,7 @@ class PropertiesSerializer<Value : Any>(
             if (text != null) {
 
                 // create a properties file line in key/value format,
-                val line = "${path.pathString()}=$text"
+                val line = "${property.path.pathString()}=$text"
 
                 // add it to the list of lines,
                 lines.add(line)
