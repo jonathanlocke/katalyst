@@ -14,4 +14,5 @@ import jonathanlocke.katalyst.problems.Problem.Effect.CONTINUE
  */
 open class Warning(message: String, cause: Throwable? = null, value: Any? = null) : Problem(message, cause, value) {
     override val effect = CONTINUE
+    override fun prefixed(prefix: String): Problem = Failure(prefix + message, cause, value)
 }

@@ -1,3 +1,3 @@
 package jonathanlocke.katalyst.resources.storage
 
-interface ResourceStorageSystem
+abstract class ResourceStoreBase : ResourceStore

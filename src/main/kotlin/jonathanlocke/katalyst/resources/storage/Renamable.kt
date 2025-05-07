@@ -1,5 +1,7 @@
 package jonathanlocke.katalyst.resources.storage
 
-interface Renamable<Target> {
-    fun rename(target: Target)
+import jonathanlocke.katalyst.resources.Resource
+
+interface Renamable {
+    fun rename(target: Resource)
 }

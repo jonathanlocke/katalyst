@@ -14,4 +14,5 @@ import jonathanlocke.katalyst.problems.Problem.Effect.STOP
  */
 open class Failure(message: String, cause: Throwable? = null, value: Any? = null) : Problem(message, cause, value) {
     override val effect = STOP
+    override fun prefixed(prefix: String): Problem = Failure(prefix + message, cause, value)
 }

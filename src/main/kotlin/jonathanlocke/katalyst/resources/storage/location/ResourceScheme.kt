@@ -1,4 +1,4 @@
-package jonathanlocke.katalyst.resources.creation
+package jonathanlocke.katalyst.resources.storage.location
 
 import java.net.URI
 

@@ -29,6 +29,8 @@ abstract class Problem(val message: String, val cause: Throwable? = null, val va
 
     abstract val effect: Effect
 
+    abstract fun prefixed(prefix: String): Problem
+
     override fun toString(): String {
         val causeText = cause?.let { ", cause: $it" } ?: ""
         val valueText = value?.let { ", value: $it" } ?: ""

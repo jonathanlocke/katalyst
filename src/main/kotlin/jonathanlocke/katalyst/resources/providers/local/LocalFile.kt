@@ -2,19 +2,17 @@ package jonathanlocke.katalyst.resources.providers.local
 
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.bytes
-import jonathanlocke.katalyst.resources.creation.ResourceFolder
-import jonathanlocke.katalyst.resources.creation.ResourceScheme
+import jonathanlocke.katalyst.resources.Resource
+import jonathanlocke.katalyst.resources.ResourceBase
 import jonathanlocke.katalyst.resources.metadata.Filename
 import jonathanlocke.katalyst.resources.proximity.ResourceProximity
-import jonathanlocke.katalyst.resources.storage.Copyable
-import jonathanlocke.katalyst.resources.storage.ResourceStorageSystem
-import jonathanlocke.katalyst.resources.streams.Resource
-import jonathanlocke.katalyst.resources.streams.ResourceBase
-import jonathanlocke.katalyst.resources.streams.reading.ResourceReader
-import jonathanlocke.katalyst.resources.streams.writing.ResourceWriter
-import jonathanlocke.katalyst.resources.streams.writing.WriteMode
-import jonathanlocke.katalyst.resources.streams.writing.WriteMode.DoNotOverwrite
-import jonathanlocke.katalyst.resources.streams.writing.WriteMode.Overwrite
+import jonathanlocke.katalyst.resources.storage.ResourceFolder
+import jonathanlocke.katalyst.resources.storage.ResourceStore
+import jonathanlocke.katalyst.resources.storage.location.ResourceScheme
+import jonathanlocke.katalyst.resources.streams.Copyable
+import jonathanlocke.katalyst.resources.streams.WriteMode
+import jonathanlocke.katalyst.resources.streams.WriteMode.DoNotOverwrite
+import jonathanlocke.katalyst.resources.streams.WriteMode.Overwrite
 import java.io.*
 import java.net.URI
 import java.nio.file.Files
@@ -25,7 +23,7 @@ import java.time.Instant
 class LocalFile(override val path: Path) : ResourceBase() {
 
     override val parent: ResourceFolder get() = TODO("Not yet implemented")
-    override val storageSystem: ResourceStorageSystem = LocalFilesystem()
+    override val store: ResourceStore = LocalFileStore()
     override val exists: Boolean = Files.exists(path)
     override val proximity: ResourceProximity = ResourceProximity.Local
     override val size: Bytes = bytes(Files.size(path))
@@ -59,14 +57,6 @@ class LocalFile(override val path: Path) : ResourceBase() {
     }
 
     override fun copyTo(target: Resource, method: Copyable.CopyMethod, mode: WriteMode) {
-        TODO("Not yet implemented")
-    }
-
-    override fun reader(): ResourceReader {
-        TODO("Not yet implemented")
-    }
-
-    override fun writer(mode: WriteMode): ResourceWriter {
         TODO("Not yet implemented")
     }
 }

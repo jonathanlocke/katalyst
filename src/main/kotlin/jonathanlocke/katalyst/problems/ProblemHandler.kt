@@ -1,6 +1,7 @@
 package jonathanlocke.katalyst.problems
 
 import jonathanlocke.katalyst.problems.categories.*
+import jonathanlocke.katalyst.problems.handlers.PrefixingProblemHandler
 import jonathanlocke.katalyst.problems.handlers.ReturnOnError
 import jonathanlocke.katalyst.problems.handlers.ThrowOnError
 import java.util.function.Supplier
@@ -66,6 +67,8 @@ interface ProblemHandler {
 
     fun problems(): ProblemList
 
+    fun prefixed(prefix: String) = PrefixingProblemHandler(prefix, this)
+
     /**
      * Forces a failure state that throws an exception which includes all problems this handler has encountered
      */
@@ -78,6 +81,11 @@ interface ProblemHandler {
      */
     fun receive(problem: Problem) {
         problems().add(problem)
+    }
+
+    fun ensure(condition: Boolean, message: String): Boolean {
+        if (!condition) error(message)
+        return condition
     }
 
     fun failure(message: String, cause: Throwable? = null, value: Any? = null) = receive(Failure(message, cause, value))

@@ -1,3 +1,0 @@
-package jonathanlocke.katalyst.resources.creation
-
-class ResourceFolder

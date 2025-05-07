@@ -1,5 +1,6 @@
 package jonathanlocke.katalyst.resources.creation
 
+import jonathanlocke.katalyst.resources.storage.location.ResourceScheme
 import java.net.URI
 
 interface UriResourceResolver {

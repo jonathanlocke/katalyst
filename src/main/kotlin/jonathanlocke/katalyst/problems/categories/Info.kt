@@ -11,4 +11,5 @@ import jonathanlocke.katalyst.problems.Problem.Effect.CONTINUE
  */
 open class Info(message: String) : Problem(message) {
     override val effect = CONTINUE
+    override fun prefixed(prefix: String): Problem = Info(prefix + message)
 }
