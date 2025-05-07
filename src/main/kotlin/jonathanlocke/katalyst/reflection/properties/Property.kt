@@ -4,18 +4,18 @@ import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.reflection.properties.kotlin.KotlinProperty
 import kotlin.reflect.KProperty
 
-interface Property<T : Any> {
+interface Property<Value : Any> {
 
     enum class Visibility { PUBLIC, PRIVATE, PROTECTED }
     companion object {
 
-        fun <T : Any> property(property: KProperty<T>) = KotlinProperty(property)
+        fun <Value : Any> property(property: KProperty<Value>) = KotlinProperty(property)
     }
 
     val visibility: Visibility
     val name: String
-    val type: ValueType<T>
-    fun get(instance: Any): T?
-    fun set(instance: Any, value: T?)
+    fun type(): ValueType<Value>
+    fun get(instance: Any): Value?
+    fun set(instance: Any, value: Value?)
     fun canGet(instance: Any): Boolean
 }

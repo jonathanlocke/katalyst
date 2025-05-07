@@ -8,10 +8,18 @@ interface ValueType<Value : Any> {
 
     companion object {
 
-        fun <Value : Any> valueType(kClass: KClass<Value>) = KotlinValueType(kClass)
+        fun <Value : Any> valueType(valueClass: KClass<Value>) =
+            KotlinValueType(valueClass, null)
+
+        fun <Value : Any> valueType(kClass: KClass<Value>, parameterClass: KClass<*>) =
+            KotlinValueType(kClass, parameterClass)
     }
 
     val simpleName: String
+    val qualifiedName: String
+    val packageName: String
+    val valueClass: KClass<Value>
+    val parameterClass: KClass<*>?
     fun createInstance(): Value
     fun superProperties(): List<Property<*>>
     fun declaredProperties(): List<Property<*>>

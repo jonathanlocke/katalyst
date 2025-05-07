@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.text.formatting
 
-interface Formattable<T> {
+interface Formattable<Value> {
     @Suppress("UNCHECKED_CAST")
-    fun format(formatter: Formatter<T>): String = formatter.format(this as T)
+    fun format(formatter: Formatter<Value>): String = formatter.format(this as Value)
 }

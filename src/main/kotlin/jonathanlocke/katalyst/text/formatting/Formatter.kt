@@ -1,5 +1,5 @@
 package jonathanlocke.katalyst.text.formatting
 
-fun interface Formatter<T> {
-    fun format(value: T): String
+fun interface Formatter<Value> {
+    fun format(value: Value): String
 }

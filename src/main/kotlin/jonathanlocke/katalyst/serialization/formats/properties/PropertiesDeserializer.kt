@@ -89,7 +89,7 @@ class PropertiesDeserializer<Value : Any>(
                         problemHandler.fail("Parent property path '$parentPath' does not exist in type '${type.simpleName}'")
                     } else {
                         // and initialize it to a new value,
-                        val parentValue = parentProperty.type.createInstance()
+                        val parentValue = parentProperty.type().createInstance()
                         val grandparentValue =
                             pathToValue[parentPath.parent()] ?: run {
                                 problemHandler.fail("Internal error: no path to grandparent")
@@ -102,7 +102,7 @@ class PropertiesDeserializer<Value : Any>(
                 }
 
                 // then if there is a conversion to the property type,
-                val conversions = conversionRegistry.to(property.type)
+                val conversions = conversionRegistry.to(property.type())
                 if (!conversions.isEmpty()) {
 
                     // get the forward converter (String to Value),

@@ -54,7 +54,7 @@ class PropertyPath(val type: ValueType<*>) : ArrayList<String>() {
             }
 
             // otherwise advance to the type of the property for the next element.
-            at = property.type
+            at = property.type()
         }
 
         return property

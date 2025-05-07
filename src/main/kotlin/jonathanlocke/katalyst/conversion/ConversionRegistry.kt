@@ -144,7 +144,7 @@ open class ConversionRegistry() {
         // For each property of the companion object,
         valueType(companionObject::class).memberProperties().forEach { property ->
 
-            when (property.type) {
+            when (property.type()) {
 
                 // register it if it is a Conversion,
                 valueType(Conversion::class) -> {

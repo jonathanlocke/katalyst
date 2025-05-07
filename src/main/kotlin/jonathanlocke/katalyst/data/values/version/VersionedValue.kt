@@ -8,4 +8,4 @@ package jonathanlocke.katalyst.data.values.version
  *
  * @see Versioned
  */
-class VersionedValue<T>(val value: T, override val version: Version) : Versioned
+class VersionedValue<Value>(val value: Value, override val version: Version) : Versioned

@@ -1,5 +1,6 @@
 package jonathanlocke.katalyst.reflection.properties.kotlin
 
+import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.reflection.properties.Property
 import jonathanlocke.katalyst.reflection.properties.Property.Visibility
@@ -10,7 +11,7 @@ import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.KVisibility
 
-class KotlinProperty<T : Any>(val property: KProperty<T>) : Property<T> {
+class KotlinProperty<Value : Any>(val property: KProperty<Value>) : Property<Value> {
 
     override val visibility: Visibility = when (property.visibility) {
         KVisibility.PUBLIC -> PUBLIC
@@ -22,9 +23,19 @@ class KotlinProperty<T : Any>(val property: KProperty<T>) : Property<T> {
     override val name = property.name
 
     @Suppress("UNCHECKED_CAST")
-    override val type = valueType(property.returnType.classifier as KClass<T>)
-    override fun get(instance: Any): T? = property.getter.call(instance)
-    override fun set(instance: Any, value: T?) {
+    override fun type(): ValueType<Value> {
+        val propertyType = property.returnType
+        val valueClass = propertyType.classifier as KClass<Value>
+        return if (propertyType.arguments.isEmpty()) {
+            valueType(valueClass)
+        } else {
+            val parameterClass = property.returnType.arguments.first().type?.classifier as? KClass<*>
+            valueType(valueClass, parameterClass!!)
+        }
+    }
+
+    override fun get(instance: Any): Value? = property.getter.call(instance)
+    override fun set(instance: Any, value: Value?) {
         if (property is KMutableProperty<*>) {
             property.setter.call(instance, value)
         }

@@ -21,15 +21,15 @@ interface Mixin {
      * @param valueFactory A factory function to create the value if it does not exist
      * @return The value associated with *this* object
      */
-    fun <T : Any> mixinValue(type: ValueType<T>, valueFactory: () -> T): T =
+    fun <Value : Any> mixinValue(type: ValueType<Value>, valueFactory: () -> Value): Value =
         MixinStore.attach(mixinStateReference(type), valueFactory)
 
     /**
      * Detaches the value associated with *this* object
      * @param type The type of the value
      */
-    fun <T : Any> mixinValueDetach(type: ValueType<T>) =
+    fun <Value : Any> mixinValueDetach(type: ValueType<Value>) =
         MixinStore.detach(mixinStateReference(type))
 
-    private fun <T : Any> mixinStateReference(type: ValueType<T>) = MixinReference(this, type)
+    private fun <Value : Any> mixinStateReference(type: ValueType<Value>) = MixinReference(this, type)
 }
