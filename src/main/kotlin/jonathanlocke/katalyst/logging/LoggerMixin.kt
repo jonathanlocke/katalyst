@@ -9,7 +9,7 @@ interface LoggerMixin : Mixin, Logger {
 
     fun logger(): Logger = mixinValue(valueType(Logger::class)) { defaultLoggerFactory.newLogger() }
 
-    override fun receive(problem: Problem) = logger().receive(problem)
+    override fun handle(problem: Problem) = logger().handle(problem)
     override fun logs(): List<Log> = logger().logs()
     override fun problems() = logger().problems()
 }

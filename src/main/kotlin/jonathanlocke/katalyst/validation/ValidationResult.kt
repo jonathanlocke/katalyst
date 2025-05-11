@@ -39,7 +39,7 @@ class ValidationResult<Value : Any>(val value: Value) : ProblemHandler {
     val errors = problems().errors()
     val warnings = problems().warnings()
 
-    override fun receive(problem: Problem) {
+    override fun handle(problem: Problem) {
         if (problem is Error) validationError(problem.message, problem.cause)
         if (problem is Warning) validationWarning(problem.message, problem.cause)
     }

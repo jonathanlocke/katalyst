@@ -7,13 +7,9 @@ open class ProblemRepeater : ProblemHandlerBase(), ProblemSource {
 
     private val problemHandlers: MutableList<ProblemHandler> = ArrayList()
 
-    override fun problemHandlers(): MutableList<ProblemHandler> {
-        return problemHandlers
-    }
+    override fun handlers(): MutableList<ProblemHandler> = problemHandlers
 
-    override fun onReceive(problem: Problem) {
-        for (handler in problemHandlers) {
-            handler.receive(problem)
-        }
+    override fun onHandle(problem: Problem) {
+        for (it in problemHandlers) it.handle(problem)
     }
 }

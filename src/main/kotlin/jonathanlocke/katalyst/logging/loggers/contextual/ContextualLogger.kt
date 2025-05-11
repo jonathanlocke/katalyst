@@ -19,7 +19,7 @@ class ContextualLogger(val logs: List<Log>) : Logger {
 
     override fun problems() = NullProblemList()
 
-    override fun receive(problem: Problem) = addToLogs(codeLocation, currentThread(), problem)
+    override fun handle(problem: Problem) = addToLogs(codeLocation, currentThread(), problem)
     override fun logs(): List<Log> = logs
 
     private fun addToLogs(location: CodeLocation, thread: Thread, problem: Problem) {

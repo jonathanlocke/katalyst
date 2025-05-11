@@ -67,12 +67,12 @@ interface Validator<Value : Any> {
         @SafeVarargs
         fun <Value : Any> validate(
             value: Value,
-            vararg validators: Validator<Value>
+            vararg validators: Validator<Value>,
         ): ValidationResult<Value> {
             val result = ValidationResult(value)
             Arrays.stream<Validator<Value>>(validators)
                 .map { it: Validator<Value> -> it.validate(value) }
-                .forEach { it -> it.problems().forEach(result::receive) }
+                .forEach { it -> it.problems().forEach(result::handle) }
             return result
         }
 

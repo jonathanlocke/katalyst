@@ -69,8 +69,12 @@ interface ProblemHandler {
 
     fun prefixed(prefix: String) = PrefixingProblemHandler(prefix, this)
 
-    fun handleProblemsFrom(problemSource: ProblemSource) {
-        problemSource.problemHandlers().add(this)
+    fun handle(problem: Problem) {
+        problems().add(problem)
+    }
+
+    fun handleFrom(problemSource: ProblemSource) {
+        problemSource.addHandler(this)
     }
 
     /**
@@ -78,10 +82,6 @@ interface ProblemHandler {
      */
     fun fail(message: String) {
         ProblemException.fail(message, problems())
-    }
-
-    fun receive(problem: Problem) {
-        problems().add(problem)
     }
 
     fun requireValue(value: Any?, message: String = "Cannot be null") {
@@ -98,15 +98,18 @@ interface ProblemHandler {
         return condition
     }
 
-    fun failure(message: String, cause: Throwable? = null, value: Any? = null) = receive(Failure(message, cause, value))
+    fun failure(message: String, cause: Throwable? = null, value: Any? = null) =
+        handle(Failure(message, cause, value))
 
-    fun info(message: String, cause: Throwable? = null, value: Any? = null) = receive(Info(message))
+    fun info(message: String, cause: Throwable? = null, value: Any? = null) = handle(Info(message))
 
-    fun trace(message: String, cause: Throwable? = null, value: Any? = null) = receive(Trace(message))
+    fun trace(message: String, cause: Throwable? = null, value: Any? = null) = handle(Trace(message))
 
-    fun error(message: String, cause: Throwable? = null, value: Any? = null) = receive(Error(message, cause, value))
+    fun error(message: String, cause: Throwable? = null, value: Any? = null) =
+        handle(Error(message, cause, value))
 
-    fun warning(message: String, cause: Throwable? = null, value: Any? = null) = receive(Warning(message, cause, value))
+    fun warning(message: String, cause: Throwable? = null, value: Any? = null) =
+        handle(Warning(message, cause, value))
 
     /**
      * Guards the given functional code block by catching exceptions and reporting them as errors
