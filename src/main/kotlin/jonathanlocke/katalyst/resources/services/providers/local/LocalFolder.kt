@@ -2,6 +2,7 @@ package jonathanlocke.katalyst.resources.services.providers.local
 
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.toBytes
+import jonathanlocke.katalyst.resources.ResourceFolder.FolderAccessMode
 import jonathanlocke.katalyst.resources.location.ResourceLocation
 import jonathanlocke.katalyst.resources.location.path.Filename
 import jonathanlocke.katalyst.resources.services.ResourceFolderService
@@ -9,7 +10,6 @@ import jonathanlocke.katalyst.resources.services.ResourceService
 import jonathanlocke.katalyst.resources.services.ResourceStoreService
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
-import kotlin.Int.Companion.MAX_VALUE
 
 class LocalFolder(
     override val store: ResourceStoreService,
@@ -40,11 +40,11 @@ class LocalFolder(
     override fun resource(filename: Filename): ResourceService = store.resource(location.child(filename))
     override fun folder(filename: Filename): ResourceFolderService = store.folder(location.child(filename))
 
-    override fun resources(recurse: Boolean): List<ResourceService> =
-        Files.walk(location.path, if (recurse) MAX_VALUE else 1).filter { Files.isRegularFile(it) }
+    override fun resources(access: FolderAccessMode): List<ResourceService> =
+        Files.walk(location.path, access.levels).filter { Files.isRegularFile(it) }
             .map { resource(Filename(it.fileName)) }.toList()
 
-    override fun folders(recurse: Boolean): List<ResourceFolderService> =
-        Files.walk(location.path, if (recurse) MAX_VALUE else 1).filter { Files.isDirectory(it) }
+    override fun folders(access: FolderAccessMode): List<ResourceFolderService> =
+        Files.walk(location.path, access.levels).filter { Files.isDirectory(it) }
             .map { folder(Filename(it.fileName)) }.toList()
 }

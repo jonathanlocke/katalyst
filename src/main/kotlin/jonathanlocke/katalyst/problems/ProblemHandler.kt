@@ -69,7 +69,7 @@ interface ProblemHandler {
 
     fun prefixed(prefix: String) = PrefixingProblemHandler(prefix, this)
 
-    fun handleProblems(problemSource: ProblemSource) {
+    fun handleProblemsFrom(problemSource: ProblemSource) {
         problemSource.problemHandlers().add(this)
     }
 
@@ -80,9 +80,6 @@ interface ProblemHandler {
         ProblemException.fail(message, problems())
     }
 
-    /**
-     * Extension point for handling a problem
-     */
     fun receive(problem: Problem) {
         problems().add(problem)
     }
