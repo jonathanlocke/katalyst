@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.data.values.numeric.count
 
-import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConverter.Companion.convert
-import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConverter.Companion.stringToValueConverter
+import jonathanlocke.katalyst.conversion.converters.strings.StringConversions.Companion.convert
+import jonathanlocke.katalyst.conversion.converters.strings.StringConversions.Companion.stringToValueConverter
 import jonathanlocke.katalyst.conversion.converters.strings.values.StringToNumber.Companion.longConverter
 import jonathanlocke.katalyst.data.values.numeric.Numeric
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.ThousandsSeparatedFormatter
@@ -57,6 +57,9 @@ value class Count private constructor(val count: Long) : Comparable<Count>, Form
             text.convert(longConverter, throwOnError)?.toCount() ?: handler.error("Could not parse count: $text")
                 .let { null }
         }
+
+        fun <T> List<T>.count() = count(this.size)
+        fun <T> MutableList<T>.count() = count(this.size)
 
         /**
          * Converts the given number to a [Count].

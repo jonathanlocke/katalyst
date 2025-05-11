@@ -69,11 +69,15 @@ interface ProblemHandler {
 
     fun prefixed(prefix: String) = PrefixingProblemHandler(prefix, this)
 
+    fun handleProblems(problemSource: ProblemSource) {
+        problemSource.problemHandlers().add(this)
+    }
+
     /**
      * Forces a failure state that throws an exception which includes all problems this handler has encountered
      */
     fun fail(message: String) {
-        throw ProblemException(message, problems())
+        ProblemException.fail(message, problems())
     }
 
     /**
@@ -83,8 +87,17 @@ interface ProblemHandler {
         problems().add(problem)
     }
 
-    fun ensure(condition: Boolean, message: String): Boolean {
-        if (!condition) error(message)
+    fun requireValue(value: Any?, message: String = "Cannot be null") {
+        require(value != null) { message }
+    }
+
+    fun requireOrFail(condition: Boolean, message: String, code: Runnable? = null): Boolean {
+        if (condition) fail(message) else code?.run()
+        return condition
+    }
+
+    fun requireOrError(condition: Boolean, message: String, code: Runnable? = null): Boolean {
+        if (condition) error(message) else code?.run()
         return condition
     }
 

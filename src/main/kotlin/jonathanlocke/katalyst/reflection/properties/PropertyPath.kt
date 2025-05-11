@@ -35,10 +35,10 @@ class PropertyPath(val type: ValueType<*>) : ArrayList<String>() {
      * Returns the property at this path in the given type.
      * @return The property at this path in the given type, or null if it does not exist.
      */
-    fun property(): Property<*>? {
+    fun property(): PropertyAccessor<*>? {
 
         var at: ValueType<*> = type
-        var property: Property<*>? = null
+        var property: PropertyAccessor<*>? = null
 
         // For each element in the path,
         for (element in this) {

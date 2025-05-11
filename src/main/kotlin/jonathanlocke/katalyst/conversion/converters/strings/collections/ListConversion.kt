@@ -4,10 +4,10 @@ import jonathanlocke.katalyst.conversion.Conversion
 import jonathanlocke.katalyst.conversion.ConversionBase
 import jonathanlocke.katalyst.conversion.converters.Converter
 import jonathanlocke.katalyst.conversion.converters.ConverterBase
+import jonathanlocke.katalyst.conversion.converters.strings.StringConversions.Companion.stringToValueConverter
 import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConverter
-import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConverter.Companion.stringToValueConverter
 import jonathanlocke.katalyst.conversion.converters.strings.ValueToStringConverter
-import jonathanlocke.katalyst.conversion.converters.strings.values.ValueToString
+import jonathanlocke.katalyst.conversion.converters.strings.values.FormatValueToString
 import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
 import jonathanlocke.katalyst.reflection.ValueType
@@ -57,7 +57,7 @@ class ListConversion<Value : Any>(
     val stringToValueProblemHandler: ProblemHandler = throwOnError,
 
     // Value -> String conversion
-    val valueToStringConverter: ValueToStringConverter<Value> = ValueToString(type) as ValueToStringConverter<Value>,
+    val valueToStringConverter: ValueToStringConverter<Value> = FormatValueToString(type) as ValueToStringConverter<Value>,
     val valueToStringProblemHandler: ProblemHandler = throwOnError,
     val defaultToStringValue: String = "?"
 

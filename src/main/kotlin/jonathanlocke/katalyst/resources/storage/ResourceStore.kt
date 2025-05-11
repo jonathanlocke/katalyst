@@ -1,3 +1,0 @@
-package jonathanlocke.katalyst.resources.storage
-
-interface ResourceStore

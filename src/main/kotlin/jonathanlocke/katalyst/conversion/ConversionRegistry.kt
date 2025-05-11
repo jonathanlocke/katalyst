@@ -4,8 +4,10 @@ import jonathanlocke.katalyst.conversion.ConversionRegistry.Companion.defaultCon
 import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConverter
 import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeList
 import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeMultiMap
+import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
+import kotlin.reflect.full.companionObjectInstance
 
 /**
  * Registry of [Conversion]s.
@@ -120,6 +122,38 @@ open class ConversionRegistry() {
     }
 
     /**
+     * Converts the given value from the given type to the given type
+     */
+    fun <From : Any, To : Any> convert(
+        fromType: ValueType<From>, toType: ValueType<To>, from: From?, problemHandler: ProblemHandler
+    ): To? {
+        val conversion = conversion(fromType, toType)
+        if (conversion == null) {
+            problemHandler.error("Could not find conversion from $fromType to $toType")
+            return null
+        }
+        val result = conversion.forwardConverter().convert(from, problemHandler)
+        if (result == null) {
+            problemHandler.error("Could not convert ${from?.toString() ?: "null"} from $fromType to $toType")
+        }
+        return result
+    }
+
+
+    /**
+     * Returns any conversion for the given types, or throws an exception if no conversion exists
+     */
+    @Suppress("UNCHECKED_CAST")
+    fun <From : Any, To : Any> conversion(
+        fromType: ValueType<From>, toType: ValueType<To>
+    ): Conversion<From, To>? {
+        synchronized(this) {
+            val conversion = from[fromType]?.stream()?.filter { it.to.equals(toType) }?.findFirst()?.orElse(null)
+            return conversion as? Conversion<From, To>
+        }
+    }
+
+    /**
      * All the conversions that convert *from* the given type to another type
      */
     fun from(fromType: ValueType<*>): List<Conversion<*, *>> = synchronized(this) {
@@ -140,6 +174,9 @@ open class ConversionRegistry() {
      */
     @Suppress("UNCHECKED_CAST")
     fun registerAllConversions(companionObject: Any) {
+
+        require(companionObject::class.java.enclosingClass?.kotlin?.companionObjectInstance == companionObject)
+        { "Not a companion object: $companionObject" }
 
         // For each property of the companion object,
         valueType(companionObject::class).memberProperties().forEach { property ->

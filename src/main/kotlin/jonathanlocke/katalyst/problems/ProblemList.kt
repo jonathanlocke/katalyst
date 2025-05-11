@@ -1,8 +1,8 @@
 package jonathanlocke.katalyst.problems
 
+import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.globalMaximumSize
 import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeList
 import jonathanlocke.katalyst.data.values.numeric.count.Count
-import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.countMaximum
 import jonathanlocke.katalyst.problems.Problem.Effect.CONTINUE
 import jonathanlocke.katalyst.problems.Problem.Effect.STOP
 import jonathanlocke.katalyst.problems.ProblemFormatters.Companion.problemListDetailsFormatter
@@ -14,9 +14,10 @@ import jonathanlocke.katalyst.text.formatting.Formattable
  * @see Problem
  */
 open class ProblemList(
-    val maximumProblems: Count = countMaximum(),
-    private val problemList: MutableList<Problem> = safeList("problems", maximumSize = maximumProblems)
-) : MutableList<Problem> by problemList, ProblemHandler, Formattable<ProblemList> {
+    val maximumProblems: Count = globalMaximumSize
+) : AbstractMutableList<Problem>(), ProblemHandler, Formattable<ProblemList> {
+
+    private val problemList: MutableList<Problem> by lazy { safeList("problems", maximumSize = maximumProblems) }
 
     override fun problems() = this
 
@@ -26,5 +27,10 @@ open class ProblemList(
     fun isInvalid() = !isValid()
 
     override fun toString(): String = problemListDetailsFormatter.format(this)
-}
 
+    override fun set(index: Int, element: Problem): Problem = problemList.set(index, element)
+    override fun removeAt(index: Int): Problem = problemList.removeAt(index)
+    override fun add(index: Int, element: Problem) = problemList.add(index, element)
+    override val size: Int get() = problemList.size
+    override fun get(index: Int): Problem = problemList.get(index)
+}

@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.conversion.converters.strings.values
 
 import jonathanlocke.katalyst.conversion.ConversionRegistry
-import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConverter.Companion.stringToValueConverter
+import jonathanlocke.katalyst.conversion.converters.strings.StringConversions.Companion.stringToValueConverter
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 
 /**

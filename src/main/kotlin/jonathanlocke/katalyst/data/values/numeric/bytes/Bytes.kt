@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.data.values.numeric.bytes
 
-import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConverter.Companion.stringToValueConverter
+import jonathanlocke.katalyst.conversion.converters.strings.StringConversions.Companion.stringToValueConverter
 import jonathanlocke.katalyst.data.values.numeric.Numeric
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.bytesConverter
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.exabytes
@@ -18,6 +18,8 @@ import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.tebibyte
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.terabytes
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.UnitSystem.IecUnits
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.UnitSystem.SiUnits
+import jonathanlocke.katalyst.data.values.numeric.percent.Percent
+import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.percentFromUnitValue
 import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
@@ -237,4 +239,7 @@ class Bytes(val bytes: Double) : Formattable<Bytes>, Numeric {
         val number = DecimalFormat("#.#").apply { isDecimalSeparatorAlwaysShown = false }.format(value)
         return "$number${if (value == 1.0) units.removeSuffix("s") else units}"
     }
+
+    fun percentOf(size: Bytes): Percent = percentFromUnitValue(this.bytes / size.bytes)
 }
+

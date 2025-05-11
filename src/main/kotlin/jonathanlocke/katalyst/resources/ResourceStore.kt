@@ -1,0 +1,3 @@
+package jonathanlocke.katalyst.resources
+
+class ResourceStore

@@ -50,9 +50,10 @@ abstract class SafeDataStructure(
 
     companion object {
 
-        var globalEstimatedSize: Count = count(32)
-        var globalWarningSize: Count = count(100_000)
-        var globalMaximumSize: Count = count(1_100_000)
+        val globalEstimatedSize: Count by lazy { count(32) }
+        val globalWarningSize: Count by lazy { count(100_000) }
+        val globalMaximumSize: Count by lazy { count(1_100_000) }
+        
 
         /**
          * Creates a [SafeList] with the given metadata
@@ -67,7 +68,7 @@ abstract class SafeDataStructure(
         fun <Element : Any> safeList(
             name: String = "Unknown",
             estimatedSize: Count = globalEstimatedSize,
-            warningSize: Count = count(1_000_000),
+            warningSize: Count = globalWarningSize,
             maximumSize: Count = globalMaximumSize,
             newUnsafeList: (Count) -> MutableList<Element> = { size -> ArrayList(size.asInt()) },
             problemHandler: ProblemHandler = throwOnError
@@ -89,7 +90,7 @@ abstract class SafeDataStructure(
         fun <Member : Any> safeSet(
             name: String = "Unknown",
             estimatedSize: Count = globalEstimatedSize,
-            warningSize: Count = count(1_000_000),
+            warningSize: Count = globalWarningSize,
             maximumSize: Count = globalMaximumSize,
             newUnsafeSet: (Count) -> MutableSet<Member> = { size -> HashSet(size.asInt()) },
             problemHandler: ProblemHandler = throwOnError
@@ -111,7 +112,7 @@ abstract class SafeDataStructure(
         fun <Key : Any, Value : Any> safeMap(
             name: String = "Unknown",
             estimatedSize: Count = globalEstimatedSize,
-            warningSize: Count = count(1_000_000),
+            warningSize: Count = globalWarningSize,
             maximumSize: Count = globalMaximumSize,
             newUnsafeMap: (Count) -> MutableMap<Key, Value> = { size -> HashMap(size.asInt()) },
             problemHandler: ProblemHandler = throwOnError
@@ -134,7 +135,7 @@ abstract class SafeDataStructure(
         fun <Key : Any, Value : Any> safeMultiMap(
             name: String = "Unknown",
             estimatedSize: Count = globalEstimatedSize,
-            warningSize: Count = count(1_000_000),
+            warningSize: Count = globalWarningSize,
             maximumSize: Count = globalMaximumSize,
             newUnsafeMap: (Count) -> MutableMap<Key, Value> = { size -> HashMap(size.asInt()) },
             newSafeList: () -> SafeList<Value>,

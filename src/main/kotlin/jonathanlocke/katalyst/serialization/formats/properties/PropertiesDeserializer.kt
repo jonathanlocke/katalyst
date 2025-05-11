@@ -6,7 +6,7 @@ import jonathanlocke.katalyst.conversion.converters.Converter
 import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
-import jonathanlocke.katalyst.reflection.properties.Property
+import jonathanlocke.katalyst.reflection.properties.PropertyAccessor
 import jonathanlocke.katalyst.reflection.properties.PropertyPath
 import jonathanlocke.katalyst.reflection.properties.PropertyPath.Companion.propertyPath
 import jonathanlocke.katalyst.reflection.properties.PropertyPath.Companion.rootPropertyPath
@@ -67,7 +67,7 @@ class PropertiesDeserializer<Value : Any>(
             if (property == null) {
 
                 // fail
-                problemHandler.fail("Property path does not exist: $path")
+                problemHandler.fail("PropertyAccessor path does not exist: $path")
 
             } else {
 
@@ -79,7 +79,7 @@ class PropertiesDeserializer<Value : Any>(
 
                     // first ensure the path only increases by one level at a time,
                     if (path.size > lastPath.size + 1) {
-                        problemHandler.fail("Property path '$path' skips levels - can only increase depth by one level at a time")
+                        problemHandler.fail("PropertyAccessor path '$path' skips levels - can only increase depth by one level at a time")
                         return
                     }
 
@@ -96,7 +96,7 @@ class PropertiesDeserializer<Value : Any>(
                                 return
                             }
                         @Suppress("UNCHECKED_CAST")
-                        (parentProperty as Property<Any?>).set(grandparentValue, parentValue)
+                        (parentProperty as PropertyAccessor<Any?>).set(grandparentValue, parentValue)
                         pathToValue[parentPath] = parentValue
                     }
                 }
@@ -117,7 +117,7 @@ class PropertiesDeserializer<Value : Any>(
                         val property = path.property()
                         if (property != null) {
                             @Suppress("UNCHECKED_CAST")
-                            (property as Property<Any?>).set(instance, converted)
+                            (property as PropertyAccessor<Any?>).set(instance, converted)
                         } else {
                             problemHandler.fail("Internal error: no property at path")
                         }
@@ -158,7 +158,7 @@ class PropertiesDeserializer<Value : Any>(
             if (limiter.canDeserialize(valueText)) {
 
                 // todo: add ValueClass.property(PropertyPath)
-                // todo: add Property.annotations support
+                // todo: add PropertyAccessor.annotations support
 
                 propertyDeserializer.deserialize(propertyPath(type, propertyPathText), valueText)
             }

@@ -1,21 +1,12 @@
 package jonathanlocke.katalyst.reflection.properties
 
 import jonathanlocke.katalyst.reflection.ValueType
-import jonathanlocke.katalyst.reflection.properties.kotlin.KotlinProperty
-import kotlin.reflect.KProperty
 
-interface Property<Value : Any> {
+data class Property(
+    val parent: Any?, val path: PropertyPath, val property: PropertyAccessor<*>, val value: Any?
+) {
+    val parentValueType = if (parent == null) null else ValueType.Companion.valueType(parent::class)
+    val packageName = parentValueType?.qualifiedName ?: "<none>"
 
-    enum class Visibility { PUBLIC, PRIVATE, PROTECTED }
-    companion object {
-
-        fun <Value : Any> property(property: KProperty<Value>) = KotlinProperty(property)
-    }
-
-    val visibility: Visibility
-    val name: String
-    fun type(): ValueType<Value>
-    fun get(instance: Any): Value?
-    fun set(instance: Any, value: Value?)
-    fun canGet(instance: Any): Boolean
+    override fun toString(): String = packageName + ":" + path.pathString() + " = " + value
 }

@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.data.values.numeric.percent
 
-import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConverter.Companion.stringToValueConverter
+import jonathanlocke.katalyst.conversion.converters.strings.StringConversions.Companion.stringToValueConverter
 import jonathanlocke.katalyst.data.values.numeric.Numeric
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.DecimalFormat
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.IntegerFormat
@@ -139,5 +139,7 @@ class Percent(val percent: Double) : Comparable<Percent>, Formattable<Percent>, 
          * @return The percent
          */
         fun percent(percent: Numeric): Percent = percent(percent.asNumber())
+
+        fun percentFromUnitValue(value: Double) = percent(value * 100.0)
     }
 }

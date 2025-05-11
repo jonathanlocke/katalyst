@@ -5,6 +5,6 @@ import jonathanlocke.katalyst.conversion.converters.strings.values.StringToNumbe
 class DefaultConversionRegistry : ConversionRegistry() {
 
     init {
-        StringToNumber.registerConversions(this)
+        registerAllConversions(StringToNumber)
     }
 }
