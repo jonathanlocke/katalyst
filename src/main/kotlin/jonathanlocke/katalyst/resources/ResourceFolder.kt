@@ -25,5 +25,5 @@ class ResourceFolder(location: ResourceLocation) : ResourceNode(location) {
     fun folders(mode: Recursion = TopLevel) =
         ResourceFolderList(service().folders(mode).map { ResourceFolder(it.location) })
 
-    private fun service() = store.folder(location)
+    private fun service() = storeService.folderService(location)
 }

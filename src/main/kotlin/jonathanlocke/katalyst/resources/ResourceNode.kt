@@ -1,19 +1,25 @@
 package jonathanlocke.katalyst.resources
 
 import jonathanlocke.katalyst.problems.ProblemSource
+import jonathanlocke.katalyst.resources.ResourceCapability.Companion.Read
+import jonathanlocke.katalyst.resources.ResourceCapability.Companion.Resolve
+import jonathanlocke.katalyst.resources.ResourceCapability.Companion.Write
 import jonathanlocke.katalyst.resources.location.ResourceLocation
-import jonathanlocke.katalyst.resources.metadata.ResourceMetadata
 
-abstract class ResourceNode(val location: ResourceLocation) : ResourceMetadata, ProblemSource {
+abstract class ResourceNode(val location: ResourceLocation) : ProblemSource {
 
-    val store = ResourceStore(location)
+    protected val storeService = ResourceStore(location)
+    protected val nodeService = storeService.nodeService(location)
+    protected val resourceService = storeService.resourceService(location)
+    protected val folderService = storeService.folderService(location)
 
-    fun exists() = store.node(location).exists()
-    fun isReadable() = store.node(location).isReadable()
-    fun isWritable() = store.node(location).isWritable()
+    val metadata = nodeService.metadata
+    val size = metadata.size
+    val createdAtUtc = metadata.createdAtUtc
+    val lastModifiedAtUtc = metadata.lastModifiedAtUtc
+    val lastAccessedAtUtc = metadata.lastAccessedAtUtc
 
-    override val size = store.node(location).size
-    override val createdAtUtc = store.node(location).createdAtUtc
-    override val lastModifiedAtUtc = store.node(location).lastModifiedAtUtc
-    override val lastAccessedAtUtc = store.node(location).lastAccessedAtUtc
+    fun exists() = nodeService.can(Resolve)
+    fun isReadable() = nodeService.can(Read)
+    fun isWritable() = nodeService.can(Write)
 }

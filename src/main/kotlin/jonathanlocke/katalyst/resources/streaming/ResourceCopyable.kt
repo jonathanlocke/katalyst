@@ -5,7 +5,7 @@ import jonathanlocke.katalyst.resources.Resource
 import jonathanlocke.katalyst.resources.streaming.CopyMethod.CopyAndRename
 import jonathanlocke.katalyst.resources.streaming.WriteMode.DoNotOverwrite
 
-interface Copyable {
+interface ResourceCopyable {
 
     fun copyTo(
         target: Resource,

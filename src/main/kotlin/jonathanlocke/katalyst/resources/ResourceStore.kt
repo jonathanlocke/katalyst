@@ -4,11 +4,12 @@ import jonathanlocke.katalyst.resources.location.ResourceLocation
 import jonathanlocke.katalyst.resources.location.path.Filename
 import jonathanlocke.katalyst.resources.services.resolvers.ResourceStoreServiceRegistry.Companion.resourceStoreServiceRegistry
 
-class ResourceStore(location: ResourceLocation) {
+class ResourceStore(root: ResourceLocation) {
 
-    private val service = resourceStoreServiceRegistry.resolve(location)
+    val storeService = resourceStoreServiceRegistry.resolve(root)
 
-    fun temporaryResource(baseName: Filename) = Resource(service.temporaryResourceLocation(baseName))
-    fun resource(location: ResourceLocation) = service.resource(location)
-    fun folder(location: ResourceLocation) = service.folder(location)
+    fun temporaryResource(baseName: Filename) = Resource(storeService.temporaryResourceLocation(baseName))
+    fun nodeService(location: ResourceLocation) = storeService.node(location)
+    fun resourceService(location: ResourceLocation) = storeService.resource(location)
+    fun folderService(location: ResourceLocation) = storeService.folder(location)
 }
