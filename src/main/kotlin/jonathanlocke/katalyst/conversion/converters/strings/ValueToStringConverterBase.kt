@@ -2,7 +2,7 @@ package jonathanlocke.katalyst.conversion.converters.strings
 
 import jonathanlocke.katalyst.conversion.converters.ConverterBase
 import jonathanlocke.katalyst.reflection.ValueType
-import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
+import jonathanlocke.katalyst.reflection.ValueType.Companion.valueTypeString
 
 /**
  * Base class for implementing converters from [Value] -> [String].
@@ -23,7 +23,7 @@ import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
  * @see ValueToStringConverter
  */
 abstract class ValueToStringConverterBase<Value : Any>(fromType: ValueType<Value>) :
-    ConverterBase<Value, String>(fromType, valueType(String::class)),
+    ConverterBase<Value, String>(fromType, valueTypeString),
     ValueToStringConverter<Value> {
 
     /**

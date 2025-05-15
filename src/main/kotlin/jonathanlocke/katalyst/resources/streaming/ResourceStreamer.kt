@@ -9,22 +9,22 @@ import jonathanlocke.katalyst.serialization.Deserializer
 import jonathanlocke.katalyst.serialization.Serializer
 import java.io.*
 
-class Streamer(val streamable: Streamable) {
+class ResourceStreamer(val resourceStreamable: ResourceStreamable) {
 
     fun withReader(code: (BufferedReader) -> Unit) {
-        streamable.openForReading().use { input ->
+        resourceStreamable.openForReading().use { input ->
             InputStreamReader(input).buffered().use { reader ->
                 code.invoke(reader)
             }
         }
     }
 
-    fun withInput(code: (InputStream) -> Unit) = streamable.openForReading().use { input ->
+    fun withInput(code: (InputStream) -> Unit) = resourceStreamable.openForReading().use { input ->
         code.invoke(input.buffered())
     }
 
     fun withWriter(mode: WriteMode = DoNotOverwrite, code: (BufferedWriter) -> Unit) {
-        streamable.openForWriting(mode).use { output ->
+        resourceStreamable.openForWriting(mode).use { output ->
             OutputStreamWriter(output).buffered().use { writer ->
                 code.invoke(writer)
             }
@@ -32,7 +32,7 @@ class Streamer(val streamable: Streamable) {
     }
 
     fun withOutput(mode: WriteMode = DoNotOverwrite, code: (OutputStream) -> Unit) =
-        streamable.openForWriting(mode).use { output ->
+        resourceStreamable.openForWriting(mode).use { output ->
             code.invoke(output.buffered())
         }
 
@@ -42,13 +42,12 @@ class Streamer(val streamable: Streamable) {
     fun <Value> deserialize(deserializer: Deserializer<Value>, problemHandler: ProblemHandler = throwOnError) =
         withReader { reader -> deserializer.deserialize(reader.readText(), problemHandler) }
 
-
-    fun readBytes(): ByteArray = streamable.openForReading().use {
+    fun readBytes(): ByteArray = resourceStreamable.openForReading().use {
         return it.readBytes()
     }
 
     fun readLines(
-        progressReporter: ProgressReporter = nullProgressReporter, receiver: (lineNumber: Int, text: String) -> Unit
+        progressReporter: ProgressReporter = nullProgressReporter, receiver: (lineNumber: Int, text: String) -> Unit,
     ) {
         withReader { reader ->
             var lineNumber = 1
@@ -60,7 +59,7 @@ class Streamer(val streamable: Streamable) {
     }
 
     fun readLines(
-        progressReporter: ProgressReporter = nullProgressReporter, receiver: (text: String) -> Unit
+        progressReporter: ProgressReporter = nullProgressReporter, receiver: (text: String) -> Unit,
     ) {
         return readLines(progressReporter) { _, text -> receiver(text) }
     }
@@ -69,7 +68,7 @@ class Streamer(val streamable: Streamable) {
         readLines(progressReporter) { _, text -> add(text) }
     }
 
-    fun readText() = streamable.openForReading().use { it.readBytes().decodeToString() }
+    fun readText() = resourceStreamable.openForReading().use { it.readBytes().decodeToString() }
 
     fun writeBytes(bytes: ByteArray) = withOutput { output ->
         output.write(bytes)

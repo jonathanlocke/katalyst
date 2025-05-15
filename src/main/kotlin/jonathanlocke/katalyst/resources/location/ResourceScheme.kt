@@ -10,6 +10,11 @@ class ResourceScheme(val scheme: String) {
         return uri.scheme == scheme
     }
 
-    override fun equals(other: Any?): Boolean = other is ResourceScheme && other.scheme == scheme
+    override fun equals(other: Any?): Boolean = when (other) {
+        is ResourceScheme -> other.scheme == scheme
+        is String -> scheme == other
+        else -> false
+    }
+
     override fun hashCode(): Int = scheme.hashCode()
 }

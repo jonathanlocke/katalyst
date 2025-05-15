@@ -1,12 +1,14 @@
 package jonathanlocke.katalyst.conversion
 
 import jonathanlocke.katalyst.conversion.ConversionRegistry.Companion.defaultConversionRegistry
+import jonathanlocke.katalyst.conversion.converters.strings.StringConversion
 import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConverter
 import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeList
 import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeMultiMap
 import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
+import jonathanlocke.katalyst.reflection.ValueType.Companion.valueTypeString
 import kotlin.reflect.full.companionObjectInstance
 
 /**
@@ -125,7 +127,7 @@ open class ConversionRegistry() {
      * Converts the given value from the given type to the given type
      */
     fun <From : Any, To : Any> convert(
-        fromType: ValueType<From>, toType: ValueType<To>, from: From?, problemHandler: ProblemHandler
+        fromType: ValueType<From>, toType: ValueType<To>, from: From?, problemHandler: ProblemHandler,
     ): To? {
         val conversion = conversion(fromType, toType)
         if (conversion == null) {
@@ -139,13 +141,16 @@ open class ConversionRegistry() {
         return result
     }
 
+    fun <Value : Any> stringConversion(valueType: ValueType<Value>): StringConversion<Value> {
+        return conversion(valueTypeString, valueType) as StringConversion<Value>
+    }
 
     /**
      * Returns any conversion for the given types, or throws an exception if no conversion exists
      */
     @Suppress("UNCHECKED_CAST")
     fun <From : Any, To : Any> conversion(
-        fromType: ValueType<From>, toType: ValueType<To>
+        fromType: ValueType<From>, toType: ValueType<To>,
     ): Conversion<From, To>? {
         synchronized(this) {
             val conversion = from[fromType]?.stream()?.filter { it.to.equals(toType) }?.findFirst()?.orElse(null)
@@ -179,7 +184,7 @@ open class ConversionRegistry() {
         { "Not a companion object: $companionObject" }
 
         // For each property of the companion object,
-        valueType(companionObject::class).memberProperties().forEach { property ->
+        valueType(companionObject::class).memberPropertyAccessors().forEach { property ->
 
             when (property.type()) {
 

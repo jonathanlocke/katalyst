@@ -1,14 +1,11 @@
 package jonathanlocke.katalyst.resources.services
 
-import jonathanlocke.katalyst.resources.streaming.CopyMethod
-import jonathanlocke.katalyst.resources.streaming.Streamable
-import jonathanlocke.katalyst.resources.streaming.WriteMode
+import jonathanlocke.katalyst.resources.location.ResourceLocation
+import jonathanlocke.katalyst.resources.streaming.ResourceStreamable
 
-interface ResourceService : ResourceNodeService, Streamable {
+interface ResourceService : ResourceNodeService, ResourceStreamable {
 
-    override fun isFolder() = false
+    override val isFolder: Boolean get() = false
 
-    fun canOverwrite(mode: WriteMode): Boolean
-    fun renameTo(target: ResourceService): Boolean
-    fun copyTo(target: ResourceService, method: CopyMethod, mode: WriteMode)
+    fun moveTo(target: ResourceLocation): Boolean
 }

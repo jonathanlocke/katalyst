@@ -3,7 +3,7 @@ package jonathanlocke.katalyst.conversion.converters.strings.values
 import jonathanlocke.katalyst.conversion.converters.strings.ValueToStringConverter
 import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.reflection.ValueType
-import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
+import jonathanlocke.katalyst.reflection.ValueType.Companion.valueTypeString
 import jonathanlocke.katalyst.text.formatting.Formatter
 import jonathanlocke.katalyst.text.formatting.formatters.anything.AnythingFormatters.Companion.convertToString
 
@@ -23,10 +23,10 @@ import jonathanlocke.katalyst.text.formatting.formatters.anything.AnythingFormat
  */
 class FormatValueToString<From : Any>(
     override val from: ValueType<From>,
-    val formatter: Formatter<From> = convertToString()
+    val formatter: Formatter<From> = convertToString(),
 ) : ValueToStringConverter<From> {
 
-    override val to: ValueType<String> = valueType(String::class)
+    override val to: ValueType<String> = valueTypeString
 
     override fun convert(from: From?, problemHandler: ProblemHandler): String? =
         if (from != null) formatter.format(from) else "?"

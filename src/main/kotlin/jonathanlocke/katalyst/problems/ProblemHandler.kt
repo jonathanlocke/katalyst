@@ -84,12 +84,11 @@ interface ProblemHandler {
         ProblemException.fail(message, problems())
     }
 
-    fun requireValue(value: Any?, message: String = "Cannot be null") {
-        require(value != null) { message }
-    }
+    fun <Value> requireNotNull(value: Value?, message: String = "Cannot be null") =
+        requireOrFail(value != null, message)
 
     fun requireOrFail(condition: Boolean, message: String, code: Runnable? = null): Boolean {
-        if (condition) fail(message) else code?.run()
+        if (!condition) fail(message) else code?.run()
         return condition
     }
 

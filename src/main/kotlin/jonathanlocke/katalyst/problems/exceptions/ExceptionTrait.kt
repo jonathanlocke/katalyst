@@ -6,7 +6,7 @@ import java.util.function.Supplier
 /**
  * Trait for making exception handling more concise
  */
-class ExceptionTrait {
+interface ExceptionTrait {
 
     /**
      * Run the given code, catch any exceptions and report them as errors
@@ -25,11 +25,13 @@ class ExceptionTrait {
      * Run the given code, catch any exceptions and report them as errors
      * @param code The code to run
      */
-    fun tryCatch(problemHandler: ProblemHandler, code: Runnable) {
+    fun tryCatch(problemHandler: ProblemHandler, code: Runnable): Boolean {
         try {
             code.run()
+            return true
         } catch (e: Exception) {
             problemHandler.error("Caught exception", e)
+            return false
         }
     }
 }

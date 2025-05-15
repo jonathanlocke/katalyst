@@ -31,7 +31,7 @@ class ResourceStoreServiceRegistry : ResourceStoreServiceResolver, ProblemSource
 
     override fun resolve(location: ResourceLocation): ResourceStoreService {
         val service = services[location.scheme]
-        requireValue(service, "Location service $location is not registered")
+        requireNotNull(service, "Location service $location is not registered")
         return service!!
     }
 }

@@ -12,6 +12,7 @@ import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
+import jonathanlocke.katalyst.reflection.ValueType.Companion.valueTypeString
 import jonathanlocke.katalyst.text.parsing.Separator
 import jonathanlocke.katalyst.text.parsing.Separator.Companion.commaSeparator
 
@@ -59,10 +60,10 @@ class ListConversion<Value : Any>(
     // Value -> String conversion
     val valueToStringConverter: ValueToStringConverter<Value> = FormatValueToString(type) as ValueToStringConverter<Value>,
     val valueToStringProblemHandler: ProblemHandler = throwOnError,
-    val defaultToStringValue: String = "?"
+    val defaultToStringValue: String = "?",
 
-) : ConversionBase<String, List<Value>>(
-    valueType(String::class),
+    ) : ConversionBase<String, List<Value>>(
+    valueTypeString,
     valueType(List::class) as ValueType<List<Value>>
 ) {
 
@@ -77,7 +78,7 @@ class ListConversion<Value : Any>(
     }
 
     override fun reverseConverter(): Converter<List<Value>, String> = object :
-        ConverterBase<List<Value>, String>(List::class as ValueType<List<Value>>, valueType(String::class)) {
+        ConverterBase<List<Value>, String>(List::class as ValueType<List<Value>>, valueTypeString) {
         override fun onConvert(from: List<Value>): String = separator.join(from.map {
             valueToStringConverter.convert(it, valueToStringProblemHandler) ?: defaultToStringValue
         }.toList())

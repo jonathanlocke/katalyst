@@ -8,6 +8,8 @@ interface ValueType<Value : Any> {
 
     companion object {
 
+        val valueTypeString = valueType(String::class)
+
         fun <Value : Any> valueType(valueClass: KClass<Value>) =
             KotlinValueType(valueClass, null)
 
@@ -22,9 +24,9 @@ interface ValueType<Value : Any> {
     val parameterClass: KClass<*>?
     fun isInstanceOf(type: KClass<*>): Boolean
     fun createInstance(): Value
-    fun superProperties(): List<PropertyAccessor<*>>
-    fun declaredProperties(): List<PropertyAccessor<*>>
-    fun memberProperties(): List<PropertyAccessor<*>>
+    fun superPropertyAccessors(): List<PropertyAccessor<*>>
+    fun declaredPropertyAccessors(): List<PropertyAccessor<*>>
+    fun memberPropertyAccessors(): List<PropertyAccessor<*>>
     fun property(name: String): PropertyAccessor<*>?
     fun supertypes(): List<ValueType<*>>
 }

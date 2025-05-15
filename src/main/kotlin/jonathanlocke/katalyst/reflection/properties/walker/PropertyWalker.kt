@@ -3,6 +3,7 @@ package jonathanlocke.katalyst.reflection.properties.walker
 import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeList
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.reflection.properties.Property
+import jonathanlocke.katalyst.reflection.properties.PropertyAccessor
 import jonathanlocke.katalyst.reflection.properties.PropertyAccessor.Visibility.PUBLIC
 import jonathanlocke.katalyst.reflection.properties.PropertyPath
 import jonathanlocke.katalyst.reflection.properties.walker.PropertyWalker.WalkFlag.RECURSE_BREADTH_FIRST
@@ -23,7 +24,7 @@ class PropertyWalker(val rootValue: Any) {
         /**
          * Filter that matches all public properties
          */
-        val PUBLIC_PROPERTIES = ALL_PROPERTIES.and { it.property.visibility == PUBLIC }
+        val PUBLIC_PROPERTIES = ALL_PROPERTIES.and { it.accessor.visibility == PUBLIC }
     }
 
     internal class Walk(
@@ -51,7 +52,7 @@ class PropertyWalker(val rootValue: Any) {
         filter: PropertyFilter = PUBLIC_PROPERTIES,
         sorter: PropertyComparator = SortByName(),
         vararg flags: WalkFlag,
-        visitor: PropertyVisitor
+        visitor: PropertyVisitor,
     ) {
         walk(filter, sorter, *flags).forEach { visitor.atProperty(it) }
     }
@@ -67,10 +68,10 @@ class PropertyWalker(val rootValue: Any) {
     fun walk(
         filter: PropertyFilter = PUBLIC_PROPERTIES,
         sorter: PropertyComparator = SortByName(),
-        vararg flags: WalkFlag
-    ): List<Property> {
+        vararg flags: WalkFlag,
+    ): List<Property<*>> {
         val rootPath = PropertyPath(valueType(rootValue::class))
-        val properties = safeList<Property>()
+        val properties = safeList<Property<*>>()
         walk(Walk(rootValue, rootPath, filter, sorter, properties::add, flags.toList()))
         return properties.sortedWith(sorter)
     }
@@ -80,28 +81,34 @@ class PropertyWalker(val rootValue: Any) {
      *
      * @param walk The state of the walk
      */
+    @Suppress("UNCHECKED_CAST")
     private fun walk(walk: Walk) {
 
         // For each declared property in the current value,
         val parent = walk.parent
         val recursiveWalks = safeList<Walk>()
-        for (property in valueType(parent::class).declaredProperties()) {
+        for (propertyAccessor in valueType(parent::class).declaredPropertyAccessors()) {
 
             // if the property can be accessed,
-            if (property.canGet(parent)) {
+            if (propertyAccessor.canGet(parent)) {
 
                 // get the value of the property,
-                val propertyValue = property.get(parent)
+                val propertyValue = propertyAccessor.get(parent)
 
                 // extend the property path with the property name,
-                val propertyPath = walk.path + property.name
+                val propertyPath = walk.path + propertyAccessor.name
 
                 // and if the property passes the filter,
-                val propertyInformation = Property(parent, propertyPath, property, propertyValue)
-                if (walk.filter.test(propertyInformation)) {
+                val property = Property(
+                    parent,
+                    propertyPath,
+                    propertyAccessor as PropertyAccessor<Any>,
+                    propertyValue
+                )
+                if (walk.filter.test(property)) {
 
                     // collect the property information
-                    walk.visitor.atProperty(propertyInformation)
+                    walk.visitor.atProperty(property)
 
                     // and if the property has a value,
                     if (propertyValue != null) {

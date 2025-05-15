@@ -11,14 +11,14 @@ import kotlin.reflect.full.memberProperties
 
 class KotlinValueType<Value : Any>(
     override val valueClass: KClass<Value>,
-    override val parameterClass: KClass<*>?
+    override val parameterClass: KClass<*>?,
 ) : ValueType<Value> {
 
     @Suppress("UNCHECKED_CAST")
-    override fun memberProperties(): List<PropertyAccessor<*>> =
+    override fun memberPropertyAccessors(): List<PropertyAccessor<*>> =
         valueClass.memberProperties.map { PropertyAccessor.Companion.property(it as KProperty<Any>) }
 
-    override fun property(name: String): PropertyAccessor<*>? = memberProperties().find { it.name == name }
+    override fun property(name: String): PropertyAccessor<*>? = memberPropertyAccessors().find { it.name == name }
     override fun supertypes(): List<KotlinValueType<*>> =
         valueClass.supertypes.mapNotNull { it.classifier as? KClass<*> }.map { KotlinValueType(it, null) }
 
@@ -28,9 +28,12 @@ class KotlinValueType<Value : Any>(
     override val packageName: String = valueClass.java.`package`.name
     override fun isInstanceOf(type: KClass<*>) = valueClass.isSubclassOf(type)
 
-    override fun superProperties(): List<PropertyAccessor<*>> = supertypes().flatMap { it.memberProperties() }
-    override fun declaredProperties(): List<PropertyAccessor<*>> =
-        memberProperties().filter { property: PropertyAccessor<*> -> property !in superProperties() }.toList()
+    override fun superPropertyAccessors(): List<PropertyAccessor<*>> =
+        supertypes().flatMap { it.memberPropertyAccessors() }
+
+    override fun declaredPropertyAccessors(): List<PropertyAccessor<*>> =
+        memberPropertyAccessors().filter { property: PropertyAccessor<*> -> property !in superPropertyAccessors() }
+            .toList()
 
     override fun equals(other: Any?) =
         other is KotlinValueType<*> && valueClass == other.valueClass && parameterClass == other.parameterClass

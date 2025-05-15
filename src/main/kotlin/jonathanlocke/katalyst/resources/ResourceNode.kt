@@ -1,12 +1,12 @@
 package jonathanlocke.katalyst.resources
 
+import jonathanlocke.katalyst.problems.ProblemSource
 import jonathanlocke.katalyst.resources.location.ResourceLocation
 import jonathanlocke.katalyst.resources.metadata.ResourceMetadata
-import jonathanlocke.katalyst.resources.services.resolvers.ResourceStoreServiceRegistry.Companion.resourceStoreServiceRegistry
 
-abstract class ResourceNode(val location: ResourceLocation) : ResourceMetadata {
+abstract class ResourceNode(val location: ResourceLocation) : ResourceMetadata, ProblemSource {
 
-    val store = resourceStoreServiceRegistry.resolve(location)
+    val store = ResourceStore(location)
 
     fun exists() = store.node(location).exists()
     fun isReadable() = store.node(location).isReadable()

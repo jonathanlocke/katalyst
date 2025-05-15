@@ -8,6 +8,7 @@ import kotlin.reflect.KProperty
 interface PropertyAccessor<Value : Any> {
 
     enum class Visibility { PUBLIC, PRIVATE, PROTECTED }
+
     companion object {
 
         fun <Value : Any> property(property: KProperty<Value>) = KotlinPropertyAccessor(property)
