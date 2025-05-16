@@ -1,61 +1,61 @@
 package jonathanlocke.katalyst.resources
 
-import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.ProblemList
 import jonathanlocke.katalyst.progress.ProgressReporter
 import jonathanlocke.katalyst.resources.location.ResourceLocation
 import jonathanlocke.katalyst.resources.location.path.Filename.Companion.parseFilename
-import jonathanlocke.katalyst.resources.streaming.*
+import jonathanlocke.katalyst.resources.streaming.CopyMethod
+import jonathanlocke.katalyst.resources.streaming.CopyMethod.Copy
 import jonathanlocke.katalyst.resources.streaming.CopyMethod.CopyAndRename
-import jonathanlocke.katalyst.resources.streaming.WriteMode.Overwrite
+import jonathanlocke.katalyst.resources.streaming.ResourceCopyable
+import jonathanlocke.katalyst.resources.streaming.ResourceStreamable
+import jonathanlocke.katalyst.resources.streaming.io.ResourceOutputStream
+import jonathanlocke.katalyst.resources.streaming.io.WriteMode
+import jonathanlocke.katalyst.resources.streaming.io.WriteMode.Overwrite
 
-class Resource(location: ResourceLocation) : ResourceNode(location), ResourceCopyable, ResourceStreamable {
+class Resource(location: ResourceLocation) :
+    ResourceNode(location),
+    ResourceCopyable,
+    ResourceStreamable {
 
     override fun openForReading(progressReporter: ProgressReporter) =
         resourceService.openForReading(progressReporter)
 
-    override fun openForWriting(progressReporter: ProgressReporter, mode: WriteMode): ResourceOutputStream {
+    override fun openForWriting(mode: WriteMode, progressReporter: ProgressReporter): ResourceOutputStream {
         requireOrFail(mode == Overwrite || !exists(), "Cannot overwrite existing resource: $this")
-
-        return resourceService.openForWriting(progressReporter)
+        return resourceService.openForWriting(progressReporter = progressReporter)
     }
 
     fun relativeTo(folder: ResourceFolder) = Resource(location.relativeTo(folder.location))
 
     override fun copyTo(
-        target: Resource,
+        to: Resource,
         method: CopyMethod,
         mode: WriteMode,
         progressReporter: ProgressReporter,
     ) {
-        requireOrFail(target.isWritable(), "Target is not writable: $target")
-        requireOrFail(target.can(mode), "Cannot overwrite target: $target")
+        requireOrFail(to.isWritable(), "Target is not writable: $to")
 
         when (method) {
+
             CopyAndRename -> {
-                val temporary = storeService.temporaryResource(parseFilename("copy"))
+                val temporary = store.temporaryResource(parseFilename("copy"))
                 openForReading().use { input ->
-                    temporary.openForWriting(Overwrite).use { output ->
+                    temporary.openForWriting(Overwrite, progressReporter).use { output ->
                         input.copyTo(output)
                     }
                 }
-                temporary.renameTo(target)
+                temporary.moveTo(to)
             }
 
-            else -> copyResource(target, mode)
+            Copy -> copyResource(to, mode, progressReporter)
         }
     }
 
-    private fun copyResource(target: Resource, mode: WriteMode) =
-        openForReading().copyTo(target.openForWriting(mode))
-
-
-    override fun handlers(): MutableList<ProblemHandler> {
-        TODO("Not yet implemented")
+    private fun copyResource(to: Resource, mode: WriteMode, progressReporter: ProgressReporter) {
+        openForReading().use { input ->
+            to.openForWriting(mode, progressReporter).use { output ->
+                input.copyTo(output)
+            }
+        }
     }
-
-    override fun problems(): ProblemList {
-        TODO("Not yet implemented")
-    }
-
 }

@@ -2,33 +2,56 @@ package jonathanlocke.katalyst.resources
 
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.count
 import jonathanlocke.katalyst.data.values.temporal.TimeExtensions.Companion.profile
-import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
+import jonathanlocke.katalyst.problems.ProblemSourceMixin
 import jonathanlocke.katalyst.progress.ProgressReporter
 import jonathanlocke.katalyst.progress.ProgressReporter.Companion.progressReporter
 import jonathanlocke.katalyst.resources.streaming.CopyMethod
 import jonathanlocke.katalyst.resources.streaming.CopyMethod.CopyAndRename
-import jonathanlocke.katalyst.resources.streaming.WriteMode
-import jonathanlocke.katalyst.resources.streaming.WriteMode.DoNotOverwrite
+import jonathanlocke.katalyst.resources.streaming.io.WriteMode
+import jonathanlocke.katalyst.resources.streaming.io.WriteMode.DoNotOverwrite
 
-class ResourceList(resources: List<Resource>) : List<Resource> by resources {
+class ResourceList(resources: List<Resource>) : List<Resource> by resources, ProblemSourceMixin {
+
+    fun commonAncestor(): ResourceFolder {
+        requireOrFail(isNotEmpty(), "Cannot find common ancestor of empty list")
+        var ancestor = first().parent()!!
+        ancestor.root()
+        for (resource in this) {
+            while (!ancestor.isRoot && !resource.location.isUnder(ancestor.location)) {
+                ancestor = ancestor.parent()!!
+            }
+        }
+        return ancestor
+    }
 
     /**
      * Copies all nested resources matching the given matcher from this folder to the destination folder.
      */
     fun copyTo(
-        problemHandler: ProblemHandler = throwOnError,
-        target: ResourceFolder,
+        to: ResourceFolder,
         method: CopyMethod = CopyAndRename,
         mode: WriteMode = DoNotOverwrite,
-        reporter: ProgressReporter = progressReporter(problemHandler, count()),
-    ): Boolean = profile(problemHandler.prefixed("Copying ${count()} files to $target")) {
-        problemHandler.requireOrError(!target.exists(), "Target folder does not exist") {
-            for (resource in this) {
-                resource.copyTo(
-                    target.resource(resource.relativeTo(target).location),
-                    method, mode, reporter
-                )
+        reporter: ProgressReporter = progressReporter(this, count()),
+    ): Boolean {
+
+        // Prefix this problem handler to give problems a context,
+        val problemHandler = prefixed("Copying ${count()} files to $to")
+
+        // profile the copy operation,
+        profile(problemHandler) {
+
+            // and if the 'to' folder exists,
+            problemHandler.requireOrError(!to.exists(), "Target folder does not exist") {
+
+                // go through each resource we want to copy,
+                for (resource in this) {
+
+                    // and copy it to the path relative to the 'to' folder.
+                    resource.copyTo(
+                        to.resource(resource.relativeTo(commonAncestor()).location),
+                        method, mode, reporter
+                    )
+                }
             }
         }
     }

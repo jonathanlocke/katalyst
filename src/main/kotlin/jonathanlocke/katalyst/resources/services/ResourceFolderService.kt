@@ -10,8 +10,7 @@ interface ResourceFolderService : ResourceNodeService {
 
     fun clear(): Boolean
     fun mkdirs(): Boolean
-    fun delete(): Boolean
-    fun moveTo(target: ResourceLocation): Boolean
+
     fun resources(recursion: Recursion = TopLevel): List<ResourceLocation>
     fun folders(recursion: Recursion = TopLevel): List<ResourceLocation>
 }

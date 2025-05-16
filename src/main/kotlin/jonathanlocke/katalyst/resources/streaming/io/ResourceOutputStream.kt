@@ -1,4 +1,4 @@
-package jonathanlocke.katalyst.resources.streaming
+package jonathanlocke.katalyst.resources.streaming.io
 
 import jonathanlocke.katalyst.progress.ProgressReporter
 import jonathanlocke.katalyst.progress.ProgressReporter.Companion.nullProgressReporter
@@ -9,17 +9,19 @@ class ResourceOutputStream(
     private val rawOutput: OutputStream,
 ) : OutputStream() {
 
+    val output = rawOutput.buffered()
+
     override fun write(b: Int) {
-        rawOutput.write(b)
+        output.write(b)
         progressReporter.next()
     }
 
     override fun write(b: ByteArray, off: Int, len: Int) {
-        rawOutput.write(b, off, len)
+        output.write(b, off, len)
         repeat(len) { progressReporter.next() }
     }
 
     override fun close() {
-        rawOutput.close()
+        output.close()
     }
 }

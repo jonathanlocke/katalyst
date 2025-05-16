@@ -4,12 +4,17 @@ import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
 import jonathanlocke.katalyst.progress.ProgressReporter
 import jonathanlocke.katalyst.progress.ProgressReporter.Companion.nullProgressReporter
-import jonathanlocke.katalyst.resources.streaming.WriteMode.DoNotOverwrite
+import jonathanlocke.katalyst.resources.streaming.io.ResourceOutputStream
+import jonathanlocke.katalyst.resources.streaming.io.WriteMode
+import jonathanlocke.katalyst.resources.streaming.io.WriteMode.DoNotOverwrite
 import jonathanlocke.katalyst.serialization.Deserializer
 import jonathanlocke.katalyst.serialization.Serializer
 import java.io.*
 
-class ResourceStreamer(val resourceStreamable: ResourceStreamable) {
+class ResourceStreamer(
+    val progressReporter: ProgressReporter = nullProgressReporter,
+    val resourceStreamable: ResourceStreamable,
+) {
 
     fun withReader(code: (BufferedReader) -> Unit) {
         resourceStreamable.openForReading().use { input ->
@@ -24,16 +29,16 @@ class ResourceStreamer(val resourceStreamable: ResourceStreamable) {
     }
 
     fun withWriter(mode: WriteMode = DoNotOverwrite, code: (BufferedWriter) -> Unit) {
-        resourceStreamable.openForWriting(mode).use { output ->
+        resourceStreamable.openForWriting(mode, progressReporter).use { output ->
             OutputStreamWriter(output).buffered().use { writer ->
                 code.invoke(writer)
             }
         }
     }
 
-    fun withOutput(mode: WriteMode = DoNotOverwrite, code: (OutputStream) -> Unit) =
-        resourceStreamable.openForWriting(mode).use { output ->
-            code.invoke(output.buffered())
+    fun withOutput(mode: WriteMode = DoNotOverwrite, code: (ResourceOutputStream) -> Unit) =
+        resourceStreamable.openForWriting(mode, progressReporter).use { output ->
+            code.invoke(output)
         }
 
     fun <Value> serialize(serializer: Serializer<Value>, value: Value, problemHandler: ProblemHandler = throwOnError) =

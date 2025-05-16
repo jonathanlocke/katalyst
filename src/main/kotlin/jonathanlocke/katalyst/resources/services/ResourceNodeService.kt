@@ -15,4 +15,6 @@ interface ResourceNodeService : ProblemSource {
     val isResource get() = !isFolder
 
     fun can(capability: ResourceCapability): Boolean
+    fun moveTo(target: ResourceLocation): Boolean
+    fun delete(): Boolean
 }

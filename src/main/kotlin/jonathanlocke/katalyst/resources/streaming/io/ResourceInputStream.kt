@@ -1,4 +1,4 @@
-package jonathanlocke.katalyst.resources.streaming
+package jonathanlocke.katalyst.resources.streaming.io
 
 import jonathanlocke.katalyst.progress.ProgressReporter
 import jonathanlocke.katalyst.progress.ProgressReporter.Companion.nullProgressReporter
@@ -9,14 +9,17 @@ class ResourceInputStream(
     private val rawInput: InputStream,
 ) : InputStream() {
 
+    val input = rawInput.buffered()
+
     fun copyTo(output: ResourceOutputStream) {
+        val input = this
         output.use { output ->
-            rawInput.copyTo(output)
+            input.copyTo(output)
         }
     }
 
     override fun read(): Int {
-        val value = rawInput.read()
+        val value = input.read()
         if (value != -1) {
             progressReporter.next()
         }
@@ -24,12 +27,12 @@ class ResourceInputStream(
     }
 
     override fun read(b: ByteArray, off: Int, len: Int): Int {
-        val count = rawInput.read(b, off, len)
+        val count = input.read(b, off, len)
         if (count > 0) {
             repeat(count) { progressReporter.next() }
         }
         return count
     }
 
-    override fun close() = rawInput.close()
+    override fun close() = input.close()
 }

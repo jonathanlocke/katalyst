@@ -13,17 +13,18 @@ class ResourceFolder(location: ResourceLocation) : ResourceNode(location) {
         val Nested = Recursion(MAX_VALUE)
     }
 
-    fun folder(filename: Filename) = service().folder(filename)
-    fun clear() = service().clear()
-    fun delete() = service().delete()
-    fun mkdirs() = service().mkdirs()
-    fun resource(relativeLocation: ResourceLocation) = Resource(relativeLocation.relativeTo(location))
+    val isRoot get() = location.isRoot
+
+    fun folder(filename: Filename) = ResourceFolder(location.child(filename))
+    fun resource(relativeLocation: ResourceLocation) =
+        Resource(relativeLocation.relativeTo(location))
+
+    fun clear() = folderService.clear()
+    fun mkdirs() = folderService.mkdirs()
 
     fun resources(mode: Recursion = TopLevel) =
-        ResourceList(service().resources(mode).map { Resource(it.location) })
+        ResourceList(folderService.resources(mode).map { Resource(it) })
 
     fun folders(mode: Recursion = TopLevel) =
-        ResourceFolderList(service().folders(mode).map { ResourceFolder(it.location) })
-
-    private fun service() = storeService.folderService(location)
+        ResourceFolderList(folderService.folders(mode).map { ResourceFolder(it) })
 }
