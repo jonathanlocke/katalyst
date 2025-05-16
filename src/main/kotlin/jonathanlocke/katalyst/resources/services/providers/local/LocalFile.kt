@@ -14,7 +14,7 @@ import java.nio.file.Files
 class LocalFile(
     override val store: ResourceStoreService,
     override val location: ResourceLocation,
-) : LocalFileSystemNode(location), ResourceService {
+) : LocalFileStoreNode(location), ResourceService {
 
     override fun openForReading(progressReporter: ProgressReporter): ResourceInputStream {
         requireOrFail(can(Read), "Cannot write to: $location")

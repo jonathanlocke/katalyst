@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.conversion
 
-import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConverter.Companion.convert
+import jonathanlocke.katalyst.conversion.converters.strings.StringConversions.Companion.convert
 import jonathanlocke.katalyst.conversion.converters.strings.values.StringToNumber.Companion.intConverter
 import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.returnOnError
 import org.junit.jupiter.api.Assertions.assertNull

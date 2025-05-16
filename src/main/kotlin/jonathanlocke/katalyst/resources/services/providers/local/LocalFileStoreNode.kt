@@ -14,7 +14,7 @@ import jonathanlocke.katalyst.resources.services.ResourceNodeService
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
 
-abstract class LocalFileSystemNode(override val location: ResourceLocation) : ResourceNodeService, ProblemSourceMixin {
+abstract class LocalFileStoreNode(override val location: ResourceLocation) : ResourceNodeService, ProblemSourceMixin {
 
     override val metadata: ResourceMetadata
         get() {
@@ -38,9 +38,9 @@ abstract class LocalFileSystemNode(override val location: ResourceLocation) : Re
         }
     }
 
-    fun delete() = tryCatch(this) { Files.deleteIfExists(location.path) }
+    override fun delete() = tryCatch(this) { Files.deleteIfExists(location.path) }
 
-    fun moveTo(target: ResourceLocation): Boolean {
+    override fun moveTo(target: ResourceLocation): Boolean {
         requireOrFail(store.contains(location), "Target is not in store '$store': $target")
         requireOrFail(can(Read), "Cannot read from: $location")
         requireOrFail(store.resource(target).can(Write), "Cannot write to: $location")

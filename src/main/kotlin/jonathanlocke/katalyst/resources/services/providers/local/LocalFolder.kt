@@ -11,7 +11,7 @@ import java.nio.file.Files
 class LocalFolder(
     override val store: ResourceStoreService,
     override val location: ResourceLocation,
-) : LocalFileSystemNode(location), ResourceFolderService, ExceptionTrait {
+) : LocalFileStoreNode(location), ResourceFolderService, ExceptionTrait {
 
     override fun clear(): Boolean {
         var errors = 0
@@ -34,8 +34,8 @@ class LocalFolder(
             .filter { Files.isRegularFile(it) }
             .map { it -> ResourceLocation(it) }.toList()
 
-    override fun folders(access: Recursion): List<ResourceLocation> =
-        Files.walk(location.path, access.levels)
+    override fun folders(recursion: Recursion): List<ResourceLocation> =
+        Files.walk(location.path, recursion.levels)
             .filter { Files.isDirectory(it) }
             .map { it -> ResourceLocation(it) }.toList()
 }

@@ -59,7 +59,6 @@ value class Count private constructor(val count: Long) : Comparable<Count>, Form
         }
 
         fun <T> List<T>.count() = count(this.size)
-        fun <T> MutableList<T>.count() = count(this.size)
 
         /**
          * Converts the given number to a [Count].

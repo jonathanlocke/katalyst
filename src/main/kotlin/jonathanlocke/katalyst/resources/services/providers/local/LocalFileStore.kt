@@ -13,7 +13,7 @@ import jonathanlocke.katalyst.resources.services.ResourceStoreService
 import java.nio.file.Files
 import kotlin.io.path.name
 
-class LocalFileSystem(
+class LocalFileStore(
     override val root: ResourceLocation,
 ) : ResourceStoreService, ProblemSourceMixin {
 

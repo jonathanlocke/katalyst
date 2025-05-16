@@ -10,19 +10,11 @@ import jonathanlocke.katalyst.resources.streaming.CopyMethod.CopyAndRename
 import jonathanlocke.katalyst.resources.streaming.io.WriteMode
 import jonathanlocke.katalyst.resources.streaming.io.WriteMode.DoNotOverwrite
 
-class ResourceList(resources: List<Resource>) : List<Resource> by resources, ProblemSourceMixin {
-
-    fun commonAncestor(): ResourceFolder {
-        requireOrFail(isNotEmpty(), "Cannot find common ancestor of empty list")
-        var ancestor = first().parent()!!
-        ancestor.root()
-        for (resource in this) {
-            while (!ancestor.isRoot && !resource.location.isUnder(ancestor.location)) {
-                ancestor = ancestor.parent()!!
-            }
-        }
-        return ancestor
-    }
+class ResourceList(
+    private val parent: ResourceFolder,
+    resources: List<Resource>,
+) : List<Resource> by resources,
+    ProblemSourceMixin {
 
     /**
      * Copies all nested resources matching the given matcher from this folder to the destination folder.
@@ -38,19 +30,19 @@ class ResourceList(resources: List<Resource>) : List<Resource> by resources, Pro
         val problemHandler = prefixed("Copying ${count()} files to $to")
 
         // profile the copy operation,
-        profile(problemHandler) {
+        return profile(problemHandler) {
 
             // and if the 'to' folder exists,
             problemHandler.requireOrError(!to.exists(), "Target folder does not exist") {
 
-                // go through each resource we want to copy,
+                // then for each resource,
                 for (resource in this) {
 
-                    // and copy it to the path relative to the 'to' folder.
-                    resource.copyTo(
-                        to.resource(resource.relativeTo(commonAncestor()).location),
-                        method, mode, reporter
-                    )
+                    // get the path to the target we want to write to inside the 'to' folder,
+                    val target = to.resource(resource.relativeTo(parent).location)
+
+                    // and copy the resource.
+                    resource.copyTo(target, method, mode, reporter)
                 }
             }
         }
