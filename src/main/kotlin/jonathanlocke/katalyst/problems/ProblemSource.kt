@@ -1,11 +1,8 @@
 package jonathanlocke.katalyst.problems
 
-import jonathanlocke.katalyst.problems.exceptions.ExceptionTrait
-
 /**
- * A problem handler that repeats all the problems it receives to a list of handlers
+ * A problem source can be listened to by adding a [ProblemHandler].
  */
-interface ProblemSource : ProblemHandler, ExceptionTrait {
+interface ProblemSource {
     fun handlers(): MutableList<ProblemHandler>
-    fun addHandler(handler: ProblemHandler) = handlers().add(handler)
 }

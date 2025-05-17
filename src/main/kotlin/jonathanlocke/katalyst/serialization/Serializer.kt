@@ -14,5 +14,5 @@ interface Serializer<Value> {
      * @param value The value to serialize
      * @return The serialized string
      */
-    fun serialize(problemHandler: ProblemHandler = throwOnError, value: Value): String
+    fun serialize(value: Value, problemHandler: ProblemHandler = throwOnError): String
 }

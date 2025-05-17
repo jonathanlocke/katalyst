@@ -35,7 +35,7 @@ import jonathanlocke.katalyst.serialization.limiters.SizeSerializationLimiter
  */
 class PropertiesSerialization<Value : Any>(
     val conversionRegistry: ConversionRegistry = defaultConversionRegistry,
-    val limiter: SerializationLimiter = defaultPropertiesSerializationLimits
+    val limiter: SerializationLimiter = defaultPropertiesSerializationLimits,
 ) : Serialization<Value> {
 
     companion object {
@@ -67,7 +67,7 @@ class PropertiesSerialization<Value : Any>(
      * @see PropertiesSerializer
      */
     fun serialize(value: Value, problemHandler: ProblemHandler = throwOnError): String {
-        return serializer().serialize(problemHandler, value)
+        return serializer().serialize(value, problemHandler)
     }
 
     /**

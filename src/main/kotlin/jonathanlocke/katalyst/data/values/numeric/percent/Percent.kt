@@ -80,8 +80,7 @@ class Percent(val percent: Double) : Comparable<Percent>, Formattable<Percent>, 
     operator fun div(other: Numeric): Percent = div(other.asNumber())
 
     override fun hashCode(): Int = percent.hashCode()
-    override fun equals(other: Any?): Boolean =
-        (this === other) || (other is Percent && this.percent == other.percent)
+    override fun equals(other: Any?): Boolean = (this === other) || (other is Percent && this.percent == other.percent)
 
     override fun compareTo(that: Percent): Int = this.percent.compareTo(that.percent)
     override fun toString(): String = format(IntegerFormat)
@@ -96,13 +95,11 @@ class Percent(val percent: Double) : Comparable<Percent>, Formattable<Percent>, 
         /**
          * Returns a converter that converts a string to a [Percent], reporting any problems to the given handler.
          */
-        fun percentConverter() =
-            stringToValueConverter(valueType(Percent::class)) { text, problemHandler ->
-                parsePercent(
-                    text,
-                    problemHandler
-                )
-            }
+        fun percentConverter() = stringToValueConverter(valueType(Percent::class)) { text, problemHandler ->
+            parsePercent(
+                text, problemHandler
+            )
+        }
 
         val IntegerFormat = Formatter<Percent> { "${it.percent.toLong()}%" }
         val DecimalFormat = Formatter<Percent> { "%.1f%%".format(it.percent) }
@@ -119,12 +116,11 @@ class Percent(val percent: Double) : Comparable<Percent>, Formattable<Percent>, 
          * @param problemHandler The problem handler to use if the text cannot be parsed as a percent
          * @return The percent
          */
-        fun parsePercent(text: String, problemHandler: ProblemHandler = throwOnError): Percent? {
-            return problemHandler.tryCatch("Could not parse percentage: $text") {
+        fun parsePercent(text: String, problemHandler: ProblemHandler = throwOnError): Percent? =
+            problemHandler.tryValue("Could not parse percentage: $text") {
                 val percentage = text.trim().trimEnd('%').toDouble()
                 percent(percentage)
             }
-        }
 
         /**
          * Creates a [Percent] object

@@ -2,10 +2,14 @@ package jonathanlocke.katalyst.resources.services.providers.local
 
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.toBytes
 import jonathanlocke.katalyst.problems.ProblemSourceMixin
+import jonathanlocke.katalyst.resources.capabilities.ResourceStoreCapability.Companion.GetTemporaryFolderLocation
+import jonathanlocke.katalyst.resources.capabilities.ResourceStoreCapability.Companion.GetTemporaryResourceLocation
+import jonathanlocke.katalyst.resources.capabilities.ResourceStoreCapability.Companion.Resolve
 import jonathanlocke.katalyst.resources.location.ResourceLocation
 import jonathanlocke.katalyst.resources.location.ResourceProximity.Local
 import jonathanlocke.katalyst.resources.location.path.Filename
 import jonathanlocke.katalyst.resources.location.path.Paths.Companion.isRoot
+import jonathanlocke.katalyst.resources.metadata.ResourceStoreMetadata
 import jonathanlocke.katalyst.resources.services.ResourceFolderService
 import jonathanlocke.katalyst.resources.services.ResourceNodeService
 import jonathanlocke.katalyst.resources.services.ResourceService
@@ -25,9 +29,14 @@ class LocalFileStore(
     }
 
     override val proximity = Local
-    override val size = fileStore().totalSpace.toBytes()
-    override val usable = fileStore().usableSpace.toBytes()
-    override val free = fileStore().unallocatedSpace.toBytes()
+
+    override fun metadata() = ResourceStoreMetadata(
+        size = fileStore().totalSpace.toBytes(),
+        usable = fileStore().usableSpace.toBytes(),
+        free = fileStore().unallocatedSpace.toBytes()
+    )
+
+    override val capabilities = setOf(Resolve, GetTemporaryResourceLocation, GetTemporaryFolderLocation)
 
     override fun resource(location: ResourceLocation): ResourceService = LocalFile(this, location)
 

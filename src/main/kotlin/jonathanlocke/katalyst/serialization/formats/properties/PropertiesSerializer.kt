@@ -18,7 +18,7 @@ import jonathanlocke.katalyst.serialization.Serializer
 @Suppress("UNCHECKED_CAST")
 class PropertiesSerializer<Value : Any>(
     val conversionRegistry: ConversionRegistry = defaultConversionRegistry,
-    val limiter: SerializationLimiter
+    val limiter: SerializationLimiter,
 ) : Serializer<Value> {
 
     /**
@@ -37,7 +37,7 @@ class PropertiesSerializer<Value : Any>(
      * @return The serialized properties file as a string, with each property on a new line
      */
     @Suppress("UNCHECKED_CAST")
-    override fun serialize(problemHandler: ProblemHandler, value: Value): String {
+    override fun serialize(value: Value, problemHandler: ProblemHandler): String {
 
         val lines = mutableListOf<String>()
 

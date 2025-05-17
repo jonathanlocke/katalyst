@@ -74,7 +74,7 @@ interface ProblemHandler {
     }
 
     fun handleFrom(problemSource: ProblemSource) {
-        problemSource.addHandler(this)
+        problemSource.handlers().add(this)
     }
 
     /**
@@ -84,8 +84,7 @@ interface ProblemHandler {
         ProblemException.fail(message, problems())
     }
 
-    fun <Value> requireOrFail(value: Value?, message: String = "Cannot be null") =
-        requireOrFail(value != null, message)
+    fun <Value> requireOrFail(value: Value?, message: String = "Cannot be null") = requireOrFail(value != null, message)
 
     fun requireOrFail(condition: Boolean, message: String, code: Runnable? = null): Boolean {
         if (!condition) fail(message) else code?.run()
@@ -97,23 +96,27 @@ interface ProblemHandler {
         return condition
     }
 
-    fun failure(message: String, cause: Throwable? = null, value: Any? = null) =
-        handle(Failure(message, cause, value))
+    fun failure(message: String, cause: Throwable? = null, value: Any? = null) = handle(Failure(message, cause, value))
 
     fun info(message: String, cause: Throwable? = null, value: Any? = null) = handle(Info(message))
 
     fun trace(message: String, cause: Throwable? = null, value: Any? = null) = handle(Trace(message))
 
-    fun error(message: String, cause: Throwable? = null, value: Any? = null) =
-        handle(Error(message, cause, value))
+    fun error(message: String, cause: Throwable? = null, value: Any? = null) = handle(Error(message, cause, value))
 
-    fun warning(message: String, cause: Throwable? = null, value: Any? = null) =
-        handle(Warning(message, cause, value))
+    fun warning(message: String, cause: Throwable? = null, value: Any? = null) = handle(Warning(message, cause, value))
+
+    fun tryBoolean(message: String, code: Supplier<Boolean>): Boolean = try {
+        code.get()
+    } catch (e: Exception) {
+        error(message, e)
+        false
+    }
 
     /**
      * Guards the given functional code block by catching exceptions and reporting them as errors
      */
-    fun <Value> tryCatch(message: String, code: Supplier<Value>): Value? = try {
+    fun <Value> tryValue(message: String, code: Supplier<Value>): Value? = try {
         code.get()
     } catch (e: Exception) {
         error(message, e)

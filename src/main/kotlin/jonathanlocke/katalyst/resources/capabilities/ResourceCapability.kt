@@ -1,4 +1,4 @@
-package jonathanlocke.katalyst.resources
+package jonathanlocke.katalyst.resources.capabilities
 
 class ResourceCapability(val name: String) {
 
@@ -6,7 +6,7 @@ class ResourceCapability(val name: String) {
         val Resolve = ResourceCapability("Resolve")
         val Move = ResourceCapability("Move")
         val Delete = ResourceCapability("Delete")
-        val Write = ResourceCapability("WriteTo")
-        val Read = ResourceCapability("ReadFrom")
+        val Read = ResourceCapability("Read")
+        val Write = ResourceCapability("Write")
     }
 }

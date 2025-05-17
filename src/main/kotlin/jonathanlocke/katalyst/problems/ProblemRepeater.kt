@@ -5,11 +5,11 @@ package jonathanlocke.katalyst.problems
  */
 open class ProblemRepeater : ProblemHandlerBase(), ProblemSource {
 
-    private val problemHandlers: MutableList<ProblemHandler> = ArrayList()
-
-    override fun handlers(): MutableList<ProblemHandler> = problemHandlers
+    private val handlers = ArrayList<ProblemHandler>()
 
     override fun onHandle(problem: Problem) {
-        for (it in problemHandlers) it.handle(problem)
+        handlers.forEach { it.handle(problem) }
     }
+
+    override fun handlers() = handlers
 }

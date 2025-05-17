@@ -2,11 +2,14 @@ package jonathanlocke.katalyst.resources.services
 
 import jonathanlocke.katalyst.resources.ResourceFolder.Companion.TopLevel
 import jonathanlocke.katalyst.resources.ResourceFolder.Recursion
+import jonathanlocke.katalyst.resources.capabilities.ResourceFolderCapability
 import jonathanlocke.katalyst.resources.location.ResourceLocation
 
 interface ResourceFolderService : ResourceNodeService {
 
     override val isFolder: Boolean get() = true
+
+    val capabilities: Set<ResourceFolderCapability>
 
     fun clear(): Boolean
     fun mkdirs(): Boolean
