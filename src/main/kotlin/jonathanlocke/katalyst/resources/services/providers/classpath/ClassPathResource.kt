@@ -1,33 +1,58 @@
 package jonathanlocke.katalyst.resources.services.providers.classpath
 
+import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.toBytes
 import jonathanlocke.katalyst.progress.ProgressReporter
+import jonathanlocke.katalyst.progress.ProgressReporter.Companion.nullProgressReporter
 import jonathanlocke.katalyst.resources.capabilities.ResourceCapability.Companion.Read
+import jonathanlocke.katalyst.resources.capabilities.ResourceCapability.Companion.Resolve
 import jonathanlocke.katalyst.resources.location.ResourceLocation
+import jonathanlocke.katalyst.resources.metadata.ResourceMetadata
+import jonathanlocke.katalyst.resources.metadata.ResourceMetadataValue.HasLastModifiedAt
+import jonathanlocke.katalyst.resources.metadata.ResourceMetadataValue.HasSize
 import jonathanlocke.katalyst.resources.services.ResourceService
 import jonathanlocke.katalyst.resources.services.ResourceStoreService
-import jonathanlocke.katalyst.resources.services.providers.local.LocalFileStoreNode
 import jonathanlocke.katalyst.resources.streaming.io.ResourceInputStream
 import jonathanlocke.katalyst.resources.streaming.io.ResourceOutputStream
 import jonathanlocke.katalyst.resources.streaming.io.WriteMode
-import java.nio.file.Files
+import java.time.Instant
 
 class ClassPathResource(
     override val store: ResourceStoreService,
     override val location: ResourceLocation,
-) : LocalFileStoreNode(location), ResourceService {
+) : ClassPathNode(location), ResourceService {
 
-    override fun openForReading(progressReporter: ProgressReporter): ResourceInputStream =
-        ResourceInputStream(progressReporter, Files.newInputStream(location.path).buffered())
-
-    override fun isReadable() = tryBoolean("") {
-        openForReading(ProgressReporter.nullProgressReporter)
-    }
+    override val capabilities = setOf(Resolve, Read)
 
     override fun isWritable() = false
+    override fun moveTo(target: ResourceLocation) = throw unimplemented()
+    override fun delete() = throw unimplemented()
+    override fun exists() = isReadable()
 
-    override val capabilities = setOf(Read)
+    override fun metadata(): ResourceMetadata? = tryValue {
+        val resource = scanResource()!!
+        ResourceMetadata(
+            setOf(HasSize, HasLastModifiedAt),
+            resource.length.toBytes(),
+            Instant.ofEpochMilli(resource.lastModified)
+        )
+    }
+
+    override fun openForReading(progressReporter: ProgressReporter): ResourceInputStream {
+        val input = Thread.currentThread().contextClassLoader.getResourceAsStream(location.path.toString())
+        if (input != null) {
+            return ResourceInputStream(progressReporter, input.buffered())
+        }
+        throw failure("Could not find classpath resource: $location")
+    }
 
     override fun openForWriting(mode: WriteMode, progressReporter: ProgressReporter): ResourceOutputStream {
-        throw UnsupportedOperationException("Cannot write to a classpath resource.")
+        throw failure("Cannot write to a classpath resource")
+    }
+
+    override fun isReadable(): Boolean = try {
+        openForReading(nullProgressReporter)
+        true
+    } catch (_: Exception) {
+        false
     }
 }

@@ -1,39 +1,37 @@
 package jonathanlocke.katalyst.resources.services.providers.local
 
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.bytes
-import jonathanlocke.katalyst.problems.ProblemSourceMixin
 import jonathanlocke.katalyst.resources.location.ResourceLocation
 import jonathanlocke.katalyst.resources.metadata.ResourceMetadata
+import jonathanlocke.katalyst.resources.metadata.ResourceMetadataValue.*
 import jonathanlocke.katalyst.resources.services.ResourceNodeService
 import java.nio.file.Files
 import java.nio.file.Files.readAttributes
 import java.nio.file.attribute.BasicFileAttributes
 
-abstract class LocalFileStoreNode(override val location: ResourceLocation) : ResourceNodeService, ProblemSourceMixin {
+abstract class LocalFileStoreNode(override val location: ResourceLocation) : ResourceNodeService {
 
-    override val metadata: ResourceMetadata
-        get() {
-            val attributes = readAttributes(location.path, BasicFileAttributes::class.java)
-            return ResourceMetadata(
-                bytes(Files.size(location.path)),
-                attributes.lastModifiedTime().toInstant(),
-                attributes.lastAccessTime().toInstant(),
-                attributes.creationTime().toInstant()
-            )
-        }
-
-    override fun exists() = tryBoolean("Could not check existence of $location.path") {
-        Files.exists(location.path)
-    }
-
-    override fun delete() = tryBoolean("Could not delete $location.path") {
-        Files.deleteIfExists(
-            location.path
+    override fun metadata() = tryValue {
+        val attributes = readAttributes(location.path, BasicFileAttributes::class.java)
+        ResourceMetadata(
+            setOf(HasSize, HasCreatedAt, HasLastAccessedAt, HasLastModifiedAt),
+            bytes(Files.size(location.path)),
+            attributes.lastModifiedTime().toInstant(),
+            attributes.lastAccessTime().toInstant(),
+            attributes.creationTime().toInstant()
         )
     }
 
-    override fun moveTo(target: ResourceLocation): Boolean {
+    override fun exists() = tryBoolean {
+        Files.exists(location.path)
+    }
+
+    override fun delete() = tryBoolean {
+        Files.deleteIfExists(location.path)
+    }
+
+    override fun moveTo(target: ResourceLocation) = tryBoolean {
         requireOrFail(store.contains(location), "Target is not in store '$store': $target")
-        return Files.move(location.path, location.path) != null
+        Files.move(location.path, location.path) != null
     }
 }

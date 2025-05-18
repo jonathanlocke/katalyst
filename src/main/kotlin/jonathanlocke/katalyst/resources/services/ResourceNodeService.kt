@@ -8,11 +8,10 @@ interface ResourceNodeService : ProblemSourceMixin {
 
     val store: ResourceStoreService
     val location: ResourceLocation
-    val metadata: ResourceMetadata
-
-    val isFolder: Boolean
+    val isFolder get() = this is ResourceFolderService
     val isResource get() = !isFolder
 
+    fun metadata(): ResourceMetadata?
     fun moveTo(target: ResourceLocation): Boolean
     fun delete(): Boolean
     fun exists(): Boolean

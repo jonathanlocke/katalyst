@@ -10,6 +10,7 @@ import jonathanlocke.katalyst.resources.location.ResourceProximity.Local
 import jonathanlocke.katalyst.resources.location.path.Filename
 import jonathanlocke.katalyst.resources.location.path.Paths.Companion.isRoot
 import jonathanlocke.katalyst.resources.metadata.ResourceStoreMetadata
+import jonathanlocke.katalyst.resources.metadata.ResourceStoreMetadataValue.*
 import jonathanlocke.katalyst.resources.services.ResourceFolderService
 import jonathanlocke.katalyst.resources.services.ResourceNodeService
 import jonathanlocke.katalyst.resources.services.ResourceService
@@ -31,6 +32,7 @@ class LocalFileStore(
     override val proximity = Local
 
     override fun metadata() = ResourceStoreMetadata(
+        setOf(HasSize, HasUsableSpace, HasFreeSpace),
         size = fileStore().totalSpace.toBytes(),
         usable = fileStore().usableSpace.toBytes(),
         free = fileStore().unallocatedSpace.toBytes()
@@ -48,7 +50,7 @@ class LocalFileStore(
         folder(location)
     }
 
-    override fun temporaryResourceLocation(baseName: Filename): ResourceLocation =
+    override fun temporaryResourceLocation(baseName: Filename) =
         ResourceLocation(Files.createTempFile(baseName.name, ".tmp").toUri())
 
     override fun temporaryFolderLocation(baseName: Filename): ResourceLocation =

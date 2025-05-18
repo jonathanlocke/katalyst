@@ -19,7 +19,7 @@ class ResourceFolder(
 
     val isRoot = location.isRoot
 
-    fun folder(filename: Filename) = folder(location.child(filename))
+    fun folder(filename: Filename) = folder(location.resolve(filename))
     fun relativeResource(relativeLocation: ResourceLocation) =
         resource(relativeLocation.relativeTo(location))
 

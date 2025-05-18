@@ -13,10 +13,8 @@ interface ResourceStoreService : ProblemSource {
     val proximity: ResourceProximity
     val capabilities: Set<ResourceStoreCapability>
 
-    fun metadata(): ResourceStoreMetadata
-
+    fun metadata(): ResourceStoreMetadata?
     fun contains(location: ResourceLocation) = location.isUnder(root)
-
     fun resource(location: ResourceLocation): ResourceService
     fun folder(location: ResourceLocation): ResourceFolderService
     fun node(location: ResourceLocation): ResourceNodeService

@@ -7,8 +7,6 @@ import jonathanlocke.katalyst.resources.location.ResourceLocation
 
 interface ResourceFolderService : ResourceNodeService {
 
-    override val isFolder: Boolean get() = true
-
     val capabilities: Set<ResourceFolderCapability>
 
     fun clear(): Boolean

@@ -4,6 +4,7 @@ class ResourceCapability(val name: String) {
 
     companion object {
         val Resolve = ResourceCapability("Resolve")
+        val GetMetadata = ResourceCapability("GetMetadata")
         val Move = ResourceCapability("Move")
         val Delete = ResourceCapability("Delete")
         val Read = ResourceCapability("Read")

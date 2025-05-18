@@ -15,11 +15,10 @@ class LocalFolder(
     override val store: ResourceStoreService,
     override val location: ResourceLocation,
 ) : LocalFileStoreNode(location), ResourceFolderService {
-
-
+    
     override val capabilities = setOf(Resolve, Move, Delete, ListFolders, ListFiles)
 
-    override fun clear(): Boolean {
+    override fun clear() = tryBoolean {
 
         var errors = 0
 
@@ -39,10 +38,10 @@ class LocalFolder(
 
             // show how many.
             error("Could not delete $errors files under: $location")
-            return false
+            false
         }
 
-        return true
+        true
     }
 
     override fun mkdirs() = tryBoolean("Could not create directory path to: $location") {
@@ -53,12 +52,10 @@ class LocalFolder(
     }
 
     override fun resources(recursion: Recursion): List<ResourceLocation> =
-        Files.walk(location.path, recursion.levels)
-            .filter { Files.isRegularFile(it) }
+        Files.walk(location.path, recursion.levels).filter { Files.isRegularFile(it) }
             .map { it -> ResourceLocation(it) }.toList()
 
     override fun folders(recursion: Recursion): List<ResourceLocation> =
-        Files.walk(location.path, recursion.levels)
-            .filter { Files.isDirectory(it) }
-            .map { it -> ResourceLocation(it) }.toList()
+        Files.walk(location.path, recursion.levels).filter { Files.isDirectory(it) }.map { it -> ResourceLocation(it) }
+            .toList()
 }

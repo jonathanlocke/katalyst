@@ -96,17 +96,25 @@ interface ProblemHandler {
         return condition
     }
 
-    fun failure(message: String, cause: Throwable? = null, value: Any? = null) = handle(Failure(message, cause, value))
+    fun unimplemented() = failure("Unimplemented")
+
+    fun failure(message: String, cause: Throwable? = null, value: Any? = null): ProblemException {
+        handle(Failure(message, cause, value))
+        return ProblemException(message, problems())
+    }
 
     fun info(message: String, cause: Throwable? = null, value: Any? = null) = handle(Info(message))
 
     fun trace(message: String, cause: Throwable? = null, value: Any? = null) = handle(Trace(message))
 
-    fun error(message: String, cause: Throwable? = null, value: Any? = null) = handle(Error(message, cause, value))
+    fun error(message: String, cause: Throwable? = null, value: Any? = null): ProblemException {
+        handle(Error(message, cause, value))
+        return ProblemException(message, problems())
+    }
 
     fun warning(message: String, cause: Throwable? = null, value: Any? = null) = handle(Warning(message, cause, value))
 
-    fun tryBoolean(message: String, code: Supplier<Boolean>): Boolean = try {
+    fun tryBoolean(message: String = "Caught exception", code: Supplier<Boolean>): Boolean = try {
         code.get()
     } catch (e: Exception) {
         error(message, e)
@@ -116,7 +124,7 @@ interface ProblemHandler {
     /**
      * Guards the given functional code block by catching exceptions and reporting them as errors
      */
-    fun <Value> tryValue(message: String, code: Supplier<Value>): Value? = try {
+    fun <Value> tryValue(message: String = "Caught exception", code: Supplier<Value>): Value? = try {
         code.get()
     } catch (e: Exception) {
         error(message, e)

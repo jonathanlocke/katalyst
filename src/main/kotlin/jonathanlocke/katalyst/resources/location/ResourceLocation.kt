@@ -21,8 +21,9 @@ open class ResourceLocation(open val uri: URI) {
     val isAbsolute = path.isAbsolute
     val isRoot = path.isRoot()
     val isRelative = !isAbsolute
-    fun child(relativeLocation: ResourceLocation) = ResourceLocation(uri.resolve(relativeLocation.toString()))
-    fun child(filename: Filename) = child(ResourceLocation(filename))
+    fun resolve(relativeLocation: ResourceLocation) = ResourceLocation(uri.resolve(relativeLocation.toString()))
+    fun resolve(relativeLocation: String) = ResourceLocation(uri.resolve(relativeLocation))
+    fun resolve(filename: Filename) = resolve(ResourceLocation(filename))
     fun relativeTo(folder: ResourceLocation) = ResourceLocation(uri.resolve(path.relativeTo(folder.path).toString()))
     fun isUnder(location: ResourceLocation) = location.uri.path.startsWith(uri.path)
 }

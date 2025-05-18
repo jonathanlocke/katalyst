@@ -5,10 +5,8 @@ import jonathanlocke.katalyst.resources.streaming.ResourceStreamable
 
 interface ResourceService : ResourceNodeService, ResourceStreamable {
 
+    val capabilities: Set<ResourceCapability>
+
     fun isReadable(): Boolean
     fun isWritable(): Boolean
-
-    override val isFolder: Boolean get() = false
-
-    val capabilities: Set<ResourceCapability>
 }

@@ -87,7 +87,7 @@ class ResourceStreamer(
     fun <Value> deserialize(deserializer: Deserializer<Value>, problemHandler: ProblemHandler = throwOnError) =
         withReader { reader -> deserializer.deserialize(reader.readText(), problemHandler) }
 
-    fun readText() = problemHandler.tryBoolean("Could not read text from $resourceStreamable") {
+    fun readText() = problemHandler.tryValue("Could not read text from $resourceStreamable") {
         resourceStreamable.openForReading().use { it.readBytes().decodeToString() }
     }
 
