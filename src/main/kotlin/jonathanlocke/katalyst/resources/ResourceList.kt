@@ -29,7 +29,7 @@ class ResourceList(
     ): Boolean {
 
         // Prefix this problem handler to give problems a context,
-        val prefixedProblemHandler = problemHandler.prefixed("Copying ${count()} files to $to")
+        val prefixedProblemHandler = problemHandler.prefixedWith("Copying ${count()} files to $to")
 
         // profile the copy operation,
         return profile(prefixedProblemHandler) {

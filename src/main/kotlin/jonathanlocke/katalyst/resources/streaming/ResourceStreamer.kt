@@ -21,14 +21,14 @@ class ResourceStreamer(
     val resourceStreamable: ResourceStreamable,
     val problemHandler: ProblemHandler = throwOnError,
     val progressReporter: ProgressReporter = nullProgressReporter,
-) {
+) : ProblemHandler by problemHandler, ProgressReporter by progressReporter {
+
     fun copyTo(
         to: Resource,
         method: CopyMethod,
         mode: WriteMode,
     ) {
-        problemHandler.requireOrFail(to.isWritable(), "Target is not writable: $to")
-
+        requireOrFail(to.isWritable(), "Target is not writable: $to")
         resourceStreamable.openForReading().use { input ->
             when (method) {
 
@@ -50,7 +50,7 @@ class ResourceStreamer(
     }
 
     fun <Value> withReader(code: (Reader) -> Value) =
-        problemHandler.tryValue("Reading from text reader failed: $resourceStreamable") {
+        tryValue("Reading from text reader failed: $resourceStreamable") {
             resourceStreamable.openForReading().use { input ->
                 InputStreamReader(input).buffered().use { reader ->
                     code.invoke(reader)
@@ -59,7 +59,7 @@ class ResourceStreamer(
         }
 
     fun <Value> withWriter(mode: WriteMode = DoNotOverwrite, code: (Writer) -> Value) =
-        problemHandler.tryValue("Writing to text writer failed: $resourceStreamable") {
+        tryValue("Writing to text writer failed: $resourceStreamable") {
             resourceStreamable.openForWriting(mode, progressReporter).use { output ->
                 OutputStreamWriter(output).buffered().use { writer ->
                     code.invoke(writer)
@@ -68,26 +68,26 @@ class ResourceStreamer(
         }
 
     fun <Value> withInput(code: (InputStream) -> Value) =
-        problemHandler.tryValue("Reading from input stream failed: $resourceStreamable") {
+        tryValue("Reading from input stream failed: $resourceStreamable") {
             resourceStreamable.openForReading().use { input ->
                 code.invoke(input.buffered())
             }
         }
 
     fun <Value> withOutput(mode: WriteMode = DoNotOverwrite, code: (ResourceOutputStream) -> Value) =
-        problemHandler.tryValue("Writing to output stream failed: $resourceStreamable") {
+        tryValue("Writing to output stream failed: $resourceStreamable") {
             resourceStreamable.openForWriting(mode, progressReporter).use { output ->
                 code.invoke(output)
             }
         }
 
     fun <Value> serialize(serializer: Serializer<Value>, value: Value) =
-        withWriter { writer -> writer.write(serializer.serialize(value, problemHandler)) }
+        withWriter { writer -> writer.write(serializer.serialize(value, this)) }
 
-    fun <Value> deserialize(deserializer: Deserializer<Value>, problemHandler: ProblemHandler = throwOnError) =
-        withReader { reader -> deserializer.deserialize(reader.readText(), problemHandler) }
+    fun <Value> deserialize(deserializer: Deserializer<Value>) =
+        withReader { reader -> deserializer.deserialize(reader.readText(), this) }
 
-    fun readText() = problemHandler.tryValue("Could not read text from $resourceStreamable") {
+    fun readText() = tryValue("Could not read text from $resourceStreamable") {
         resourceStreamable.openForReading().use { it.readBytes().decodeToString() }
     }
 
@@ -100,7 +100,7 @@ class ResourceStreamer(
     }
 
     fun readBytes(): ByteArray? {
-        return problemHandler.tryValue("Could not read bytes from $resourceStreamable") {
+        return tryValue("Could not read bytes from $resourceStreamable") {
             resourceStreamable.openForReading().use {
                 it.readBytes()
             }

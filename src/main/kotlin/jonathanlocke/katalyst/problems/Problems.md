@@ -13,10 +13,10 @@ of ProblemHandler.
 Accepting a ProblemHandler looks like this:
 
 ```kotlin
-class Rocket(problemHandler: ProblemHandler) {
+class Rocket(problemHandler: ProblemHandler) : ProblemHandler by problemHandler {
     fun launch() {
         if (!startEngine()) {
-            problemHandler.error("Couldn't blast off") 
+            error("Couldn't blast off") 
         }
     }
 }
@@ -25,9 +25,9 @@ class Rocket(problemHandler: ProblemHandler) {
 Use of Rocket then looks like this:
 
 ```kotlin
-class Launchpad(problemHandler: ProblemHandler) {
+class Launchpad(problemHandler: ProblemHandler) : ProblemHandler by problemHandler {
     fun launchRocket() {
-        val rocket = Rocket(problemHandler)
+        val rocket = Rocket(this)
         rocket.launch()
     }
 }
@@ -80,4 +80,39 @@ to the Rocket, a runtime error will result due to this code similar to this:
         }
     }
 ```
+
+## How to Design for ProblemHandler
+
+To allow a method to accept either a ReturnOnError handler or a ThrowOnError handler, it is
+necessary to catch exceptions and perform the proper error handling. Two methods in ProblemHandler
+make this easy for the two primary cases: (1) the method returns a value or null on failure and
+(2) the method returns a boolean value signifying success or failure.
+
+### 1. tryBoolean
+
+In the case of a Boolean return value, the tryBoolean method can be used like this:
+
+```kotlin
+    override fun exists() = tryBoolean("File does not exist: $location") {
+        Files.exists(location.path)
+    }
+```
+
+If File.exists() throws an exception this method will return false, *unless* a problem handler attached 
+to this object is ThrowOnError, in which case it will trap the exception information and rethrow a 
+ProblemException. The message is optional and can be used to capture context information about the problem.
+
+### 2. tryValue
+
+In the case of an optional (nullable) return value, the tryValue method can be used:
+
+```kotlin
+    override fun loadSpaceship(): Spaceship? = tryValue() {
+        return database.loadSpaceshp(id)
+    }
+```
+
+Here, if the database is unable to load the spaceship by id, any exceptions will be caught and either
+null will be returned (in the case of ReturnOnError) or an exception will be thrown (in the case of
+ThrowOnError)
 

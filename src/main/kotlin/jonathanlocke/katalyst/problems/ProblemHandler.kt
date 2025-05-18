@@ -88,13 +88,6 @@ interface ProblemHandler {
         return handler
     }
 
-    /**
-     * Forces a failure state that throws an exception which includes all problems this handler has encountered
-     */
-    fun fail(message: String) {
-        ProblemException.fail(message, problems())
-    }
-
     fun <Value> requireOrFail(value: Value?, message: String = "Cannot be null") = requireOrFail(value != null, message)
 
     fun requireOrFail(condition: Boolean, message: String, code: Runnable? = null): Boolean {
@@ -105,6 +98,13 @@ interface ProblemHandler {
     fun requireOrError(condition: Boolean, message: String, code: Runnable? = null): Boolean {
         if (condition) error(message) else code?.run()
         return condition
+    }
+
+    /**
+     * Forces a failure state that throws an exception which includes all problems this handler has encountered
+     */
+    fun fail(message: String) {
+        ProblemException.fail(message, problems())
     }
 
     fun failure(message: String, cause: Throwable? = null, value: Any? = null): ProblemException {
@@ -142,5 +142,8 @@ interface ProblemHandler {
         null
     }
 
-    fun prefixed(prefix: String) = PrefixingProblemHandler(prefix, this)
+    /**
+     * Returns a new [ProblemHandler] that prefixes all messages with the given [prefix]
+     */
+    fun prefixedWith(prefix: String) = PrefixingProblemHandler(prefix, this)
 }
