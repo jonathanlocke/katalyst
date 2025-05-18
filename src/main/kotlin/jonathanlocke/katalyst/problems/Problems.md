@@ -1,20 +1,19 @@
 
 # Problems
 
-## Use Patterns
+## Use Patterns for ProblemHandler
 
 There are two ways for an object to handle problems. The first is by accepting a 
 ProblemHandler in its constructor and then using it to handle problems. The second
-is for an object to implement ProblemSource (which extends ProblemHandler), 
-typically by implementing the ProblemSourceMixin.
+is for an object to implement the ProblemHandlerMixin, which provides an implementation
+of ProblemHandler.
 
-### 1. Pass ProblemHandler to constructor
+### 1. Construct with a ProblemHandler
 
 Accepting a ProblemHandler looks like this:
 
 ```kotlin
 class Rocket(problemHandler: ProblemHandler) {
-    
     fun launch() {
         if (!startEngine()) {
             problemHandler.error("Couldn't blast off") 
@@ -27,7 +26,6 @@ Use of Rocket then looks like this:
 
 ```kotlin
 class Launchpad(problemHandler: ProblemHandler) {
-    
     fun launchRocket() {
         val rocket = Rocket(problemHandler)
         rocket.launch()
@@ -35,18 +33,15 @@ class Launchpad(problemHandler: ProblemHandler) {
 }
 ```
 
-The advantage of this pattern is that it's not possible to create a Rocket object
-without being aware that it handles problems through the ProblemHandler interface.
-Failing to pass in a ProblemHandler to the constructor will result in a compile time
-error. The downside is that it's slightly more verbose than the second option.
+**Pros**: It's a compile time error to fail to handle errors  
+**Cons**: Code is more verbose than using ProblemHandlerMixin
 
-### 2. Implement ProblemHandler
+### 2. Implement ProblemHandlerMixin
 
 Rocket could also look like this:
 
 ```kotlin
-class Rocket : ProblemSourceMixin {
-    
+class Rocket : ProblemHandlerMixin {
     fun launch() {
         if (!startEngine()) {
             error("Couldn't blast off")        
@@ -58,8 +53,7 @@ class Rocket : ProblemSourceMixin {
 Use of Rocket then looks like this:
 
 ```kotlin
-class Launchpad : ProblemSourceMixin {
-    
+class Launchpad : ProblemHandlerMixin {
     fun launchRocket() {
         val rocket = handleProblemsFrom(Rocket())
         rocket.launch()
@@ -67,24 +61,23 @@ class Launchpad : ProblemSourceMixin {
 }
 ```
 
-The advantage is that there's less code involved. The result is cleaner. The downside
-is that it's possible to create a Rocket and use it without capturing the problems 
-that it is transmitting. If Rocket calls error() and the client that created it has
-not attached a ProblemHandler to the Rocket, a runtime error will result due to 
-this code similar to this in ProblemSource:
+**Pros**: Cleaner, more concise code  
+**Cons**: Failure to handle problems results in a runtime warning
+
+If Rocket calls error() and the client that created it has not attached a ProblemHandler 
+to the Rocket, a runtime error will result due to this code similar to this:
 
 ```kotlin
     fun handlers(): MutableList<ProblemHandler>
 
     override fun handle(problem: Problem) {
+
+        // If there are no handlers,
         if (handlers().isEmpty()) {
-            logger.warning("Unhandled problem: $problem")
+
+            // log a warning because the problem will be lost.
+            defaultLoggerFactory.newLogger().warning("Unhandled problem: $problem")
         }
-        super.handle(problem)
     }
 ```
 
-Any time the list of handlers is empty and an attempt is made to handle a problem,
-the attempt will be logged as a warning. The problem is not trivial because there 
-may be problems that are rarely transmitted by a ProblemSource. This might not be 
-caught without adequate testing.
