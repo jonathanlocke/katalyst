@@ -14,13 +14,18 @@ import jonathanlocke.katalyst.text.formatting.Formattable
  * @see Problem
  */
 open class ProblemList(
-    val maximumProblems: Count = globalMaximumSize
+    val maximumProblems: Count = globalMaximumSize,
 ) : AbstractMutableList<Problem>(), ProblemHandler, Formattable<ProblemList> {
 
     private val problemList: MutableList<Problem> by lazy { safeList("problems", maximumSize = maximumProblems) }
 
     override fun problems() = this
+    override fun handlers(): MutableList<ProblemHandler> = throw unimplemented()
+    override fun handle(problem: Problem) {
+        problemList.add(problem)
+    }
 
+    fun count() = problemList.size
     fun errors() = problemList.filter { it.effect == STOP }.size
     fun warnings() = problemList.filter { it.effect == CONTINUE }.size
     fun isValid() = errors() == 0

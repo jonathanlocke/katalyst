@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.resources.streaming
 
 import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.ProblemSourceMixin
+import jonathanlocke.katalyst.problems.ProblemHandlerMixin
 import jonathanlocke.katalyst.progress.ProgressReporter
 import jonathanlocke.katalyst.progress.ProgressReporter.Companion.nullProgressReporter
 import jonathanlocke.katalyst.resources.streaming.io.ResourceInputStream
@@ -9,7 +9,7 @@ import jonathanlocke.katalyst.resources.streaming.io.ResourceOutputStream
 import jonathanlocke.katalyst.resources.streaming.io.WriteMode
 import jonathanlocke.katalyst.resources.streaming.io.WriteMode.DoNotOverwrite
 
-interface ResourceStreamable : ProblemSourceMixin {
+interface ResourceStreamable : ProblemHandlerMixin {
 
     enum class CopyMethod {
         Copy, CopyAndRename

@@ -17,7 +17,7 @@ import jonathanlocke.katalyst.reflection.ValueType
  *
  * **Problems**
  *
- * - [handleFrom] - Reports a problem
+ * - [handleProblemsFrom] - Reports a problem
  *
  * **Extension Points**
  *
@@ -38,17 +38,15 @@ import jonathanlocke.katalyst.reflection.ValueType
 abstract class ConverterBase<From : Any, To : Any>(
     override val from: ValueType<From>,
     override val to: ValueType<To>,
-) :
-    Converter<From, To>,
-    ProblemHandler {
+) : Converter<From, To>, ProblemHandler {
 
     /** True if this converter allows null values */
     val nullAllowed: Boolean = false
 
-    override fun problems() = problemHandler.problems()
-
     /** The problem handler to use when handling conversion problems */
-    private lateinit var problemHandler: ProblemHandler
+    private val problemHandler = ThreadLocal<ProblemHandler>()
+
+    override fun problems() = problemHandler.get().problems()
 
     /**
      * The value to use for nullity if (a) nulls are not allowed, or (b) a conversion fails and the
@@ -63,8 +61,7 @@ abstract class ConverterBase<From : Any, To : Any>(
      * Invokes the error handler for this object with the given message
      * @param handle The problem to report
      */
-    override fun handle(problem: Problem) =
-        problemHandler.handle(problem)
+    override fun handle(problem: Problem) = problemHandler.get().handle(problem)
 
     /**
      * Converts from the From type to the To type. If the 'from' value is null and the converter allows
@@ -73,38 +70,50 @@ abstract class ConverterBase<From : Any, To : Any>(
      */
     final override fun convert(from: From?, problemHandler: ProblemHandler): To? {
 
-        // Set the error handler to use for this conversion
-        this.problemHandler = problemHandler
+        // Save the current problem handler for this thread
+        val currentHandler = this.problemHandler.get()
 
-        // If the value is null,
-        return if (from == null) {
+        try {
 
-            // and we don't allow that,
-            if (!nullAllowed) {
+            // Set the problem handler to use for this thread,
+            this.problemHandler.set(problemHandler)
 
-                // then it's an error
-                problemHandler.error("Cannot convert null value")
-                nullValue()
+            // then if the value is null,
+            return if (from == null) {
+
+                // and we don't allow that,
+                if (!nullAllowed) {
+
+                    // then it's an error
+                    error("Cannot convert null value")
+                    nullValue()
+
+                } else {
+
+                    // otherwise, convert to the null value
+                    nullValue()
+                }
 
             } else {
 
-                // otherwise, convert to the null value
-                nullValue()
+                // and if the value is not null,
+                try {
+
+                    // convert to the To type
+                    onConvert(from)
+
+                } catch (e: Exception) {
+
+                    // unless an exception occurs
+                    error("Cannot convert $from")
+                    nullValue()
+                }
             }
-        } else {
 
-            // and if the value is not null,
-            try {
+        } finally {
 
-                // convert to the To type
-                onConvert(from)
-
-            } catch (e: Exception) {
-
-                // unless an exception occurs
-                problemHandler.error("Cannot convert $from")
-                nullValue()
-            }
+            // restore the problem handler to the previous value
+            this.problemHandler.set(currentHandler)
         }
     }
 

@@ -2,7 +2,7 @@ package jonathanlocke.katalyst.resources
 
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes
 import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.ProblemSourceMixin
+import jonathanlocke.katalyst.problems.ProblemHandlerMixin
 import jonathanlocke.katalyst.resources.location.ResourceLocation
 import jonathanlocke.katalyst.resources.metadata.ResourceMetadata
 import java.time.Instant
@@ -10,7 +10,7 @@ import java.time.Instant
 abstract class ResourceNode(
     private val problemHandler: ProblemHandler,
     val location: ResourceLocation,
-) : ProblemSourceMixin {
+) : ProblemHandlerMixin {
 
     val store = ResourceStore(problemHandler, location)
 

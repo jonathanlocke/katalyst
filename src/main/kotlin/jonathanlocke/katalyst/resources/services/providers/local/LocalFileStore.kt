@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.resources.services.providers.local
 
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.toBytes
-import jonathanlocke.katalyst.problems.ProblemSourceMixin
+import jonathanlocke.katalyst.problems.ProblemHandlerMixin
 import jonathanlocke.katalyst.resources.capabilities.ResourceStoreCapability.Companion.GetTemporaryFolderLocation
 import jonathanlocke.katalyst.resources.capabilities.ResourceStoreCapability.Companion.GetTemporaryResourceLocation
 import jonathanlocke.katalyst.resources.capabilities.ResourceStoreCapability.Companion.Resolve
@@ -20,7 +20,7 @@ import kotlin.io.path.name
 
 class LocalFileStore(
     override val root: ResourceLocation,
-) : ResourceStoreService, ProblemSourceMixin {
+) : ResourceStoreService, ProblemHandlerMixin {
 
     init {
         requireOrFail(root.scheme.equals("file"), "Not a local filesystem: $root")

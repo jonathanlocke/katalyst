@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.resources.services.providers.classpath
 
-import jonathanlocke.katalyst.problems.ProblemSourceMixin
+import jonathanlocke.katalyst.problems.ProblemHandlerMixin
 import jonathanlocke.katalyst.resources.capabilities.ResourceStoreCapability.Companion.Resolve
 import jonathanlocke.katalyst.resources.location.ResourceLocation
 import jonathanlocke.katalyst.resources.location.ResourceProximity.Local
@@ -9,7 +9,7 @@ import jonathanlocke.katalyst.resources.services.ResourceStoreService
 
 class ClassPathResourceStore(
     override val root: ResourceLocation,
-) : ResourceStoreService, ProblemSourceMixin {
+) : ResourceStoreService, ProblemHandlerMixin {
 
     override val capabilities = setOf(Resolve)
     override val proximity = Local

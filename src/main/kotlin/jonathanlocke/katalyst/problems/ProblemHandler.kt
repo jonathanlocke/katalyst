@@ -65,16 +65,27 @@ import java.util.function.Supplier
  */
 interface ProblemHandler {
 
+    /**
+     * The list of problems that have been received
+     */
     fun problems(): ProblemList
 
-    fun prefixed(prefix: String) = PrefixingProblemHandler(prefix, this)
+    /**
+     * Handles the given [Problem]
+     */
+    fun handle(problem: Problem)
 
-    fun handle(problem: Problem) {
-        problems().add(problem)
-    }
+    /**
+     * A list of problem handlers that this handler delegates to
+     */
+    fun handlers(): MutableList<ProblemHandler> = mutableListOf()
 
-    fun handleFrom(problemSource: ProblemSource) {
-        problemSource.handlers().add(this)
+    /**
+     * Adds this handler as a receiver to the given [handler]
+     */
+    fun <Handler : ProblemHandler> handleProblemsFrom(handler: Handler): Handler {
+        handler.handlers().add(this)
+        return handler
     }
 
     /**
@@ -96,12 +107,12 @@ interface ProblemHandler {
         return condition
     }
 
-    fun unimplemented() = failure("Unimplemented")
-
     fun failure(message: String, cause: Throwable? = null, value: Any? = null): ProblemException {
         handle(Failure(message, cause, value))
         return ProblemException(message, problems())
     }
+
+    fun unimplemented() = failure("Unimplemented")
 
     fun info(message: String, cause: Throwable? = null, value: Any? = null) = handle(Info(message))
 
@@ -130,4 +141,6 @@ interface ProblemHandler {
         error(message, e)
         null
     }
+
+    fun prefixed(prefix: String) = PrefixingProblemHandler(prefix, this)
 }

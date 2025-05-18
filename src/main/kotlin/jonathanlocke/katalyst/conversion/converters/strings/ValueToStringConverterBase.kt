@@ -16,7 +16,7 @@ import jonathanlocke.katalyst.reflection.ValueType.Companion.valueTypeString
  * - [nullValue] - The value to use for nullity if (a) nulls are not allowed, or (b) a conversion fails and the
  *                 error handler returns a null value instead of throwing an exception
  * - [nullAllowed] - True if null input values are allowed
- * - [handleFrom] - Reports an error to the error handler
+ * - [handleProblemsFrom] - Reports an error to the error handler
  *
  * @param Value The type to convert from
  * @see ConverterBase
