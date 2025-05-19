@@ -1,18 +1,18 @@
 package jonathanlocke.katalyst.resources
 
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes
-import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.ProblemHandlerMixin
 import jonathanlocke.katalyst.resources.location.ResourceLocation
 import jonathanlocke.katalyst.resources.metadata.ResourceMetadata
+import jonathanlocke.katalyst.status.StatusHandler
+import jonathanlocke.katalyst.status.StatusHandlerMixin
 import java.time.Instant
 
 abstract class ResourceNode(
-    private val problemHandler: ProblemHandler,
+    private val statusHandler: StatusHandler,
     val location: ResourceLocation,
-) : ProblemHandlerMixin {
+) : StatusHandlerMixin {
 
-    val store = ResourceStore(problemHandler, location)
+    val store = ResourceStore(statusHandler, location)
 
     fun size(): Bytes? = metadata()?.size
     fun createdAtUtc(): Instant? = metadata()?.createdAtUtc
@@ -20,10 +20,10 @@ abstract class ResourceNode(
     fun lastAccessedAtUtc(): Instant? = metadata()?.lastAccessedAtUtc
 
     fun metadata(): ResourceMetadata? = nodeService.metadata()
-    fun resource(location: ResourceLocation) = Resource(problemHandler, location)
-    fun folder(location: ResourceLocation) = ResourceFolder(problemHandler, location)
+    fun resource(location: ResourceLocation) = Resource(statusHandler, location)
+    fun folder(location: ResourceLocation) = ResourceFolder(statusHandler, location)
 
-    fun root() = ResourceFolder(problemHandler, storeService.root)
+    fun root() = ResourceFolder(statusHandler, storeService.root)
     fun parent() = location.parent?.let { resource(it) }
     fun exists() = nodeService.exists()
 

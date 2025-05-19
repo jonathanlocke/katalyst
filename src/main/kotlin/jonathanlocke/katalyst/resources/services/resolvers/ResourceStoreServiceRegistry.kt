@@ -1,15 +1,15 @@
 package jonathanlocke.katalyst.resources.services.resolvers
 
-import jonathanlocke.katalyst.problems.ProblemHandlerMixin
 import jonathanlocke.katalyst.resources.location.ResourceLocation
 import jonathanlocke.katalyst.resources.services.ResourceStoreService
 import jonathanlocke.katalyst.resources.services.ResourceStoreServiceResolver
 import jonathanlocke.katalyst.resources.services.providers.classpath.ClassPathResourceStore
 import jonathanlocke.katalyst.resources.services.providers.local.LocalFileStore
+import jonathanlocke.katalyst.status.StatusHandlerMixin
 import java.net.URI
 import java.nio.file.FileSystems
 
-class ResourceStoreServiceRegistry : ResourceStoreServiceResolver, ProblemHandlerMixin {
+class ResourceStoreServiceRegistry : ResourceStoreServiceResolver, StatusHandlerMixin {
 
     private val services = HashMap<ResourceLocation, ResourceStoreService>()
 

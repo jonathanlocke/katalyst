@@ -4,8 +4,8 @@ import jonathanlocke.katalyst.logging.Log
 import jonathanlocke.katalyst.logging.LogEntry
 import jonathanlocke.katalyst.logging.Logger
 import jonathanlocke.katalyst.logging.loggers.contextual.CodeLocation.Companion.codeLocation
-import jonathanlocke.katalyst.problems.Problem
-import jonathanlocke.katalyst.problems.lists.NullProblemList
+import jonathanlocke.katalyst.status.NullStatusList
+import jonathanlocke.katalyst.status.Status
 import java.lang.Thread.currentThread
 import java.time.Duration.between
 import java.time.Instant
@@ -17,14 +17,13 @@ class ContextualLogger(val logs: List<Log>) : Logger {
     val filters = mutableListOf<Predicate<LogEntry>>()
     val created = Instant.now()
 
-    override fun problems() = NullProblemList()
-
-    override fun handle(problem: Problem) = addToLogs(codeLocation, currentThread(), problem)
+    override fun statuses() = NullStatusList()
+    override fun handle(status: Status) = addToLogs(codeLocation, currentThread(), status)
     override fun logs(): List<Log> = logs
 
-    private fun addToLogs(location: CodeLocation, thread: Thread, problem: Problem) {
+    private fun addToLogs(location: CodeLocation, thread: Thread, status: Status) {
         val now = Instant.now()
-        val entry = LogEntry(now, between(created, now), thread, location, problem)
+        val entry = LogEntry(now, between(created, now), thread, location, status)
         if (shouldLog(entry)) {
             for (log in logs()) {
                 log.receive(entry)

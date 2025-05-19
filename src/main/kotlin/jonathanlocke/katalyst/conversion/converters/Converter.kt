@@ -1,12 +1,12 @@
 package jonathanlocke.katalyst.conversion.converters
 
-import jonathanlocke.katalyst.problems.Problem
-import jonathanlocke.katalyst.problems.ProblemException
-import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
-import jonathanlocke.katalyst.problems.handlers.ReturnOnError
-import jonathanlocke.katalyst.problems.handlers.ThrowOnError
 import jonathanlocke.katalyst.reflection.ValueType
+import jonathanlocke.katalyst.status.Status
+import jonathanlocke.katalyst.status.StatusException
+import jonathanlocke.katalyst.status.StatusHandler
+import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
+import jonathanlocke.katalyst.status.handlers.ReturnOnError
+import jonathanlocke.katalyst.status.handlers.ThrowOnError
 import jonathanlocke.katalyst.validation.ValidationResult
 import jonathanlocke.katalyst.validation.ValidatorBase
 
@@ -20,7 +20,7 @@ import jonathanlocke.katalyst.validation.ValidatorBase
  *
  * **Methods**
  *
- * - [convert] - Converts the given [From] value to a [To] value. If an error occurs, the [ProblemHandler] is called,
+ * - [convert] - Converts the given [From] value to a [To] value. If an error occurs, the [StatusHandler] is called,
  *               which determines whether a null value is returned or an exception is thrown.
  *
  * @param From Source type
@@ -28,14 +28,14 @@ import jonathanlocke.katalyst.validation.ValidatorBase
  *
  * @see ReturnOnError
  * @see ThrowOnError
- * @see Problem
- * @see ProblemHandler
+ * @see Status
+ * @see StatusHandler
  */
 interface Converter<From : Any, To : Any> {
 
     /**
      * All converters are validators. If [convert] fails, it will report the conversion error
-     * as a [Problem] to its [ProblemHandler]. Because [ValidationResult] is a [ProblemHandler],
+     * as a [Status] to its [StatusHandler]. Because [ValidationResult] is a [StatusHandler],
      * simply passing the result object to [convert] will cause it to capture any errors that
      * occur during conversion in the result.
      */
@@ -56,19 +56,19 @@ interface Converter<From : Any, To : Any> {
     val to: ValueType<To>
 
     /**
-     * Converts the given [From] value to a [To] value. If an error occurs, the [ProblemHandler] is called and
+     * Converts the given [From] value to a [To] value. If an error occurs, the [StatusHandler] is called and
      * that determines whether a null value is returned ([ReturnOnError]) or an exception is thrown ([ThrowOnError]).
      * @param from The value to convert
-     * @param problemHandler The error handler to use when the conversion fails. Defaults to [ThrowOnError] if not provided.
+     * @param statusHandler The error handler to use when the conversion fails. Defaults to [ThrowOnError] if not provided.
      * @return Returns [To] if the conversion succeeded. If the conversion failed, returns null unless the error handler
      * throws an exception
-     * @throws ProblemException Thrown by error handler if the conversion fails and the handler is [ThrowOnError]
+     * @throws StatusException Thrown by error handler if the conversion fails and the handler is [ThrowOnError]
      *
-     * @see ProblemHandler
+     * @see StatusHandler
      * @see ReturnOnError
      * @see ThrowOnError
      */
-    fun convert(from: From?, problemHandler: ProblemHandler = throwOnError): To?
+    fun convert(from: From?, statusHandler: StatusHandler = throwOnError): To?
 
     /**
      * The value to use for conversions that result in a null [To] value. Overriding this method allows failed

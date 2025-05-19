@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.resources.location.path
 
-import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
+import jonathanlocke.katalyst.status.StatusHandler
+import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
 
 class Extension(text: String) {
 
@@ -24,8 +24,8 @@ class Extension(text: String) {
         val TAR: Extension = parseExtension(".tar")
         val GZ: Extension = parseExtension(".gz")
 
-        fun parseExtension(extension: String, problemHandler: ProblemHandler = throwOnError): Extension {
-            problemHandler.requireOrFail(extension.startsWith("."), "Extension must start with '.'")
+        fun parseExtension(extension: String, statusHandler: StatusHandler = throwOnError): Extension {
+            statusHandler.requireOrFail(extension.startsWith("."), "Extension must start with '.'")
             return Extension(extension)
         }
     }

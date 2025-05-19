@@ -1,25 +1,25 @@
 package jonathanlocke.katalyst.data.structures.lists
 
 import jonathanlocke.katalyst.data.structures.SafeDataStructure
-import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
+import jonathanlocke.katalyst.status.StatusHandler
+import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
 
 /**
  * A [MutableList] that is safe to use.
  *
  * @param metadata Metadata about the collection
- * @param problemHandler The problem handler to use
+ * @param statusHandler The status handler to use
  * @param list The underlying list
  *
  * @see SafetyMetadata
- * @see ProblemHandler
+ * @see StatusHandler
  * @see SafeDataStructure
  */
 class SafeList<Element : Any> internal constructor(
     override val metadata: SafetyMetadata,
-    override val problemHandler: ProblemHandler = throwOnError,
-    private val list: MutableList<Element>
-) : SafeDataStructure(metadata, problemHandler), MutableList<Element> {
+    override val statusHandler: StatusHandler = throwOnError,
+    private val list: MutableList<Element>,
+) : SafeDataStructure(metadata, statusHandler), MutableList<Element> {
 
     fun toImmutableList(): List<Element> = list.toList()
 

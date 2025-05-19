@@ -75,7 +75,7 @@ to the Rocket, a runtime error will result due to this code similar to this:
         // If there are no handlers,
         if (handlers().isEmpty()) {
 
-            // log a warning because the problem will be lost.
+            // log a warning because the status will be lost.
             defaultLoggerFactory.newLogger().warning("Unhandled problem: $problem")
         }
     }
@@ -93,7 +93,7 @@ make this easy for the two primary cases: (1) the method returns a value or null
 In the case of a Boolean return value, the tryBoolean method can be used like this:
 
 ```kotlin
-    override fun exists() = tryBoolean("File does not exist: $location") {
+    override fun exists(problemHandler: ProblemHandler = this) = tryBoolean("File does not exist: $location") {
         Files.exists(location.path)
     }
 ```

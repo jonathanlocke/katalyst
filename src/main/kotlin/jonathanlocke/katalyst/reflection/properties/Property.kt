@@ -1,16 +1,37 @@
 package jonathanlocke.katalyst.reflection.properties
 
 import jonathanlocke.katalyst.reflection.ValueType
+import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
+import kotlin.reflect.KClass
 
-data class Property<Value : Any>(
-    val parent: Any?,
+class Property<Value : Any>(
+    val parentValue: Any,
     val path: PropertyPath,
     val accessor: PropertyAccessor<Value>,
-    val value: Value?,
 ) {
-    val parentValueType = if (parent == null) null else ValueType.Companion.valueType(parent::class)
-    val packageName = parentValueType?.qualifiedName ?: "<none>"
-    val type = accessor.type()
+    private var propertyValue: Value? = null
 
-    override fun toString(): String = packageName + ":" + path.pathString() + " = " + value
+    fun isChildOf(property: Property<*>): Boolean = path.isChildOf(property.path)
+    fun isParentOf(property: Property<*>): Boolean = path.isParentOf(property.path)
+
+    val name get() = path.property()?.name ?: "<unknown>"
+
+    fun <AnnotationInstance : Annotation> getAnnotation(type: KClass<AnnotationInstance>): AnnotationInstance? =
+        accessor.annotation(type)
+
+    val packageName = parentValueType.packageName
+    val parentValueType: ValueType<*> get() = valueType(parentValue::class)
+    val type: ValueType<Value> get() = this.accessor.type()
+
+    val value: Value?
+        get() {
+            if (propertyValue == null) {
+                propertyValue = this.accessor.get(parentValue)
+            }
+            return propertyValue
+        }
+
+    fun fullPath() = this.packageName + ":" + this
+
+    override fun toString() = path.pathString() + " = " + this.value
 }

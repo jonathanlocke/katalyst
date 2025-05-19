@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.conversion.converters
 
-import jonathanlocke.katalyst.problems.ProblemHandler
+import jonathanlocke.katalyst.status.StatusHandler
 
 fun interface ConverterLambda<From, To> {
-    fun convert(from: From, problemHandler: ProblemHandler): To
+    fun convert(from: From, statusHandler: StatusHandler): To
 }

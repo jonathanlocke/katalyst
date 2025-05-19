@@ -1,12 +1,12 @@
 package jonathanlocke.katalyst.resources.location
 
-import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.resources.Resource
 import jonathanlocke.katalyst.resources.ResourceFolder
 import jonathanlocke.katalyst.resources.ResourceStore
 import jonathanlocke.katalyst.resources.location.path.Filename
 import jonathanlocke.katalyst.resources.location.path.Paths.Companion.filename
 import jonathanlocke.katalyst.resources.location.path.Paths.Companion.isRoot
+import jonathanlocke.katalyst.status.StatusHandler
 import java.net.URI
 import java.nio.file.Path
 import kotlin.io.path.relativeTo
@@ -19,17 +19,17 @@ open class ResourceLocation(open val uri: URI) {
 
     companion object {
         fun Path.toResourceLocation() = ResourceLocation(this)
-        fun Path.toResource(problemHandler: ProblemHandler) = ResourceLocation(this).resource(problemHandler)
-        fun Path.toFolder(problemHandler: ProblemHandler) = ResourceLocation(this).folder(problemHandler)
-        fun Path.toResourceStore(problemHandler: ProblemHandler) = ResourceLocation(this).store(problemHandler)
+        fun Path.toResource(statusHandler: StatusHandler) = ResourceLocation(this).resource(statusHandler)
+        fun Path.toFolder(statusHandler: StatusHandler) = ResourceLocation(this).folder(statusHandler)
+        fun Path.toResourceStore(statusHandler: StatusHandler) = ResourceLocation(this).store(statusHandler)
         fun String.toResourceLocation() = ResourceLocation(this)
-        fun String.toResource(problemHandler: ProblemHandler) = ResourceLocation(this).resource(problemHandler)
-        fun String.toFolder(problemHandler: ProblemHandler) = ResourceLocation(this).folder(problemHandler)
-        fun String.toResourceStore(problemHandler: ProblemHandler) = ResourceLocation(this).store(problemHandler)
+        fun String.toResource(statusHandler: StatusHandler) = ResourceLocation(this).resource(statusHandler)
+        fun String.toFolder(statusHandler: StatusHandler) = ResourceLocation(this).folder(statusHandler)
+        fun String.toResourceStore(statusHandler: StatusHandler) = ResourceLocation(this).store(statusHandler)
         fun URI.toResourceLocation() = ResourceLocation(this)
-        fun URI.toResource(problemHandler: ProblemHandler) = ResourceLocation(this).resource(problemHandler)
-        fun URI.toFolder(problemHandler: ProblemHandler) = ResourceLocation(this).folder(problemHandler)
-        fun URI.toResourceStore(problemHandler: ProblemHandler) = ResourceLocation(this).store(problemHandler)
+        fun URI.toResource(statusHandler: StatusHandler) = ResourceLocation(this).resource(statusHandler)
+        fun URI.toFolder(statusHandler: StatusHandler) = ResourceLocation(this).folder(statusHandler)
+        fun URI.toResourceStore(statusHandler: StatusHandler) = ResourceLocation(this).store(statusHandler)
     }
 
     val root: ResourceLocation get() = ResourceLocation(uri.resolve(rootPath.toString()))
@@ -43,9 +43,9 @@ open class ResourceLocation(open val uri: URI) {
     val isRoot = path.isRoot()
     val isRelative = !isAbsolute
 
-    fun resource(problemHandler: ProblemHandler) = Resource(problemHandler, this)
-    fun folder(problemHandler: ProblemHandler) = ResourceFolder(problemHandler, this)
-    fun store(problemHandler: ProblemHandler) = ResourceStore(problemHandler, this)
+    fun resource(statusHandler: StatusHandler) = Resource(statusHandler, this)
+    fun folder(statusHandler: StatusHandler) = ResourceFolder(statusHandler, this)
+    fun store(statusHandler: StatusHandler) = ResourceStore(statusHandler, this)
 
     fun resolve(location: ResourceLocation) = ResourceLocation(uri.resolve(location.toString()))
     fun resolve(location: String) = ResourceLocation(uri.resolve(location))

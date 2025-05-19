@@ -1,8 +1,8 @@
 package jonathanlocke.katalyst.conversion.converters
 
-import jonathanlocke.katalyst.problems.Problem
-import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.reflection.ValueType
+import jonathanlocke.katalyst.status.Status
+import jonathanlocke.katalyst.status.StatusHandler
 
 /**
  * Base class for implementing a [Converter].
@@ -15,9 +15,9 @@ import jonathanlocke.katalyst.reflection.ValueType
  *
  * - [nullAllowed] - True if null input values are allowed
  *
- * **Problems**
+ * **Status Handling**
  *
- * - [handleProblemsFrom] - Reports a problem
+ * - [handleStatusOf] - Reports a status
  *
  * **Extension Points**
  *
@@ -32,21 +32,21 @@ import jonathanlocke.katalyst.reflection.ValueType
  * @param To The type to convert to
  *
  * @see Converter
- * @see ProblemHandler
- * @see Problem
+ * @see StatusHandler
+ * @see Status
  */
 abstract class ConverterBase<From : Any, To : Any>(
     override val from: ValueType<From>,
     override val to: ValueType<To>,
-) : Converter<From, To>, ProblemHandler {
+) : Converter<From, To>, StatusHandler {
 
     /** True if this converter allows null values */
     val nullAllowed: Boolean = false
 
-    /** The problem handler to use when handling conversion problems */
-    private val problemHandler = ThreadLocal<ProblemHandler>()
+    /** The status handler to use when handling conversion problems */
+    private val statusHandler = ThreadLocal<StatusHandler>()
 
-    override fun problems() = problemHandler.get().problems()
+    override fun statuses() = statusHandler.get().statuses()
 
     /**
      * The value to use for nullity if (a) nulls are not allowed, or (b) a conversion fails and the
@@ -59,24 +59,24 @@ abstract class ConverterBase<From : Any, To : Any>(
 
     /**
      * Invokes the error handler for this object with the given message
-     * @param handle The problem to report
+     * @param handle The status to report
      */
-    override fun handle(problem: Problem) = problemHandler.get().handle(problem)
+    override fun handle(status: Status) = statusHandler.get().handle(status)
 
     /**
      * Converts from the From type to the To type. If the 'from' value is null and the converter allows
-     * null values, null will be returned. If the value is null and the converter does not allow null values a problem
-     * will be broadcast. Any exceptions that occur during conversion are caught and broadcast as problems.
+     * null values, null will be returned. If the value is null and the converter does not allow null values a status
+     * will be broadcast. Any exceptions that occur during conversion are caught and broadcast as status problems.
      */
-    final override fun convert(from: From?, problemHandler: ProblemHandler): To? {
+    final override fun convert(from: From?, statusHandler: StatusHandler): To? {
 
-        // Save the current problem handler for this thread
-        val currentHandler = this.problemHandler.get()
+        // Save the current status handler for this thread
+        val currentHandler = this.statusHandler.get()
 
         try {
 
-            // Set the problem handler to use for this thread,
-            this.problemHandler.set(problemHandler)
+            // Set the status handler to use for this thread,
+            this.statusHandler.set(statusHandler)
 
             // then if the value is null,
             return if (from == null) {
@@ -112,8 +112,8 @@ abstract class ConverterBase<From : Any, To : Any>(
 
         } finally {
 
-            // restore the problem handler to the previous value
-            this.problemHandler.set(currentHandler)
+            // restore the status handler to the previous value
+            this.statusHandler.set(currentHandler)
         }
     }
 

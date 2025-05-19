@@ -4,11 +4,11 @@ import jonathanlocke.katalyst.conversion.ConversionRegistry
 import jonathanlocke.katalyst.conversion.ConversionRegistry.Companion.defaultConversionRegistry
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.megabytes
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.count
-import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.serialization.*
 import jonathanlocke.katalyst.serialization.limiters.SizeSerializationLimiter
+import jonathanlocke.katalyst.status.StatusHandler
+import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
 
 /**
  * Serialization of a value to a properties file with the format:
@@ -60,27 +60,27 @@ class PropertiesSerialization<Value : Any>(
 
     /**
      * Serializes a value to a properties file
-     * @param problemHandler A problem handler to report problems to
+     * @param statusHandler A status handler to report problems to
      * @param value The value to serialize
      * @return The serialized properties file as a string, with each property on a new line
      *
      * @see PropertiesSerializer
      */
-    fun serialize(value: Value, problemHandler: ProblemHandler = throwOnError): String {
-        return serializer().serialize(value, problemHandler)
+    fun serialize(value: Value, statusHandler: StatusHandler = throwOnError): String {
+        return serializer().serialize(value, statusHandler)
     }
 
     /**
      * Deserializes a properties file to a value
-     * @param problemHandler A problem handler to report problems to
+     * @param statusHandler A status handler to report problems to
      * @param type The type to deserialize the properties file to
      * @param text The properties file to deserialize
      * @return The deserialized value
      *
      * @see PropertiesDeserializer
      */
-    fun deserialize(type: ValueType<Value>, text: String, problemHandler: ProblemHandler = throwOnError): Value {
-        return deserializer(type).deserialize(text, problemHandler)
+    fun deserialize(type: ValueType<Value>, text: String, statusHandler: StatusHandler = throwOnError): Value {
+        return deserializer(type).deserialize(text, statusHandler)
     }
 
     /**

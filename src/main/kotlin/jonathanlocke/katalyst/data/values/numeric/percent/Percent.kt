@@ -7,9 +7,9 @@ import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.Inte
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.parsePercent
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.percent
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.percentConverter
-import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
+import jonathanlocke.katalyst.status.StatusHandler
+import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
 import jonathanlocke.katalyst.text.formatting.Formattable
 import jonathanlocke.katalyst.text.formatting.Formatter
 
@@ -95,9 +95,9 @@ class Percent(val percent: Double) : Comparable<Percent>, Formattable<Percent>, 
         /**
          * Returns a converter that converts a string to a [Percent], reporting any problems to the given handler.
          */
-        fun percentConverter() = stringToValueConverter(valueType(Percent::class)) { text, problemHandler ->
+        fun percentConverter() = stringToValueConverter(valueType(Percent::class)) { text, statusHandler ->
             parsePercent(
-                text, problemHandler
+                text, statusHandler
             )
         }
 
@@ -113,11 +113,11 @@ class Percent(val percent: Double) : Comparable<Percent>, Formattable<Percent>, 
          * Parses the given text into a Percent object.
          *
          * @param text The text to parse
-         * @param problemHandler The problem handler to use if the text cannot be parsed as a percent
+         * @param statusHandler The status handler to use if the text cannot be parsed as a percent
          * @return The percent
          */
-        fun parsePercent(text: String, problemHandler: ProblemHandler = throwOnError): Percent? =
-            problemHandler.tryValue("Could not parse percentage: $text") {
+        fun parsePercent(text: String, statusHandler: StatusHandler = throwOnError): Percent? =
+            statusHandler.tryValue("Could not parse percentage: $text") {
                 val percentage = text.trim().trimEnd('%').toDouble()
                 percent(percentage)
             }

@@ -1,6 +1,7 @@
 package jonathanlocke.katalyst.reflection.properties
 
 import jonathanlocke.katalyst.reflection.ValueType
+import java.util.*
 
 class PropertyPath(val type: ValueType<*>) : ArrayList<String>() {
 
@@ -15,9 +16,12 @@ class PropertyPath(val type: ValueType<*>) : ArrayList<String>() {
         }
     }
 
+    fun toQualifiedString(): String = type.qualifiedName + ":" + pathString()
     fun pathString(): String = this.joinToString(SEPARATOR)
-
     override fun toString(): String = type.simpleName + ":" + pathString()
+
+    fun isChildOf(path: PropertyPath): Boolean = this.parent() == path
+    fun isParentOf(path: PropertyPath): Boolean = path.isChildOf(this)
 
     fun parent(): PropertyPath {
         val copy = PropertyPath(type)
@@ -61,4 +65,16 @@ class PropertyPath(val type: ValueType<*>) : ArrayList<String>() {
     }
 
     operator fun plus(element: String): PropertyPath = copy().apply { add(element) }
+
+    override fun equals(other: Any?): Boolean {
+        if (other is PropertyPath) {
+            val that = other
+            return toQualifiedString() == that.toQualifiedString()
+        }
+        return false
+    }
+
+    override fun hashCode(): Int {
+        return Objects.hash(toQualifiedString())
+    }
 }

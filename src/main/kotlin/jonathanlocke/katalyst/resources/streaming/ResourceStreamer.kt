@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.resources.streaming
 
-import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
+import jonathanlocke.katalyst.status.StatusHandler
+import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
 import jonathanlocke.katalyst.progress.ProgressReporter
 import jonathanlocke.katalyst.progress.ProgressReporter.Companion.nullProgressReporter
 import jonathanlocke.katalyst.resources.Resource
@@ -19,9 +19,9 @@ import java.io.*
 
 class ResourceStreamer(
     val resourceStreamable: ResourceStreamable,
-    val problemHandler: ProblemHandler = throwOnError,
+    val statusHandler: StatusHandler = throwOnError,
     val progressReporter: ProgressReporter = nullProgressReporter,
-) : ProblemHandler by problemHandler, ProgressReporter by progressReporter {
+) : StatusHandler by statusHandler, ProgressReporter by progressReporter {
 
     fun copyTo(
         to: Resource,

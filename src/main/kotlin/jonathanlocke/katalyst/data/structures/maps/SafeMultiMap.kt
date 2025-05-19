@@ -2,25 +2,25 @@ package jonathanlocke.katalyst.data.structures.maps
 
 import jonathanlocke.katalyst.data.structures.SafeDataStructure
 import jonathanlocke.katalyst.data.structures.lists.SafeList
-import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
+import jonathanlocke.katalyst.status.StatusHandler
+import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
 
 /**
  * A [MutableSet] that is safe to use.
  *
  * @param metadata Metadata about the collection
- * @param problemHandler The problem handler to use
+ * @param statusHandler The status handler to use
  * @param map The underlying set
  *
  * @see SafetyMetadata
- * @see ProblemHandler
+ * @see StatusHandler
  */
 class SafeMultiMap<Key : Any, Value : Any> internal constructor(
     override val metadata: SafetyMetadata,
-    override val problemHandler: ProblemHandler = throwOnError,
+    override val statusHandler: StatusHandler = throwOnError,
     private val newSafeList: () -> SafeList<Value>,
-    internal val map: SafeMap<Key, SafeList<Value>> = SafeMap(metadata, problemHandler)
-) : SafeDataStructure(metadata, problemHandler) {
+    internal val map: SafeMap<Key, SafeList<Value>> = SafeMap(metadata, statusHandler),
+) : SafeDataStructure(metadata, statusHandler) {
 
     var totalSize = 0
 

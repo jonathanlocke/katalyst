@@ -3,16 +3,16 @@ package jonathanlocke.katalyst.progress.listeners
 import jonathanlocke.katalyst.data.values.numeric.count.Count
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.ThousandsSeparatedFormatter
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent
-import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.progress.ProgressListener
+import jonathanlocke.katalyst.status.StatusHandler
 
-class ProblemProgressListener(private val problemHandler: ProblemHandler) : ProgressListener {
+class ProblemProgressListener(private val statusHandler: StatusHandler) : ProgressListener {
 
     override fun progress(at: Percent) {
-        problemHandler.info("${at}%")
+        statusHandler.info("${at}%")
     }
 
     override fun progress(at: Count) {
-        problemHandler.info(at.format(ThousandsSeparatedFormatter))
+        statusHandler.info(at.format(ThousandsSeparatedFormatter))
     }
 }

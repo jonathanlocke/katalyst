@@ -1,13 +1,13 @@
 package jonathanlocke.katalyst.resources.services
 
-import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.resources.capabilities.ResourceStoreCapability
 import jonathanlocke.katalyst.resources.location.ResourceLocation
 import jonathanlocke.katalyst.resources.location.ResourceProximity
 import jonathanlocke.katalyst.resources.location.path.Filename
 import jonathanlocke.katalyst.resources.metadata.ResourceStoreMetadata
+import jonathanlocke.katalyst.status.StatusHandler
 
-interface ResourceStoreService : ProblemHandler {
+interface ResourceStoreService : StatusHandler {
 
     val root: ResourceLocation
     val proximity: ResourceProximity

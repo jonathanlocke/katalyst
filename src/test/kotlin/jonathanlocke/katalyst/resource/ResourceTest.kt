@@ -7,10 +7,18 @@ import kotlin.test.Test
 class ResourceTest : LoggerMixin {
 
     @Test
-    fun test() {
+    fun testFile() {
         "/tmp/test.txt"
             .toResource(this)
             .streamer()
             .writeText("hello")
+    }
+
+    @Test
+    fun testClassPath() {
+        "classpath:///jonathanlocke/katalyst/resource/test.txt"
+            .toResource(this)
+            .streamer()
+            .readText()
     }
 }

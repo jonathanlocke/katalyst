@@ -4,13 +4,13 @@ import jonathanlocke.katalyst.data.values.numeric.count.Count
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.count
 import jonathanlocke.katalyst.logging.Log.Mode.ASYNCHRONOUS
 import jonathanlocke.katalyst.logging.Log.Mode.SYNCHRONOUS
-import jonathanlocke.katalyst.problems.Problem
+import jonathanlocke.katalyst.status.Status
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
 abstract class LogBase : Log {
 
-    private val problemCounts = ConcurrentHashMap<Class<out Problem>, AtomicInteger>()
+    private val statusCounts = ConcurrentHashMap<Class<out Status>, AtomicInteger>()
     private val logEntryQueue = LogEntryQueue(this)
 
     override var mode: Log.Mode = SYNCHRONOUS
@@ -30,12 +30,12 @@ abstract class LogBase : Log {
         }
     }
 
-    override fun problems(): Map<Class<out Problem>, Count> = problemCounts
+    override fun statuses(): Map<Class<out Status>, Count> = statusCounts
         .mapValues { (_, count) -> count(count.get()) }
 
     override fun receive(entry: LogEntry) {
-        problemCounts
-            .computeIfAbsent(entry.problem::class.java) { AtomicInteger() }
+        statusCounts
+            .computeIfAbsent(entry.status::class.java) { AtomicInteger() }
             .incrementAndGet()
 
         when (mode) {

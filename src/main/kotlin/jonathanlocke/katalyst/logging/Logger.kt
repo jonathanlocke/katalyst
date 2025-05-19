@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.logging
 
-import jonathanlocke.katalyst.problems.ProblemHandler
+import jonathanlocke.katalyst.status.StatusHandler
 
-interface Logger : ProblemHandler {
+interface Logger : StatusHandler {
     fun logs(): List<Log>
 }

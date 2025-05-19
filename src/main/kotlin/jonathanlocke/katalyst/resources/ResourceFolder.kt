@@ -1,14 +1,14 @@
 package jonathanlocke.katalyst.resources
 
-import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.resources.location.ResourceLocation
 import jonathanlocke.katalyst.resources.location.path.Filename
+import jonathanlocke.katalyst.status.StatusHandler
 import kotlin.Int.Companion.MAX_VALUE
 
 class ResourceFolder(
-    private val problemHandler: ProblemHandler,
+    private val statusHandler: StatusHandler,
     location: ResourceLocation,
-) : ResourceNode(problemHandler, location) {
+) : ResourceNode(statusHandler, location) {
 
     class Recursion(val levels: Int)
 
@@ -27,5 +27,5 @@ class ResourceFolder(
     fun mkdirs() = folderService.mkdirs()
 
     fun resources(mode: Recursion = TopLevel) = ResourceList(
-        this, problemHandler, folderService.resources(mode).map { Resource(problemHandler, it) })
+        this, statusHandler, folderService.resources(mode).map { Resource(statusHandler, it) })
 }

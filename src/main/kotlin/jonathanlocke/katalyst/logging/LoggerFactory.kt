@@ -31,10 +31,10 @@ interface LoggerFactory {
                 listOf(
                     timeFormatter.format(entry.created),
                     durationFormatter.format(entry.elapsed),
-                    entry.problem::class.simpleName ?: "Unknown",
+                    entry.status::class.simpleName ?: "Unknown",
                     entry.thread.name,
                     entry.location.toString(),
-                    entry.problem.message
+                    entry.status.message
                 )
             })
 

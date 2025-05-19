@@ -39,7 +39,7 @@ interface Validator<Value : Any> {
         /**
          * Checks if this value is valid by calling [validate] on each validator in the list.
          * @param validators The list of validators to check
-         * @return Returns true if all validators validate successfully. If a validator encounters a problem,
+         * @return Returns true if all validators validate successfully. If a validator encounters a status,
          *         the [ErrorHandler] is called, which determines whether a null value is returned ([ReturnNull]) or
          *         an exception is thrown ([ThrowOnError]).
          */
@@ -70,7 +70,7 @@ interface Validator<Value : Any> {
             val result = ValidationResult(value)
             validators.stream()
                 .map { it -> it.validate(value) }
-                .forEach { it -> it.problems().forEach(result::handle) }
+                .forEach { it -> it.statuses().forEach(result::handle) }
             return result
         }
 

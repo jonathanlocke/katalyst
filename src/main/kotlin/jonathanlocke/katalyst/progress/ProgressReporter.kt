@@ -4,10 +4,10 @@ import jonathanlocke.katalyst.data.values.numeric.count.Count
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.count
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.percent
-import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.progress.listeners.ProblemProgressListener
 import jonathanlocke.katalyst.progress.reporters.IntervalProgressReporter
 import jonathanlocke.katalyst.progress.reporters.NullProgressReporter
+import jonathanlocke.katalyst.status.StatusHandler
 
 /**
  * Reports the progress of an operation
@@ -19,11 +19,11 @@ interface ProgressReporter {
         val nullProgressReporter = NullProgressReporter()
 
         fun progressReporter(
-            problemHandler: ProblemHandler,
+            statusHandler: StatusHandler,
             operationSteps: Count,
             reportEvery: Count = count(10_000),
-            reportEveryPercent: Percent = percent(10)
-        ) = IntervalProgressReporter(ProblemProgressListener(problemHandler), operationSteps, reportEvery)
+            reportEveryPercent: Percent = percent(10),
+        ) = IntervalProgressReporter(ProblemProgressListener(statusHandler), operationSteps, reportEvery)
     }
 
     fun next()

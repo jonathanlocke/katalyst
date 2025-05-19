@@ -2,6 +2,7 @@ package jonathanlocke.katalyst.reflection
 
 import jonathanlocke.katalyst.reflection.kotlin.KotlinValueType
 import jonathanlocke.katalyst.reflection.properties.PropertyAccessor
+import jonathanlocke.katalyst.reflection.properties.PropertyPath
 import kotlin.reflect.KClass
 
 interface ValueType<Value : Any> {
@@ -22,6 +23,8 @@ interface ValueType<Value : Any> {
     val packageName: String
     val valueClass: KClass<Value>
     val parameterClass: KClass<*>?
+    fun rootPropertyPath() = PropertyPath(this)
+    fun valueInstance(value: Value): ValueInstance<Value> = ValueInstance(this, value)
     fun isInstanceOf(type: KClass<*>): Boolean
     fun createInstance(): Value
     fun superPropertyAccessors(): List<PropertyAccessor<*>>

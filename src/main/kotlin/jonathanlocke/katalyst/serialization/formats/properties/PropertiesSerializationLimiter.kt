@@ -1,9 +1,9 @@
 package jonathanlocke.katalyst.serialization.formats.properties
 
 import jonathanlocke.katalyst.data.values.numeric.count.Count
-import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.serialization.SerializationLimiter
 import jonathanlocke.katalyst.serialization.SerializationSession
+import jonathanlocke.katalyst.status.StatusHandler
 
 /**
  * Limits the maximum number of properties in a serialization
@@ -15,15 +15,15 @@ class PropertiesSerializationLimiter(val maximumProperties: Count) : Serializati
     /**
      * Determines whether or not a serialization process should continue
      * @param session The serialization session to inspect
-     * @param problemHandler A problem handler to report problems to
+     * @param statusHandler A status handler to report problems to
      * @return True if the serialization should continue, false otherwise
      */
     override fun limitReached(
         session: SerializationSession,
-        problemHandler: ProblemHandler
+        statusHandler: StatusHandler,
     ): Boolean {
         if ((session as PropertiesSerializationSession).processedProperties > maximumProperties) {
-            problemHandler.error("Serialization exceeded the maximum of $maximumProperties properties")
+            statusHandler.error("Serialization exceeded the maximum of $maximumProperties properties")
             return true
         }
         return false

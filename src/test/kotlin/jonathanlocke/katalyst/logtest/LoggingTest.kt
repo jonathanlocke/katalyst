@@ -6,9 +6,9 @@ import jonathanlocke.katalyst.logging.Logger
 import jonathanlocke.katalyst.logging.LoggerMixin
 import jonathanlocke.katalyst.logging.loggers.contextual.ContextualLogger
 import jonathanlocke.katalyst.logging.logs.memory.MemoryLog
-import jonathanlocke.katalyst.problems.categories.Error
-import jonathanlocke.katalyst.problems.categories.Failure
-import jonathanlocke.katalyst.problems.categories.Warning
+import jonathanlocke.katalyst.status.categories.Error
+import jonathanlocke.katalyst.status.categories.Failure
+import jonathanlocke.katalyst.status.categories.Warning
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -23,8 +23,8 @@ class LoggingTest : LoggerMixin {
     fun test() {
         warning("warning")
         error("this is a test of the emergency broadcast system")
-        assertEquals(count(1), memoryLog.problems(Warning::class.java))
-        assertEquals(count(1), memoryLog.problems(Error::class.java))
-        assertEquals(count(0), memoryLog.problems(Failure::class.java))
+        assertEquals(count(1), memoryLog.statuses(Warning::class.java))
+        assertEquals(count(1), memoryLog.statuses(Error::class.java))
+        assertEquals(count(0), memoryLog.statuses(Failure::class.java))
     }
 }

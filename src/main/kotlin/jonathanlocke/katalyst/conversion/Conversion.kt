@@ -5,8 +5,8 @@ import jonathanlocke.katalyst.conversion.Conversion.Companion.stringConversion
 import jonathanlocke.katalyst.conversion.converters.Converter
 import jonathanlocke.katalyst.conversion.converters.ConverterLambda
 import jonathanlocke.katalyst.conversion.converters.strings.StringConversion
-import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.reflection.ValueType
+import jonathanlocke.katalyst.status.StatusHandler
 
 /**
  * A conversion supplies [From] -> [To] (forward) and [To] -> [From] (reverse) converters.
@@ -65,21 +65,21 @@ interface Conversion<From : Any, To : Any> {
         fun <From : Any, To : Any> conversion(
             fromClass: ValueType<From>,
             toClass: ValueType<To>,
-            forwardConverterLambda: (From?, ProblemHandler) -> To?,
-            reverseConverterLambda: (To?, ProblemHandler) -> From?
+            forwardConverterLambda: (From?, StatusHandler) -> To?,
+            reverseConverterLambda: (To?, StatusHandler) -> From?,
         ): Conversion<From, To> = object : ConversionBase<From, To>(fromClass, toClass) {
 
             override fun forwardConverter(): Converter<From, To> = object : Converter<From, To> {
                 override val from = fromClass
                 override val to = toClass
-                override fun convert(from: From?, handler: ProblemHandler): To? =
+                override fun convert(from: From?, handler: StatusHandler): To? =
                     forwardConverterLambda(from, handler)
             }
 
             override fun reverseConverter(): Converter<To, From> = object : Converter<To, From> {
                 override val from = toClass
                 override val to = fromClass
-                override fun convert(from: To?, handler: ProblemHandler): From? =
+                override fun convert(from: To?, handler: StatusHandler): From? =
                     reverseConverterLambda(from, handler)
             }
         }
@@ -95,7 +95,7 @@ interface Conversion<From : Any, To : Any> {
         fun <Value : Any> stringConversion(
             type: ValueType<Value>,
             valueToStringLambda: ConverterLambda<String, Value>,
-            stringToValueLambda: ConverterLambda<Value, String>
+            stringToValueLambda: ConverterLambda<Value, String>,
         ): Conversion<String, Value> {
             return StringConversion(type, valueToStringLambda, stringToValueLambda)
         }

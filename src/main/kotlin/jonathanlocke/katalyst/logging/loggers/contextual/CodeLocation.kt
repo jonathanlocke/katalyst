@@ -29,7 +29,7 @@ class CodeLocation(val type: Class<*>, val methodName: String, val lineNumber: I
             "java",
             "jonathanlocke.katalyst.logging",
             "jonathanlocke.katalyst.mixins",
-            "jonathanlocke.katalyst.problems"
+            "jonathanlocke.katalyst.status"
         )
 
         val defaultFilter = Predicate<StackFrame> { frame ->

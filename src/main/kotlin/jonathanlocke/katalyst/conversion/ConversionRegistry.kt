@@ -5,10 +5,10 @@ import jonathanlocke.katalyst.conversion.converters.strings.StringConversion
 import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConverter
 import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeList
 import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeMultiMap
-import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueTypeString
+import jonathanlocke.katalyst.status.StatusHandler
 import kotlin.reflect.full.companionObjectInstance
 
 /**
@@ -37,8 +37,8 @@ import kotlin.reflect.full.companionObjectInstance
  *     companion object {
  *
  *         val byteConverter = stringToValueConverter(Byte::class) {
- *             text, problemHandler -> text.toByteOrNull() ?:
- *                 problemHandler.error("Invalid Byte value $text")
+ *             text, statusHandler -> text.toByteOrNull() ?:
+ *                 statusHandler.error("Invalid Byte value $text")
  *         }
  *
  *     [...]
@@ -127,16 +127,16 @@ open class ConversionRegistry() {
      * Converts the given value from the given type to the given type
      */
     fun <From : Any, To : Any> convert(
-        fromType: ValueType<From>, toType: ValueType<To>, from: From?, problemHandler: ProblemHandler,
+        fromType: ValueType<From>, toType: ValueType<To>, from: From?, statusHandler: StatusHandler,
     ): To? {
         val conversion = conversion(fromType, toType)
         if (conversion == null) {
-            problemHandler.error("Could not find conversion from $fromType to $toType")
+            statusHandler.error("Could not find conversion from $fromType to $toType")
             return null
         }
-        val result = conversion.forwardConverter().convert(from, problemHandler)
+        val result = conversion.forwardConverter().convert(from, statusHandler)
         if (result == null) {
-            problemHandler.error("Could not convert ${from?.toString() ?: "null"} from $fromType to $toType")
+            statusHandler.error("Could not convert ${from?.toString() ?: "null"} from $fromType to $toType")
         }
         return result
     }

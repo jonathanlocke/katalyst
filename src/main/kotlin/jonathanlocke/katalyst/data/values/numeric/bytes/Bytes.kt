@@ -20,9 +20,9 @@ import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.UnitSystem.IecUnit
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.UnitSystem.SiUnits
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.percentFromUnitValue
-import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
+import jonathanlocke.katalyst.status.StatusHandler
+import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
 import jonathanlocke.katalyst.text.formatting.Formattable
 import jonathanlocke.katalyst.text.formatting.Formatter
 import java.text.DecimalFormat
@@ -48,7 +48,7 @@ import java.text.DecimalFormat
  * *Either System*
  *
  *  - [parseBytes] - Parses text to a [Bytes] value in the given [UnitSystem], handling problems as specified
- *                   by the given [ProblemHandler]
+ *                   by the given [StatusHandler]
  *
  * **Conversion**
  *
@@ -66,7 +66,7 @@ import java.text.DecimalFormat
  * - [plus], [div], [minus], [times]
  *
  * @property bytes The byte count
- * @see ProblemHandler
+ * @see StatusHandler
  */
 class Bytes(val bytes: Double) : Formattable<Bytes>, Numeric {
 
@@ -97,8 +97,8 @@ class Bytes(val bytes: Double) : Formattable<Bytes>, Numeric {
         val IecUnitsFormatter = Formatter<Bytes> { it.asIecUnitsString() }
 
         fun bytesConverter(unitSystem: UnitSystem = SiUnits) =
-            stringToValueConverter(valueType(Bytes::class)) { text, problemHandler ->
-                parseBytes(text, unitSystem, problemHandler)
+            stringToValueConverter(valueType(Bytes::class)) { text, statusHandler ->
+                parseBytes(text, unitSystem, statusHandler)
             }
 
         fun Number.toBytes() = bytes(this)
@@ -121,7 +121,7 @@ class Bytes(val bytes: Double) : Formattable<Bytes>, Numeric {
         fun parseBytes(text: String, system: UnitSystem = SiUnits): Bytes = parseBytes(text, system, throwOnError)!!
 
         fun parseBytes(
-            text: String, system: UnitSystem = SiUnits, problemHandler: ProblemHandler = throwOnError
+            text: String, system: UnitSystem = SiUnits, statusHandler: StatusHandler = throwOnError,
         ): Bytes? {
 
             val match = system.pattern.matchEntire(text)
@@ -140,7 +140,7 @@ class Bytes(val bytes: Double) : Formattable<Bytes>, Numeric {
                         "terabyte", "t", "tb" -> terabytes(number)
                         "petabyte", "p", "pb" -> petabytes(number)
                         "exabyte", "x", "xb" -> exabytes(number)
-                        else -> problemHandler.error("Unsupported units format: $units").let { null }
+                        else -> statusHandler.error("Unsupported units format: $units").let { null }
                     }
 
                     IecUnits -> when (units) {
@@ -151,12 +151,12 @@ class Bytes(val bytes: Double) : Formattable<Bytes>, Numeric {
                         "tebibyte", "t", "tb", "tib" -> terabytes(number)
                         "pebibyte", "p", "pb", "pib" -> petabytes(number)
                         "exbibyte", "x", "xb", "xib" -> exabytes(number)
-                        else -> problemHandler.error("Unsupported units format: $units").let { null }
+                        else -> statusHandler.error("Unsupported units format: $units").let { null }
                     }
                 }
             }
 
-            return problemHandler.error("Could not parse bytes: $text").let { null }
+            return statusHandler.error("Could not parse bytes: $text").let { null }
         }
     }
 

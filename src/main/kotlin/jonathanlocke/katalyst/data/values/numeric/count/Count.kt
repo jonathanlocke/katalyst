@@ -6,9 +6,9 @@ import jonathanlocke.katalyst.conversion.converters.strings.values.StringToNumbe
 import jonathanlocke.katalyst.data.values.numeric.Numeric
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.ThousandsSeparatedFormatter
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.parseCount
-import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.handlers.ProblemHandlers.Companion.throwOnError
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
+import jonathanlocke.katalyst.status.StatusHandler
+import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
 import jonathanlocke.katalyst.text.formatting.Formattable
 import jonathanlocke.katalyst.text.formatting.Formatter
 
@@ -18,7 +18,7 @@ import jonathanlocke.katalyst.text.formatting.Formatter
  *  **Creation**
  *
  *  - [count]
- *  - [parseCount] - Parses text to a [Count], handling problems as specified by the given [ProblemHandler]
+ *  - [parseCount] - Parses text to a [Count], handling problems as specified by the given [StatusHandler]
  *
  *  **Conversion**
  *
@@ -68,8 +68,8 @@ value class Count private constructor(val count: Long) : Comparable<Count>, Form
         /**
          * Converts the given number to a [Count].
          */
-        fun Number.toCount(problemHandler: ProblemHandler = throwOnError): Count? =
-            count(this.toLong(), problemHandler)
+        fun Number.toCount(statusHandler: StatusHandler = throwOnError): Count? =
+            count(this.toLong(), statusHandler)
 
         /**
          * Creates a [Count] object with the given value.
@@ -79,8 +79,8 @@ value class Count private constructor(val count: Long) : Comparable<Count>, Form
         /**
          * Creates a [Count] object with the given value.
          */
-        fun count(value: Number, problemHandler: ProblemHandler = throwOnError): Count? = if (value.toLong() < 0) {
-            problemHandler.error("Count must be non-negative, was $value").let { null }
+        fun count(value: Number, statusHandler: StatusHandler = throwOnError): Count? = if (value.toLong() < 0) {
+            statusHandler.error("Count must be non-negative, was $value").let { null }
         } else {
             Count(value.toLong())
         }
@@ -93,10 +93,10 @@ value class Count private constructor(val count: Long) : Comparable<Count>, Form
         /**
          * Parses the given text into a [Count], reporting any problems to the given handler.
          */
-        fun parseCount(text: String, problemHandler: ProblemHandler = throwOnError): Count? {
+        fun parseCount(text: String, statusHandler: StatusHandler = throwOnError): Count? {
             val value = text.replace(",", "").toLongOrNull()
             return if (value == null) {
-                problemHandler.error("Could not parse bytes: $text", value = value).let { null }
+                statusHandler.error("Could not parse bytes: $text", value = value).let { null }
             } else {
                 Count(value)
             }

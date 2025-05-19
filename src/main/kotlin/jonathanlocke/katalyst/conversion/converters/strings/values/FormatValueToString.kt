@@ -1,9 +1,9 @@
 package jonathanlocke.katalyst.conversion.converters.strings.values
 
 import jonathanlocke.katalyst.conversion.converters.strings.ValueToStringConverter
-import jonathanlocke.katalyst.problems.ProblemHandler
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueTypeString
+import jonathanlocke.katalyst.status.StatusHandler
 import jonathanlocke.katalyst.text.formatting.Formatter
 import jonathanlocke.katalyst.text.formatting.formatters.anything.AnythingFormatters.Companion.convertToString
 
@@ -28,6 +28,6 @@ class FormatValueToString<From : Any>(
 
     override val to: ValueType<String> = valueTypeString
 
-    override fun convert(from: From?, problemHandler: ProblemHandler): String? =
+    override fun convert(from: From?, statusHandler: StatusHandler): String? =
         if (from != null) formatter.format(from) else "?"
 }

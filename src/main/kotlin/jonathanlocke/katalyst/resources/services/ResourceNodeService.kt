@@ -1,10 +1,10 @@
 package jonathanlocke.katalyst.resources.services
 
-import jonathanlocke.katalyst.problems.ProblemHandlerMixin
+import jonathanlocke.katalyst.status.StatusHandlerMixin
 import jonathanlocke.katalyst.resources.location.ResourceLocation
 import jonathanlocke.katalyst.resources.metadata.ResourceMetadata
 
-interface ResourceNodeService : ProblemHandlerMixin {
+interface ResourceNodeService : StatusHandlerMixin {
 
     val store: ResourceStoreService
     val location: ResourceLocation

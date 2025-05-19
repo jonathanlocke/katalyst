@@ -1,9 +1,9 @@
 package jonathanlocke.katalyst.conversion.converters.strings
 
 import jonathanlocke.katalyst.conversion.converters.strings.collections.ListConversion
-import jonathanlocke.katalyst.problems.ProblemHandler
-import jonathanlocke.katalyst.problems.handlers.ProblemHandlers
 import jonathanlocke.katalyst.reflection.ValueType
+import jonathanlocke.katalyst.status.StatusHandler
+import jonathanlocke.katalyst.status.StatusHandlers
 import jonathanlocke.katalyst.text.parsing.Separator
 
 class StringConversions {
@@ -16,7 +16,7 @@ class StringConversions {
          */
         fun <Value : Any> stringToValueConverter(
             type: ValueType<Value>,
-            lambda: (String, ProblemHandler) -> Value?
+            lambda: (String, StatusHandler) -> Value?,
         ): StringToValueConverter<Value> = (object : StringToValueConverterBase<Value>(type) {
             override fun onToValue(text: String): Value? = lambda.invoke(text, this)
         })
@@ -25,28 +25,28 @@ class StringConversions {
          * Converts any string to an object of type [Value]
          *
          * @param converter Converter from String -> [Value]
-         * @param problemHandler An optional error handler to use
+         * @param statusHandler An optional error handler to use
          */
         fun <Value : Any> String.convert(
             converter: StringToValueConverter<Value>,
-            problemHandler: ProblemHandler = ProblemHandlers.Companion.throwOnError
-        ): Value? = converter.convert(this, problemHandler)
+            statusHandler: StatusHandler = StatusHandlers.Companion.throwOnError,
+        ): Value? = converter.convert(this, statusHandler)
 
         /**
          * Converts any string to a list of objects of type [Value]
          * @param stringToValueConverter The converter to use to convert each element in the list
          * @param separator The separator to use when parsing text and joining value objects
-         * @param problemHandler An optional error handler to use
-         * @param elementProblemHandler An optional error handler to use when an element in the list fails to convert
+         * @param statusHandler An optional error handler to use
+         * @param elementStatusHandler An optional error handler to use when an element in the list fails to convert
          */
         fun <Value : Any> String.convertToList(
             stringToValueConverter: StringToValueConverter<Value>,
             separator: Separator = Separator.Companion.commaSeparator,
-            problemHandler: ProblemHandler = ProblemHandlers.Companion.throwOnError,
-            elementProblemHandler: ProblemHandler = ProblemHandlers.Companion.throwOnError
+            statusHandler: StatusHandler = StatusHandlers.Companion.throwOnError,
+            elementStatusHandler: StatusHandler = StatusHandlers.Companion.throwOnError,
         ): List<Value>? =
-            ListConversion(stringToValueConverter.type, stringToValueConverter, separator, elementProblemHandler)
+            ListConversion(stringToValueConverter.type, stringToValueConverter, separator, elementStatusHandler)
                 .forwardConverter()
-                .convert(this, problemHandler)
+                .convert(this, statusHandler)
     }
 }

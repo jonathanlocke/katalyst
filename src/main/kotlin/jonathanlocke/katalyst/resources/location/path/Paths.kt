@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.resources.location.path
 
-import jonathanlocke.katalyst.problems.ProblemException
+import jonathanlocke.katalyst.status.StatusException
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.name
@@ -13,10 +13,10 @@ class Paths {
         fun Path.hasFileSyntax() = !hasFolderSyntax()
         fun Path.hasFolderSyntax() = toString().endsWith(File.separator)
         fun Path.withoutFirst() =
-            subpath(1, nameCount) ?: ProblemException.Companion.fail("Path '$this' must have a first")
+            subpath(1, nameCount) ?: StatusException.Companion.fail("Path '$this' must have a first")
 
         fun Path.withoutLast() =
-            subpath(0, nameCount - 1) ?: ProblemException.Companion.fail("Path '$this' must have a last")
+            subpath(0, nameCount - 1) ?: StatusException.Companion.fail("Path '$this' must have a last")
 
         fun Path.filename(): Filename = Filename(this.fileName)
         fun Path.isRoot() = root != null && this == root

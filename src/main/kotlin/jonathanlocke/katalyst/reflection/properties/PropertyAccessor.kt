@@ -7,19 +7,19 @@ import kotlin.reflect.KProperty
 
 interface PropertyAccessor<Value : Any> {
 
-    enum class Visibility { PUBLIC, PRIVATE, PROTECTED }
+    enum class Visibility { Public, Private, Protected }
 
     companion object {
 
-        fun <Value : Any> property(property: KProperty<Value>) = KotlinPropertyAccessor(property)
+        fun <Value : Any> propertyAccessor(property: KProperty<Value>) = KotlinPropertyAccessor(property)
     }
 
     fun <AnnotationInstance : Annotation> annotations(type: KClass<AnnotationInstance>): List<AnnotationInstance>
-    fun <AnnotationInstance : Annotation> annotation(type: KClass<AnnotationInstance>): AnnotationInstance? =
-        annotations(type).firstOrNull()
+    fun <AnnotationInstance : Annotation> annotation(type: KClass<AnnotationInstance>): AnnotationInstance?
 
     val visibility: Visibility
     val name: String
+    fun isInstance(): Boolean
     fun type(): ValueType<Value>
     fun get(instance: Any): Value?
     fun set(instance: Any, value: Value?)
