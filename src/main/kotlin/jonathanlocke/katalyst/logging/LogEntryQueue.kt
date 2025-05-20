@@ -11,7 +11,7 @@ internal class LogEntryQueue(private val logBase: LogBase) {
         worker = Thread {
             try {
                 while (!Thread.currentThread().isInterrupted) {
-                    logBase.onReceive(queue.take())
+                    logBase.onLog(queue.take())
                 }
             } catch (e: InterruptedException) {
                 Thread.currentThread().interrupt()

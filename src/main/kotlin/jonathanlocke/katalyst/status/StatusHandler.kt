@@ -6,7 +6,8 @@ import jonathanlocke.katalyst.status.handlers.ThrowOnError
 import java.util.function.Supplier
 
 /**
- * An [StatusHandler] allows code to be flexible in how it handles problems in different usage contexts.
+ * A [StatusHandler] allows code to be flexible in how it handles problems and other status information in different
+ * usage contexts.
  *
  * In one context, it might be desirable for a method to throw an exception, while in another context, it might
  * be desirable for the same method to return a null value for performance reasons. The status handlers [ThrowOnError]

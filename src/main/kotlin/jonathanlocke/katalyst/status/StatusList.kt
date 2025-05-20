@@ -37,6 +37,7 @@ open class StatusList(
     fun isValid() = errors() == 0
     fun isInvalid() = !isValid()
 
+    fun summary() = "${count()} statuses, ${errors()} errors, ${warnings()} warnings"
     override fun toString(): String = statusListDetailsFormatter.format(this)
 
     override fun set(index: Int, element: Status): Status = statuses.set(index, element)

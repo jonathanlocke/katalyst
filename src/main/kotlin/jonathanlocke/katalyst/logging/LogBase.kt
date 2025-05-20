@@ -24,25 +24,19 @@ abstract class LogBase : Log {
             }
         }
 
-    init {
-        if (mode == ASYNCHRONOUS) {
-            logEntryQueue.start()
-        }
-    }
-
-    override fun statuses(): Map<Class<out Status>, Count> = statusCounts
+    override fun statistics(): Map<Class<out Status>, Count> = statusCounts
         .mapValues { (_, count) -> count(count.get()) }
 
-    override fun receive(entry: LogEntry) {
+    override fun log(entry: LogEntry) {
         statusCounts
             .computeIfAbsent(entry.status::class.java) { AtomicInteger() }
             .incrementAndGet()
 
         when (mode) {
-            SYNCHRONOUS -> onReceive(entry)
+            SYNCHRONOUS -> onLog(entry)
             ASYNCHRONOUS -> logEntryQueue.offer(entry)
         }
     }
 
-    abstract fun onReceive(entry: LogEntry)
+    abstract fun onLog(entry: LogEntry)
 }

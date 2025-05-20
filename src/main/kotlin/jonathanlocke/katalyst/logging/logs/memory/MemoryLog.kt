@@ -7,7 +7,7 @@ class MemoryLog : LogBase() {
 
     val entries = mutableListOf<LogEntry>()
 
-    override fun onReceive(entry: LogEntry) {
+    override fun onLog(entry: LogEntry) {
         entries.add(entry)
     }
 }

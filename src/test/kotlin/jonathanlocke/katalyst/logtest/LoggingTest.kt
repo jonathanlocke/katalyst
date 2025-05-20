@@ -23,8 +23,8 @@ class LoggingTest : LoggerMixin {
     fun test() {
         warning("warning")
         error("this is a test of the emergency broadcast system")
-        assertEquals(count(1), memoryLog.statuses(Warning::class.java))
-        assertEquals(count(1), memoryLog.statuses(Error::class.java))
-        assertEquals(count(0), memoryLog.statuses(Failure::class.java))
+        assertEquals(count(1), memoryLog.statistics(Warning::class.java))
+        assertEquals(count(1), memoryLog.statistics(Error::class.java))
+        assertEquals(count(0), memoryLog.statistics(Failure::class.java))
     }
 }

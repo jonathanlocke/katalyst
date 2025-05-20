@@ -9,7 +9,7 @@ class ConsoleLog(val formatter: Formatter<LogEntry>) : LogBase() {
 
     private val console: Console = System.console()
 
-    override fun onReceive(entry: LogEntry) {
+    override fun onLog(entry: LogEntry) {
         console.println(formatter.format(entry))
     }
 }

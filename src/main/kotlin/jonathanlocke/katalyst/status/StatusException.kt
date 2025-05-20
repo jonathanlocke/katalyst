@@ -10,7 +10,7 @@ import jonathanlocke.katalyst.status.StatusFormatters.Companion.statusListDetail
 class StatusException(override val message: String, override val cause: Throwable? = null) : Exception(message) {
 
     constructor(message: String, statuses: StatusList) : this(
-        "$message\n\n${statuses.size} problem(s) occurred:\n\n${statuses.format(statusListDetailsFormatter)}",
+        "$message\n\n${statuses.summary()} occurred:\n\n${statuses.format(statusListDetailsFormatter)}",
         statuses.firstOrNull()?.cause
     )
 

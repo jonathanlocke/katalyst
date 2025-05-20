@@ -28,7 +28,7 @@ import jonathanlocke.katalyst.text.parsing.Separator.Companion.commaSeparator
  * **Reverse Conversion (List<[Value]> -> [String])**
  *
  *  - [valueToStringConverter] - The converter that converts [Value] -> [String]
- *  - [valueToStringStatusHandler] - The status handler to use with [Value] -> [String]**
+ *  - [valueToStringStatusHandler] - The status handler to use with [Value] -> [String]
  *  - [defaultToStringValue] - The value to use for null elements when converting to [String]
  *
  * @param Value The type of value to convert to and from

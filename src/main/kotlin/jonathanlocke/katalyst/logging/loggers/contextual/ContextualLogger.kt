@@ -26,7 +26,7 @@ class ContextualLogger(val logs: List<Log>) : Logger {
         val entry = LogEntry(now, between(created, now), thread, location, status)
         if (shouldLog(entry)) {
             for (log in logs()) {
-                log.receive(entry)
+                log.log(entry)
             }
         }
     }

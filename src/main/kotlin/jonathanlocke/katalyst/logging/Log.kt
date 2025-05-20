@@ -12,9 +12,8 @@ interface Log {
     }
 
     var mode: Mode
-    fun receive(entry: LogEntry)
-    fun statuses(): Map<Class<out Status>, Count>
+    fun log(entry: LogEntry)
 
-    @Suppress("UNCHECKED_CAST")
-    fun statuses(type: Class<out Status>): Count = statuses()[type] ?: count(0)
+    fun statistics(): Map<Class<out Status>, Count>
+    fun statistics(type: Class<out Status>): Count = statistics()[type] ?: count(0)
 }
