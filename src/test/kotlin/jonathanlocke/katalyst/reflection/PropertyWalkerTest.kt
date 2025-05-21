@@ -1,5 +1,6 @@
 package jonathanlocke.katalyst.reflection
 
+import jonathanlocke.katalyst.logging.LoggerMixin
 import jonathanlocke.katalyst.reflection.ValueInstance.Companion.valueInstance
 import jonathanlocke.katalyst.reflection.properties.Property
 import jonathanlocke.katalyst.reflection.properties.PropertyPath
@@ -8,7 +9,7 @@ import jonathanlocke.katalyst.reflection.properties.walker.PropertyWalker
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class PropertyWalkerTest {
+class PropertyWalkerTest : LoggerMixin {
 
     class Y {
         val y = 10
@@ -38,23 +39,23 @@ class PropertyWalkerTest {
             }
 
         })
-        val properties = PropertyWalker(Z()).walk(settings)
-        assertEquals(3, properties[0].value)
-        assertEquals(y, properties[1].value)
-        assertEquals(10, properties[2].value)
+        val properties = handleStatusOf(PropertyWalker(Z())).walk(settings)
+        assertEquals(3, properties[0].get())
+        assertEquals(y, properties[1].get())
+        assertEquals(10, properties[2].get())
     }
 
     @Test
     fun test() {
         val paths = mutableListOf<PropertyPath>()
         val values = mutableListOf<Any?>()
-        PropertyWalker(X()).walk { property ->
+        handleStatusOf(PropertyWalker(X())).walk { property ->
             paths.add(property.path)
-            values.add(property.value)
+            values.add(property.get())
         }
-        assertEquals("X:x", paths[0].toString())
-        assertEquals("X:y", paths[1].toString())
-        assertEquals("X:y.y", paths[2].toString())
+        assertEquals("jonathanlocke.katalyst.reflection.PropertyWalkerTest.X:x", paths[0].toString())
+        assertEquals("jonathanlocke.katalyst.reflection.PropertyWalkerTest.X:y", paths[1].toString())
+        assertEquals("jonathanlocke.katalyst.reflection.PropertyWalkerTest.X:y.y", paths[2].toString())
         assertEquals(5, values[0])
         assertEquals(10, values[2])
     }

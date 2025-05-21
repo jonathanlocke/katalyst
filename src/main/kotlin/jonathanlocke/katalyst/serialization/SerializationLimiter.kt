@@ -1,6 +1,7 @@
 package jonathanlocke.katalyst.serialization
 
 import jonathanlocke.katalyst.status.StatusHandler
+import jonathanlocke.katalyst.status.StatusHandlerMixin
 
 /**
  * Provides the ability to limit the size of a serialization.
@@ -8,7 +9,7 @@ import jonathanlocke.katalyst.status.StatusHandler
  * @see SerializationSession
  * @see StatusHandler
  */
-interface SerializationLimiter {
+interface SerializationLimiter : StatusHandlerMixin {
 
     /**
      * Override this method if you want to limit the deserialization of individual properties from text
@@ -18,23 +19,21 @@ interface SerializationLimiter {
     /**
      * Determines whether or not a serialization process should continue
      * @param session The serialization session to inspect
-     * @param statusHandler A status handler to report problems to
      * @return True if the serialization should continue, false otherwise
      */
-    fun limitReached(session: SerializationSession, statusHandler: StatusHandler): Boolean
+    fun limitReached(session: SerializationSession): Boolean
 
     /**
      * Ensures that the serialization limit has not been reached.
      * @param session The serialization session to inspect
-     * @param statusHandler A status handler to report problems to
      */
-    fun ensureLimitNotReached(session: SerializationSession, statusHandler: StatusHandler) {
+    fun ensureLimitNotReached(session: SerializationSession) {
 
         // If the session limit has reached its limit,
-        if (limitReached(session, statusHandler)) {
+        if (limitReached(session)) {
 
             // fail the serialization process entirely.
-            statusHandler.fail("Serialization limit exceeded")
+            fail("Serialization limit exceeded")
         }
     }
 }

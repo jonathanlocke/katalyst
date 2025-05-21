@@ -7,8 +7,7 @@ import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.count
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.serialization.*
 import jonathanlocke.katalyst.serialization.limiters.SizeSerializationLimiter
-import jonathanlocke.katalyst.status.StatusHandler
-import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
+import jonathanlocke.katalyst.status.StatusHandlerMixin
 
 /**
  * Serialization of a value to a properties file with the format:
@@ -36,7 +35,7 @@ import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
 class PropertiesSerialization<Value : Any>(
     val conversionRegistry: ConversionRegistry = defaultConversionRegistry,
     val limiter: SerializationLimiter = defaultPropertiesSerializationLimits,
-) : Serialization<Value> {
+) : Serialization<Value>, StatusHandlerMixin {
 
     companion object {
 
@@ -53,46 +52,42 @@ class PropertiesSerialization<Value : Any>(
          * @see PropertiesDeserializer
          */
         val defaultPropertiesSerializationLimits = SerializationLimits(
-            SizeSerializationLimiter(megabytes(100)),
-            PropertiesSerializationLimiter(count(10_000))
+            SizeSerializationLimiter(megabytes(100)), PropertiesSerializationLimiter(count(10_000))
         )
     }
 
     /**
      * Serializes a value to a properties file
-     * @param statusHandler A status handler to report problems to
      * @param value The value to serialize
      * @return The serialized properties file as a string, with each property on a new line
      *
      * @see PropertiesSerializer
      */
-    fun serialize(value: Value, statusHandler: StatusHandler = throwOnError): String {
-        return serializer().serialize(value, statusHandler)
+    fun serialize(value: Value): String {
+        return serializer().serialize(value)
     }
 
     /**
      * Deserializes a properties file to a value
-     * @param statusHandler A status handler to report problems to
      * @param type The type to deserialize the properties file to
      * @param text The properties file to deserialize
      * @return The deserialized value
      *
      * @see PropertiesDeserializer
      */
-    fun deserialize(type: ValueType<Value>, text: String, statusHandler: StatusHandler = throwOnError): Value {
-        return deserializer(type).deserialize(text, statusHandler)
+    fun deserialize(type: ValueType<Value>, text: String): Value {
+        return deserializer(type).deserialize(text)
     }
 
     /**
      * Serializer that serializes a value to a properties file
      */
-    override fun serializer(): Serializer<Value> = PropertiesSerializer(conversionRegistry, limiter)
+    override fun serializer(): Serializer<Value> = handleStatusOf(PropertiesSerializer(conversionRegistry, limiter))
 
     /**
      * Deserializer that deserializes a properties file to a value
      */
-    override fun deserializer(type: ValueType<Value>): Deserializer<Value> = PropertiesDeserializer(
-        type, conversionRegistry, limiter
-    )
+    override fun deserializer(type: ValueType<Value>): Deserializer<Value> =
+        handleStatusOf(PropertiesDeserializer(type, conversionRegistry, limiter))
 }
 

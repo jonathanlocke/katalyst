@@ -7,7 +7,7 @@ import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.reflection.properties.walker.PropertyWalker
 import jonathanlocke.katalyst.serialization.SerializationLimiter
 import jonathanlocke.katalyst.serialization.Serializer
-import jonathanlocke.katalyst.status.StatusHandler
+import jonathanlocke.katalyst.status.StatusHandlerMixin
 
 /**
  * Serializes a value to a properties file.
@@ -19,7 +19,7 @@ import jonathanlocke.katalyst.status.StatusHandler
 class PropertiesSerializer<Value : Any>(
     val conversionRegistry: ConversionRegistry = defaultConversionRegistry,
     val limiter: SerializationLimiter,
-) : Serializer<Value> {
+) : Serializer<Value>, StatusHandlerMixin {
 
     /**
      * Serializes a value to text in properties file format by following these steps:
@@ -37,7 +37,7 @@ class PropertiesSerializer<Value : Any>(
      * @return The serialized properties file as a string, with each property on a new line
      */
     @Suppress("UNCHECKED_CAST")
-    override fun serialize(value: Value, statusHandler: StatusHandler): String {
+    override fun serialize(value: Value): String {
 
         val lines = mutableListOf<String>()
 
@@ -45,10 +45,10 @@ class PropertiesSerializer<Value : Any>(
         val session = PropertiesSerializationSession()
 
         // then walk the properties of the value recursively,
-        PropertyWalker(value).walk { property ->
+        handleStatusOf(PropertyWalker(value)).walk { property ->
 
             // convert the value to text,
-            val text = toText(statusHandler, property.value)
+            val text = toText(property.get())
 
             // and if conversion succeeded,
             if (text != null) {
@@ -63,7 +63,7 @@ class PropertiesSerializer<Value : Any>(
                 session.processedProperty(line)
 
                 // then ensure that the session limit has not been reached
-                limiter.ensureLimitNotReached(session, statusHandler)
+                limiter.ensureLimitNotReached(session)
             }
         }
 
@@ -72,12 +72,11 @@ class PropertiesSerializer<Value : Any>(
 
     /**
      * Converts a value to a properties file string with the given [conversionRegistry].
-     * @param statusHandler A status handler to report problems to
      * @param value The value to convert
      * @return The converted value as a string
      */
     @Suppress("UNCHECKED_CAST")
-    private fun toText(statusHandler: StatusHandler, value: Any?): String? {
+    private fun toText(value: Any?): String? {
 
         // If the value is null,
         if (value == null) {
@@ -97,7 +96,7 @@ class PropertiesSerializer<Value : Any>(
                 val converter = conversions.first().reverseConverter() as Converter<Any, String?>
 
                 // and convert the value to text,
-                converter.convert(value, statusHandler) ?: "null"
+                converter.convert(value, this) ?: "null"
 
             } else {
 

@@ -10,7 +10,7 @@ import jonathanlocke.katalyst.reflection.properties.PropertyPath.Companion.prope
 import jonathanlocke.katalyst.reflection.properties.PropertyPath.Companion.rootPropertyPath
 import jonathanlocke.katalyst.serialization.Deserializer
 import jonathanlocke.katalyst.serialization.SerializationLimiter
-import jonathanlocke.katalyst.status.StatusHandler
+import jonathanlocke.katalyst.status.StatusHandlerMixin
 
 /**
  * Deserializes a properties file to a value.
@@ -25,18 +25,17 @@ class PropertiesDeserializer<Value : Any>(
     val type: ValueType<Value>,
     val conversionRegistry: ConversionRegistry = defaultConversionRegistry,
     val limiter: SerializationLimiter,
-) : Deserializer<Value> {
+) : Deserializer<Value>, StatusHandlerMixin {
 
     /**
      * Deserializes individual properties
      */
-    internal inner class PropertyDeserializer(val statusHandler: StatusHandler) {
+    internal inner class PropertyDeserializer() {
 
         /**
          * The root value we're deserializing
          */
-        val value = type.createInstance()
-            ?: throw statusHandler.failure("Could not create instance of type ${type.simpleName}")
+        val value = type.createInstance() ?: throw failure("Could not create instance of type ${type.simpleName}")
 
         /**
          * The last property path we processed.
@@ -66,8 +65,8 @@ class PropertiesDeserializer<Value : Any>(
             // and if there is no property,
             if (propertyAccessor == null) {
 
-                // fail
-                statusHandler.fail("PropertyAccessor path does not exist: $path")
+                // broadcast an error,
+                error("PropertyAccessor path does not exist: $path")
 
             } else {
 
@@ -79,24 +78,23 @@ class PropertiesDeserializer<Value : Any>(
 
                     // first ensure the path only increases by one level at a time,
                     if (path.size > lastPath.size + 1) {
-                        statusHandler.fail("PropertyAccessor path '$path' skips levels - can only increase depth by one level at a time")
+                        error("PropertyAccessor path '$path' skips levels - can only increase depth by one level at a time")
                         return
                     }
 
                     // then get the parent property,
                     val parentProperty = parentPath.property()
                     if (parentProperty == null) {
-                        statusHandler.fail("Parent property path '$parentPath' does not exist in type '${type.simpleName}'")
+                        error("Parent property path '$parentPath' does not exist in type '${type.simpleName}'")
                     } else {
                         // and initialize it to a new value,
                         val parentValue = parentProperty.type().createInstance()
                         val grandparentValue = pathToValue[parentPath.parent()] ?: run {
-                            statusHandler.fail("Internal error: no path to grandparent")
+                            error("Internal error: no path to grandparent")
                             return
                         }
                         @Suppress("UNCHECKED_CAST") (parentProperty as PropertyAccessor<Any?>).set(
-                            grandparentValue,
-                            parentValue
+                            grandparentValue, parentValue
                         )
                         pathToValue[parentPath] = parentValue!!
                     }
@@ -110,7 +108,7 @@ class PropertiesDeserializer<Value : Any>(
                     val converter = conversions.first().forwardConverter() as Converter<Any, *>
 
                     // convert the value text to the type,
-                    val converted = converter.convert(valueText, statusHandler)
+                    val converted = converter.convert(valueText, this@PropertiesDeserializer)
 
                     // set the property value
                     val instance = pathToValue[path.parent()]
@@ -119,7 +117,7 @@ class PropertiesDeserializer<Value : Any>(
                         if (property != null) {
                             @Suppress("UNCHECKED_CAST") (property as PropertyAccessor<Any?>).set(instance, converted)
                         } else {
-                            statusHandler.fail("Internal error: no property at path")
+                            error("Internal error: no property at path")
                         }
                     }
                 }
@@ -142,11 +140,11 @@ class PropertiesDeserializer<Value : Any>(
      * @param text The properties file text to deserialize
      * @return The deserialized value
      */
-    override fun deserialize(text: String, statusHandler: StatusHandler): Value {
+    override fun deserialize(text: String): Value {
 
         // Create a serialization session and a property deserializer,
         val session = PropertiesSerializationSession()
-        val propertyDeserializer = PropertyDeserializer(statusHandler)
+        val propertyDeserializer = PropertyDeserializer()
 
         // then for each non-blank line,
         text.lineSequence().filterNot { it.isBlank() }.forEach { propertyText ->
@@ -167,7 +165,7 @@ class PropertiesDeserializer<Value : Any>(
             session.processedProperty(propertyText)
 
             // then ensure that the session limit has not been reached
-            limiter.ensureLimitNotReached(session, statusHandler)
+            limiter.ensureLimitNotReached(session)
         }
 
         return propertyDeserializer.value

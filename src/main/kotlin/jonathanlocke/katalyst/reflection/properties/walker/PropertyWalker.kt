@@ -6,11 +6,12 @@ import jonathanlocke.katalyst.reflection.properties.Property
 import jonathanlocke.katalyst.reflection.properties.PropertyAccessor.Visibility.Public
 import jonathanlocke.katalyst.reflection.properties.walker.filters.DefaultPropertyExplorationFilter
 import jonathanlocke.katalyst.reflection.properties.walker.sorters.SortByPropertyPath
+import jonathanlocke.katalyst.status.StatusHandlerMixin
 import java.util.stream.Collectors
 
 class PropertyWalker<Value : Any>(
     private val rootValue: Value,
-) {
+) : StatusHandlerMixin {
     class Settings {
 
         private var explorationFilter: PropertyExplorationFilter = DefaultPropertyExplorationFilter()
@@ -96,9 +97,9 @@ class PropertyWalker<Value : Any>(
      * @return List of property information
      */
     fun walk(settings: Settings): MutableList<Property<*>> {
-        // Starting at the root property path,
 
-        val rootPath = valueType(rootValue::class).rootPropertyPath()
+        // Starting at the root property path,
+        val rootPath = handleStatusOf(valueType(rootValue::class)).rootPropertyPath()
 
         // collect all the properties under the root value,
         val properties: MutableList<Property<*>> = safeList()
@@ -120,7 +121,7 @@ class PropertyWalker<Value : Any>(
         if (value != null) {
 
             // and for each declared property of that value,
-            valueType(value::class)
+            handleStatusOf(valueType(value::class))
                 .declaredPropertyAccessors()
                 .stream()
                 .filter { it.isInstance() }
@@ -130,7 +131,7 @@ class PropertyWalker<Value : Any>(
                     if (accessor.canGet(value)) {
 
                         // create a property object for the property of value with the given name,
-                        var property = Property(value, walk.child(accessor.name), accessor)
+                        var property = handleStatusOf(Property(value, walk.child(accessor.name), accessor))
 
                         // go through each property resolver,
                         walk.settings.resolvers().forEach { resolver ->

@@ -4,14 +4,16 @@ import jonathanlocke.katalyst.reflection.ValueInstance
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.reflection.properties.accessors.PropertyResolvingAccessor
+import jonathanlocke.katalyst.status.StatusHandlerMixin
 import kotlin.reflect.KClass
 
 class Property<Value : Any>(
     val parentValue: Any,
     val path: PropertyPath,
     val accessor: PropertyAccessor<Value>,
-) {
-    private var propertyValue: Value? = null
+) : StatusHandlerMixin {
+
+    private var value: Value? = null
 
     fun isChildOf(property: Property<*>): Boolean = path.isChildOf(property.path)
     fun isParentOf(property: Property<*>): Boolean = path.isParentOf(property.path)
@@ -19,7 +21,7 @@ class Property<Value : Any>(
     val name get() = path.last()
 
     fun <T : Any> resolveAs(value: ValueInstance<T>): Property<T> {
-        return Property(parentValue, path, PropertyResolvingAccessor(accessor, value))
+        return handleStatusOf(Property(parentValue, path, handleStatusOf(PropertyResolvingAccessor(accessor, value))))
     }
 
     fun <AnnotationInstance : Annotation> getAnnotation(type: KClass<AnnotationInstance>): AnnotationInstance? =
@@ -29,13 +31,17 @@ class Property<Value : Any>(
     val parentValueType: ValueType<*> get() = valueType(parentValue::class)
     val type: ValueType<Value> get() = this.accessor.type()
 
-    val value: Value?
-        get() {
-            if (propertyValue == null) {
-                propertyValue = this.accessor.get(parentValue)
-            }
-            return propertyValue
+    fun get(): Value? = tryValue("Cannot get property: $path") {
+        if (value == null) {
+            value = this.accessor.get(parentValue)
         }
+        value
+    }
+
+    fun set(value: Value) = tryBoolean("Cannot set property: $path = $value") {
+        accessor.set(parentValue, value)
+        true
+    }
 
     fun fullPath() = this.packageName + ":" + this
 

@@ -1,11 +1,18 @@
 package jonathanlocke.katalyst.serialization
 
-import jonathanlocke.katalyst.status.StatusHandler
+import jonathanlocke.katalyst.status.StatusHandlerMixin
 
 /**
  * A [SerializationLimiter] that combines multiple other [SerializationLimiter]s.
  */
-open class SerializationLimits(open vararg val limiters: SerializationLimiter) : SerializationLimiter {
+open class SerializationLimits(open vararg val limiters: SerializationLimiter) : SerializationLimiter,
+    StatusHandlerMixin {
+
+    init {
+        for (limiter in limiters) {
+            handleStatusOf(limiter)
+        }
+    }
 
     /**
      * Determines whether or not a serialization process should continue
@@ -14,14 +21,13 @@ open class SerializationLimits(open vararg val limiters: SerializationLimiter) :
      */
     override fun limitReached(
         session: SerializationSession,
-        statusHandler: StatusHandler,
     ): Boolean {
 
         // If not all limiters allow the serialization to continue,
-        if (limiters.any { it.limitReached(session, statusHandler) }) {
+        if (limiters.any { it.limitReached(session) }) {
 
             // fail the serialization.
-            statusHandler.fail("Serialization limit exceeded")
+            fail("Serialization limit exceeded")
             return true
         }
         return false

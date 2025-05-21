@@ -1,7 +1,5 @@
 package jonathanlocke.katalyst.resources.streaming
 
-import jonathanlocke.katalyst.status.StatusHandler
-import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
 import jonathanlocke.katalyst.progress.ProgressReporter
 import jonathanlocke.katalyst.progress.ProgressReporter.Companion.nullProgressReporter
 import jonathanlocke.katalyst.resources.Resource
@@ -15,6 +13,8 @@ import jonathanlocke.katalyst.resources.streaming.io.WriteMode.DoNotOverwrite
 import jonathanlocke.katalyst.resources.streaming.io.WriteMode.Overwrite
 import jonathanlocke.katalyst.serialization.Deserializer
 import jonathanlocke.katalyst.serialization.Serializer
+import jonathanlocke.katalyst.status.StatusHandler
+import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
 import java.io.*
 
 class ResourceStreamer(
@@ -82,10 +82,10 @@ class ResourceStreamer(
         }
 
     fun <Value> serialize(serializer: Serializer<Value>, value: Value) =
-        withWriter { writer -> writer.write(serializer.serialize(value, this)) }
+        withWriter { writer -> writer.write(serializer.serialize(value)) }
 
     fun <Value> deserialize(deserializer: Deserializer<Value>) =
-        withReader { reader -> deserializer.deserialize(reader.readText(), this) }
+        withReader { reader -> deserializer.deserialize(reader.readText()) }
 
     fun readText() = tryValue("Could not read text from $resourceStreamable") {
         resourceStreamable.openForReading().use { it.readBytes().decodeToString() }

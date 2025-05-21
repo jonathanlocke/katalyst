@@ -47,7 +47,7 @@ class Walk<Value : Any>(
             }
 
             // and if the property has a value,
-            if (property.value != null) {
+            if (property.get() != null) {
 
                 // then walk the property recursively.
                 recurse.accept(walkChild(property))
@@ -58,5 +58,5 @@ class Walk<Value : Any>(
     private fun canExplore(property: Property<*>) = settings.canExplore(property)
     private fun canVisit(property: Property<*>) = settings.canVisit(property)
     private fun walkChild(property: Property<*>): Walk<Value> =
-        Walk(root, property.value, path.plus(property.name), settings, visitor)
+        Walk(root, property.get(), path.plus(property.name), settings, visitor)
 }

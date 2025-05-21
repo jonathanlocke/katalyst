@@ -1,12 +1,13 @@
 package jonathanlocke.katalyst.serialization
 
+import jonathanlocke.katalyst.logging.LoggerMixin
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.serialization.formats.properties.PropertiesSerialization
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class SerializationTest {
+class SerializationTest : LoggerMixin {
 
     class Y {
         var y: Int? = null
@@ -29,7 +30,6 @@ class SerializationTest {
         override fun hashCode() = Objects.hash(x, y)
     }
 
-    // todo: this test is currently failing due to a regression likely to do with property walker
     @Test
     fun testSuccess() {
 
@@ -39,7 +39,7 @@ class SerializationTest {
         value.y.y = 20
 
         // serialize the value, deserialize it, and ensure they are equal.
-        val serialization = PropertiesSerialization<X>()
+        val serialization = handleStatusOf(PropertiesSerialization<X>())
         val text = serialization.serialize(value)
         val deserialized = serialization.deserialize(valueType(X::class), text)
         assertEquals(value, deserialized)
