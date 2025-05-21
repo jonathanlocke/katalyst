@@ -13,7 +13,5 @@ class PrefixingStatusHandler(
         fun StatusHandler.prefixedWith(prefix: String) = PrefixingStatusHandler(prefix, this)
     }
 
-    override fun onHandle(status: Status) {
-        statusHandler.handle(status.prefixed(prefix))
-    }
+    override fun onHandle(status: Status) = statusHandler.handle(status.prefixed(prefix))
 }

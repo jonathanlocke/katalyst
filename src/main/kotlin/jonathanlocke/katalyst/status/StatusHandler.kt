@@ -71,9 +71,9 @@ interface StatusHandler {
     fun statuses(): StatusList
 
     /**
-     * Handles the given [Status]
+     * Handles the given [Status], returning true if the status was handled.
      */
-    fun handle(status: Status)
+    fun handle(status: Status): Boolean
 
     /**
      * A list of status handlers that this handler delegates to

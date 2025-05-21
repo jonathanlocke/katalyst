@@ -39,9 +39,10 @@ class ValidationResult<Value : Any>(val value: Value) : StatusHandler {
     val errors = statuses().errors()
     val warnings = statuses().warnings()
 
-    override fun handle(status: Status) {
+    override fun handle(status: Status): Boolean {
         if (status is Error) validationError(status.message, status.cause)
         if (status is Warning) validationWarning(status.message, status.cause)
+        return true
     }
 
     fun validationError(message: String, cause: Throwable? = null) =

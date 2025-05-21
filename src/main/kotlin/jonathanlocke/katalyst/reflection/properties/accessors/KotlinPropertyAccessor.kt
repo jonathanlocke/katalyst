@@ -1,4 +1,4 @@
-package jonathanlocke.katalyst.reflection.properties.kotlin
+package jonathanlocke.katalyst.reflection.properties.accessors
 
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
@@ -10,16 +10,16 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
-import kotlin.reflect.KVisibility
+import kotlin.reflect.KVisibility.*
 import kotlin.reflect.full.findAnnotations
 import kotlin.reflect.jvm.javaField
 
-class KotlinPropertyAccessor<Value : Any>(val property: KProperty<Value>) : PropertyAccessor<Value> {
+open class KotlinPropertyAccessor<Value : Any>(val property: KProperty<Value>) : PropertyAccessor<Value> {
 
     override val visibility: Visibility = when (property.visibility) {
-        KVisibility.PUBLIC -> Public
-        KVisibility.PRIVATE -> Private
-        KVisibility.PROTECTED -> Protected
+        PUBLIC -> Public
+        PRIVATE -> Private
+        PROTECTED -> Protected
         else -> Public
     }
 

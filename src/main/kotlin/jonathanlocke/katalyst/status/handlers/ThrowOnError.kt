@@ -22,7 +22,8 @@ import jonathanlocke.katalyst.status.StatusHandlerBase
  */
 class ThrowOnError : StatusHandlerBase() {
 
-    override fun onHandle(status: Status) {
+    override fun onHandle(status: Status): Boolean {
         if (status.effect == STOP) throw StatusException("Halting execution:", statuses())
+        return true
     }
 }

@@ -4,7 +4,8 @@ import jonathanlocke.katalyst.status.Status
 import jonathanlocke.katalyst.status.StatusHandlerBase
 
 class ConsoleStatusHandler : StatusHandlerBase() {
-    override fun onHandle(status: Status) {
+    override fun onHandle(status: Status): Boolean {
         println(status)
+        return true
     }
 }

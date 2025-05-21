@@ -186,16 +186,16 @@ open class ConversionRegistry() {
         // For each property of the companion object,
         valueType(companionObject::class).memberPropertyAccessors().forEach { property ->
 
-            when (property.type()) {
+            when (property.type().valueClass) {
 
                 // register it if it is a Conversion,
-                valueType(Conversion::class) -> {
+                Conversion::class -> {
                     val conversion = property.get(companionObject) as Conversion<*, *>
                     conversion.register(this)
                 }
 
                 // or if it is a StringToValueConverter,
-                valueType(StringToValueConverter::class) -> {
+                StringToValueConverter::class -> {
                     val conversion = property.get(companionObject) as StringToValueConverter<*>
                     conversion.register(this)
                 }

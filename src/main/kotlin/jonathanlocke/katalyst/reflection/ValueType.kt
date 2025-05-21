@@ -1,8 +1,8 @@
 package jonathanlocke.katalyst.reflection
 
-import jonathanlocke.katalyst.reflection.kotlin.KotlinValueType
 import jonathanlocke.katalyst.reflection.properties.PropertyAccessor
 import jonathanlocke.katalyst.reflection.properties.PropertyPath
+import jonathanlocke.katalyst.reflection.types.KotlinValueType
 import kotlin.reflect.KClass
 
 interface ValueType<Value : Any> {

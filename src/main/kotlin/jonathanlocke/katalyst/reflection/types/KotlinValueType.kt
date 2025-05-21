@@ -1,8 +1,7 @@
-package jonathanlocke.katalyst.reflection.kotlin
+package jonathanlocke.katalyst.reflection.types
 
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.reflection.properties.PropertyAccessor
-import jonathanlocke.katalyst.reflection.properties.PropertyAccessor.Companion.propertyAccessor
 import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -17,16 +16,16 @@ class KotlinValueType<Value : Any>(
 
     @Suppress("UNCHECKED_CAST")
     override fun memberPropertyAccessors(): List<PropertyAccessor<*>> =
-        valueClass.memberProperties.map { propertyAccessor(it as KProperty<Any>) }
+        valueClass.memberProperties.map { PropertyAccessor.Companion.propertyAccessor(it as KProperty<Any>) }
 
     override fun property(name: String): PropertyAccessor<*>? = memberPropertyAccessors().find { it.name == name }
     override fun supertypes(): List<KotlinValueType<*>> =
         valueClass.supertypes.mapNotNull { it.classifier as? KClass<*> }.map { KotlinValueType(it, null) }
 
     override fun createInstance(): Value = valueClass.createInstance()
-    override val simpleName: String = valueClass.simpleName!!
-    override val qualifiedName: String = valueClass.qualifiedName!!
-    override val packageName: String = valueClass.java.`package`.name
+    override val simpleName: String = valueClass.simpleName ?: "<unknown>"
+    override val qualifiedName: String = valueClass.qualifiedName ?: "<unknown>"
+    override val packageName: String = qualifiedName.substringBeforeLast(".")
     override fun isInstanceOf(type: KClass<*>) = valueClass.isSubclassOf(type)
 
     override fun superPropertyAccessors(): List<PropertyAccessor<*>> =

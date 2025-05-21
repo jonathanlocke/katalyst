@@ -12,11 +12,14 @@ class PropertyWalker<Value : Any>(
     private val rootValue: Value,
 ) {
     class Settings {
+
         private var explorationFilter: PropertyExplorationFilter = DefaultPropertyExplorationFilter()
 
         private var visitFilter: PropertyVisitFilter = PropertyVisitFilter { property -> true }
 
         private var sorter: PropertyComparator? = SortByPropertyPath()
+
+        private var resolvers: MutableList<PropertyResolver> = mutableListOf()
 
         fun withFilter(filter: PropertyExplorationFilter): Settings {
             val copy = copy()
@@ -24,11 +27,11 @@ class PropertyWalker<Value : Any>(
             return copy
         }
 
-        fun canExplore(property: Property<*>?): Boolean {
+        fun canExplore(property: Property<*>): Boolean {
             return explorationFilter.test(property)
         }
 
-        fun canVisit(property: Property<*>?): Boolean {
+        fun canVisit(property: Property<*>): Boolean {
             return visitFilter.test(property)
         }
 
@@ -38,8 +41,12 @@ class PropertyWalker<Value : Any>(
             return copy
         }
 
-        fun getSorter(): PropertyComparator? {
+        fun sorter(): PropertyComparator? {
             return sorter
+        }
+
+        fun resolvers(): List<PropertyResolver> {
+            return resolvers
         }
 
         fun withSorter(sorter: PropertyComparator?): Settings {
@@ -48,11 +55,18 @@ class PropertyWalker<Value : Any>(
             return copy
         }
 
+        fun withResolver(resolver: PropertyResolver): Settings {
+            val copy = copy()
+            copy.resolvers.add(resolver)
+            return copy
+        }
+
         private fun copy(): Settings {
             val copy = Settings()
             copy.explorationFilter = this.explorationFilter
             copy.visitFilter = this.visitFilter
             copy.sorter = this.sorter
+            copy.resolvers = this.resolvers
             return copy
         }
     }
@@ -91,7 +105,7 @@ class PropertyWalker<Value : Any>(
         walk(Walk(rootValue, rootValue, rootPath, settings, properties::add))
 
         // Return the properties in sorted order.
-        return properties.stream().sorted(settings.getSorter()).collect(Collectors.toList())
+        return properties.stream().sorted(settings.sorter()).collect(Collectors.toList())
     }
 
     /**
@@ -102,7 +116,7 @@ class PropertyWalker<Value : Any>(
     private fun walk(walk: Walk<Value>) {
 
         // Get the value we are at in the traversal,
-        val value = walk.getValue()
+        val value = walk.value
         if (value != null) {
 
             // and for each declared property of that value,
@@ -116,24 +130,24 @@ class PropertyWalker<Value : Any>(
                     if (accessor.canGet(value)) {
 
                         // create a property object for the property of value with the given name,
-                        val property = Property(value, walk.child(accessor.name), accessor)
+                        var property = Property(value, walk.child(accessor.name), accessor)
 
-                        // and if the property can be explored,
-                        if (walk.canExplore(property)) {
+                        // go through each property resolver,
+                        walk.settings.resolvers().forEach { resolver ->
 
-                            // and it can be visited,
-                            if (walk.canVisit(property)) {
-                                // call the visitor for the property,
+                            // and if it can resolve the property to something else,
+                            if (resolver.canResolve(property)) {
 
-                                walk.visit(property)
+                                // then do that.
+                                property = resolver.resolve(property)
                             }
+                        }
 
-                            // and if the property has a value,
-                            if (property.value != null) {
+                        // Visit the property,
+                        walk.visitProperty(property) {
 
-                                // then walk the property recursively.
-                                walk(walk.recurseIntoProperty(property))
-                            }
+                            // recursing into it if it's not null.
+                            walk(it)
                         }
                     }
                 }
@@ -141,9 +155,8 @@ class PropertyWalker<Value : Any>(
     }
 
     companion object {
-
         val AllProperties: PropertyExplorationFilter = PropertyExplorationFilter { property -> true }
-        val PublicProperties: PropertyExplorationFilter? = AllProperties.and(
-            { property -> property.accessor.visibility === Public })
+        val PublicProperties: PropertyExplorationFilter =
+            AllProperties.and { property -> property.accessor.visibility === Public }
     }
 }

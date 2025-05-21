@@ -27,8 +27,9 @@ open class StatusList(
 
     override fun statuses() = this
     override fun handlers(): MutableList<StatusHandler> = throw unimplemented()
-    override fun handle(status: Status) {
+    override fun handle(status: Status): Boolean {
         statuses.add(status)
+        return true
     }
 
     fun count() = statuses.size

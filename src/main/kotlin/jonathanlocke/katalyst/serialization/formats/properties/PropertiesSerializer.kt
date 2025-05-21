@@ -48,7 +48,7 @@ class PropertiesSerializer<Value : Any>(
         PropertyWalker(value).walk { property ->
 
             // convert the value to text,
-            val text = toText(statusHandler, value)
+            val text = toText(statusHandler, property.value)
 
             // and if conversion succeeded,
             if (text != null) {

@@ -19,6 +19,5 @@ import jonathanlocke.katalyst.status.categories.Failure
  */
 class ReturnOnError : StatusHandlerBase() {
 
-    override fun onHandle(status: Status) {
-    }
+    override fun onHandle(status: Status) = true
 }

@@ -2,15 +2,18 @@ package jonathanlocke.katalyst.reflection.properties.walker
 
 import jonathanlocke.katalyst.reflection.properties.Property
 import jonathanlocke.katalyst.reflection.properties.PropertyPath
+import java.util.function.Consumer
 
 class Walk<Value : Any>(
-    private val root: Value,
-    private val value: Any?,
-    private val path: PropertyPath,
-    private var settings: PropertyWalker.Settings,
+    val root: Value,
+    val value: Any?,
+    val path: PropertyPath,
+    val settings: PropertyWalker.Settings,
     private val visitor: PropertyVisitor,
 ) {
     private val visited = HashSet<Any?>()
+
+    fun child(name: String) = path.plus(name)
 
     fun visit(property: Property<*>): Boolean {
 
@@ -29,26 +32,31 @@ class Walk<Value : Any>(
         return false
     }
 
-    fun getValue(): Any? {
-        return value
+    fun visitProperty(
+        property: Property<out Any>,
+        recurse: Consumer<Walk<Value>>,
+    ) {
+        // If the property can be explored,
+        if (canExplore(property)) {
+
+            // and it can be visited,
+            if (canVisit(property)) {
+
+                // call the visitor for the property,
+                visit(property)
+            }
+
+            // and if the property has a value,
+            if (property.value != null) {
+
+                // then walk the property recursively.
+                recurse.accept(walkChild(property))
+            }
+        }
     }
 
-    fun canExplore(property: Property<*>): Boolean {
-        return settings.canExplore(property)
-    }
-
-    fun canVisit(property: Property<*>): Boolean {
-        return settings.canVisit(property)
-    }
-
-    fun child(name: String): PropertyPath {
-        return path.plus(name)
-    }
-
-    /**
-     * Returns a new Walk object for the child property with the given value and name
-     */
-    fun recurseIntoProperty(property: Property<*>): Walk<Value> {
-        return Walk(root, property.value, path.plus(property.name), settings, visitor)
-    }
+    private fun canExplore(property: Property<*>) = settings.canExplore(property)
+    private fun canVisit(property: Property<*>) = settings.canVisit(property)
+    private fun walkChild(property: Property<*>): Walk<Value> =
+        Walk(root, property.value, path.plus(property.name), settings, visitor)
 }

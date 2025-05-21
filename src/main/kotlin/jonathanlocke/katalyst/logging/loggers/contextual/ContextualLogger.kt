@@ -21,7 +21,7 @@ class ContextualLogger(val logs: List<Log>) : Logger {
     override fun handle(status: Status) = addToLogs(codeLocation, currentThread(), status)
     override fun logs(): List<Log> = logs
 
-    private fun addToLogs(location: CodeLocation, thread: Thread, status: Status) {
+    private fun addToLogs(location: CodeLocation, thread: Thread, status: Status): Boolean {
         val now = Instant.now()
         val entry = LogEntry(now, between(created, now), thread, location, status)
         if (shouldLog(entry)) {
@@ -29,6 +29,7 @@ class ContextualLogger(val logs: List<Log>) : Logger {
                 log.log(entry)
             }
         }
+        return true
     }
 
     fun shouldLog(entry: LogEntry): Boolean = filters.all { it.test(entry) }

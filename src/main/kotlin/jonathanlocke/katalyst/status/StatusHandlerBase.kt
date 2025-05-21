@@ -11,14 +11,7 @@ open class StatusHandlerBase() : StatusHandler {
     override fun statuses(): StatusList = statuses.value
     override fun handlers() = handlers
 
-    final override fun handle(status: Status) {
-
-        // If there are no handlers,
-        if (handlers().isEmpty()) {
-
-            // log a warning because the status will be lost.
-            defaultLoggerFactory.newLogger().warning("Unhandled problem: $status")
-        }
+    final override fun handle(status: Status): Boolean {
 
         // If the status is a failure, throw an exception.
         if (status is Failure) fail("Failure encountered")
@@ -27,12 +20,18 @@ open class StatusHandlerBase() : StatusHandler {
         statuses().add(status)
 
         // Call any subclass to handle the status,
-        onHandle(status)
+        var handled = onHandle(status)
 
         // then call each subscribed handler
-        handlers.forEach { it.handle(status) }
+        handlers.forEach { handled = it.handle(status) || handled }
+
+        // log a warning because the status will be lost.
+        if (!handled) {
+            defaultLoggerFactory.newLogger().warning("Unhandled problem: $status")
+        }
+
+        return handled
     }
 
-    open fun onHandle(status: Status) {
-    }
+    open fun onHandle(status: Status) = false
 }

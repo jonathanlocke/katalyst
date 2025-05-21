@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+//    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.10")
     implementation("io.github.classgraph:classgraph:4.8.179")
     testImplementation(kotlin("test"))

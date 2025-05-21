@@ -1,7 +1,9 @@
 package jonathanlocke.katalyst.reflection.properties
 
+import jonathanlocke.katalyst.reflection.ValueInstance
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
+import jonathanlocke.katalyst.reflection.properties.accessors.PropertyResolvingAccessor
 import kotlin.reflect.KClass
 
 class Property<Value : Any>(
@@ -14,7 +16,11 @@ class Property<Value : Any>(
     fun isChildOf(property: Property<*>): Boolean = path.isChildOf(property.path)
     fun isParentOf(property: Property<*>): Boolean = path.isParentOf(property.path)
 
-    val name get() = path.property()?.name ?: "<unknown>"
+    val name get() = path.last()
+
+    fun <T : Any> resolveAs(value: ValueInstance<T>): Property<T> {
+        return Property(parentValue, path, PropertyResolvingAccessor(accessor, value))
+    }
 
     fun <AnnotationInstance : Annotation> getAnnotation(type: KClass<AnnotationInstance>): AnnotationInstance? =
         accessor.annotation(type)
