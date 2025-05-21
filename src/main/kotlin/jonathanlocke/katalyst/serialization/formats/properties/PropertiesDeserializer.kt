@@ -4,7 +4,6 @@ import jonathanlocke.katalyst.conversion.ConversionRegistry
 import jonathanlocke.katalyst.conversion.ConversionRegistry.Companion.defaultConversionRegistry
 import jonathanlocke.katalyst.conversion.converters.Converter
 import jonathanlocke.katalyst.reflection.ValueType
-import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.reflection.properties.PropertyAccessor
 import jonathanlocke.katalyst.reflection.properties.PropertyPath
 import jonathanlocke.katalyst.reflection.properties.PropertyPath.Companion.propertyPath
@@ -37,11 +36,12 @@ class PropertiesDeserializer<Value : Any>(
          * The root value we're deserializing
          */
         val value = type.createInstance()
+            ?: throw statusHandler.failure("Could not create instance of type ${type.simpleName}")
 
         /**
          * The last property path we processed.
          */
-        var lastPath: PropertyPath = rootPropertyPath(valueType(Any::class))
+        var lastPath: PropertyPath = rootPropertyPath(type)
 
         val pathToValue = mutableMapOf<PropertyPath, Any>()
 
@@ -61,10 +61,10 @@ class PropertiesDeserializer<Value : Any>(
         fun deserialize(path: PropertyPath, valueText: String) {
 
             // Get the property at the given path in the value's type,
-            val property = path.property()
+            val propertyAccessor = path.property()
 
             // and if there is no property,
-            if (property == null) {
+            if (propertyAccessor == null) {
 
                 // fail
                 statusHandler.fail("PropertyAccessor path does not exist: $path")
@@ -90,19 +90,20 @@ class PropertiesDeserializer<Value : Any>(
                     } else {
                         // and initialize it to a new value,
                         val parentValue = parentProperty.type().createInstance()
-                        val grandparentValue =
-                            pathToValue[parentPath.parent()] ?: run {
-                                statusHandler.fail("Internal error: no path to grandparent")
-                                return
-                            }
-                        @Suppress("UNCHECKED_CAST")
-                        (parentProperty as PropertyAccessor<Any?>).set(grandparentValue, parentValue)
-                        pathToValue[parentPath] = parentValue
+                        val grandparentValue = pathToValue[parentPath.parent()] ?: run {
+                            statusHandler.fail("Internal error: no path to grandparent")
+                            return
+                        }
+                        @Suppress("UNCHECKED_CAST") (parentProperty as PropertyAccessor<Any?>).set(
+                            grandparentValue,
+                            parentValue
+                        )
+                        pathToValue[parentPath] = parentValue!!
                     }
                 }
 
                 // then if there is a conversion to the property type,
-                val conversions = conversionRegistry.to(property.type())
+                val conversions = conversionRegistry.to(propertyAccessor.type())
                 if (!conversions.isEmpty()) {
 
                     // get the forward converter (String to Value),
@@ -116,8 +117,7 @@ class PropertiesDeserializer<Value : Any>(
                     if (instance != null) {
                         val property = path.property()
                         if (property != null) {
-                            @Suppress("UNCHECKED_CAST")
-                            (property as PropertyAccessor<Any?>).set(instance, converted)
+                            @Suppress("UNCHECKED_CAST") (property as PropertyAccessor<Any?>).set(instance, converted)
                         } else {
                             statusHandler.fail("Internal error: no property at path")
                         }

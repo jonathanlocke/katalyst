@@ -2,6 +2,7 @@ package jonathanlocke.katalyst.reflection.types
 
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.reflection.properties.PropertyAccessor
+import jonathanlocke.katalyst.reflection.properties.accessors.KotlinPropertyAccessor
 import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -16,13 +17,13 @@ class KotlinValueType<Value : Any>(
 
     @Suppress("UNCHECKED_CAST")
     override fun memberPropertyAccessors(): List<PropertyAccessor<*>> =
-        valueClass.memberProperties.map { PropertyAccessor.Companion.propertyAccessor(it as KProperty<Any>) }
+        valueClass.memberProperties.map { handleStatusOf(KotlinPropertyAccessor(it as KProperty<Any>)) }
 
     override fun property(name: String): PropertyAccessor<*>? = memberPropertyAccessors().find { it.name == name }
     override fun supertypes(): List<KotlinValueType<*>> =
         valueClass.supertypes.mapNotNull { it.classifier as? KClass<*> }.map { KotlinValueType(it, null) }
 
-    override fun createInstance(): Value = valueClass.createInstance()
+    override fun createInstance(): Value? = tryValue { valueClass.createInstance() }
     override val simpleName: String = valueClass.simpleName ?: "<unknown>"
     override val qualifiedName: String = valueClass.qualifiedName ?: "<unknown>"
     override val packageName: String = qualifiedName.substringBeforeLast(".")

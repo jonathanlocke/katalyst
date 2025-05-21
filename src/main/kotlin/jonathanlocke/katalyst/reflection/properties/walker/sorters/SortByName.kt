@@ -1,4 +1,4 @@
-package jonathanlocke.katalyst.reflection.properties.walker.comparators
+package jonathanlocke.katalyst.reflection.properties.walker.sorters
 
 import jonathanlocke.katalyst.reflection.properties.Property
 import jonathanlocke.katalyst.reflection.properties.walker.PropertyComparator

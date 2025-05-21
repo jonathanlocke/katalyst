@@ -16,9 +16,10 @@ class PropertyPath(val type: ValueType<*>) : ArrayList<String>() {
         }
     }
 
-    fun toQualifiedString(): String = type.qualifiedName + ":" + pathString()
-    fun pathString(): String = this.joinToString(SEPARATOR)
-    override fun toString(): String = type.simpleName + ":" + pathString()
+    fun toQualifiedString(): String = type.qualifiedName + ":" + toPathString()
+    fun toPathString(): String = this.joinToString(SEPARATOR)
+
+    override fun toString(): String = toQualifiedString()
 
     fun isChildOf(path: PropertyPath): Boolean = this.parent() == path
     fun isParentOf(path: PropertyPath): Boolean = path.isChildOf(this)

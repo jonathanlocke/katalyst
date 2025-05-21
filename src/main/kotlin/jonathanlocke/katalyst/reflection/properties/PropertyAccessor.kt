@@ -1,18 +1,12 @@
 package jonathanlocke.katalyst.reflection.properties
 
 import jonathanlocke.katalyst.reflection.ValueType
-import jonathanlocke.katalyst.reflection.properties.accessors.KotlinPropertyAccessor
+import jonathanlocke.katalyst.status.StatusHandlerMixin
 import kotlin.reflect.KClass
-import kotlin.reflect.KProperty
 
-interface PropertyAccessor<Value : Any> {
+interface PropertyAccessor<Value : Any> : StatusHandlerMixin {
 
     enum class Visibility { Public, Private, Protected }
-
-    companion object {
-
-        fun <Value : Any> propertyAccessor(property: KProperty<Value>) = KotlinPropertyAccessor(property)
-    }
 
     fun <AnnotationInstance : Annotation> annotations(type: KClass<AnnotationInstance>): List<AnnotationInstance>
     fun <AnnotationInstance : Annotation> annotation(type: KClass<AnnotationInstance>): AnnotationInstance?

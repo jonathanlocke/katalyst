@@ -39,5 +39,5 @@ class Property<Value : Any>(
 
     fun fullPath() = this.packageName + ":" + this
 
-    override fun toString() = path.pathString() + " = " + this.value
+    override fun toString() = path.toPathString() + " = " + this.value
 }

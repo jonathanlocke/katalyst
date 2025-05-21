@@ -4,8 +4,8 @@ import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeLi
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.reflection.properties.Property
 import jonathanlocke.katalyst.reflection.properties.PropertyAccessor.Visibility.Public
-import jonathanlocke.katalyst.reflection.properties.sorters.SortByPropertyPath
 import jonathanlocke.katalyst.reflection.properties.walker.filters.DefaultPropertyExplorationFilter
+import jonathanlocke.katalyst.reflection.properties.walker.sorters.SortByPropertyPath
 import java.util.stream.Collectors
 
 class PropertyWalker<Value : Any>(

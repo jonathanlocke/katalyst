@@ -3,9 +3,10 @@ package jonathanlocke.katalyst.reflection
 import jonathanlocke.katalyst.reflection.properties.PropertyAccessor
 import jonathanlocke.katalyst.reflection.properties.PropertyPath
 import jonathanlocke.katalyst.reflection.types.KotlinValueType
+import jonathanlocke.katalyst.status.StatusHandlerMixin
 import kotlin.reflect.KClass
 
-interface ValueType<Value : Any> {
+interface ValueType<Value : Any> : StatusHandlerMixin {
 
     companion object {
 
@@ -26,7 +27,7 @@ interface ValueType<Value : Any> {
     fun rootPropertyPath() = PropertyPath(this)
     fun valueInstance(value: Value): ValueInstance<Value> = ValueInstance(this, value)
     fun isInstanceOf(type: KClass<*>): Boolean
-    fun createInstance(): Value
+    fun createInstance(): Value?
     fun superPropertyAccessors(): List<PropertyAccessor<*>>
     fun declaredPropertyAccessors(): List<PropertyAccessor<*>>
     fun memberPropertyAccessors(): List<PropertyAccessor<*>>

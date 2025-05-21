@@ -1,10 +1,10 @@
-package jonathanlocke.katalyst.reflection.properties.sorters
+package jonathanlocke.katalyst.reflection.properties.walker.sorters
 
 import jonathanlocke.katalyst.reflection.properties.Property
 import jonathanlocke.katalyst.reflection.properties.walker.PropertyComparator
 
 class SortByPropertyPath : PropertyComparator {
     override fun compare(a: Property<*>, b: Property<*>): Int {
-        return a.path.pathString().compareTo(b.path.pathString())
+        return a.path.toPathString().compareTo(b.path.toPathString())
     }
 }

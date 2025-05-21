@@ -127,9 +127,6 @@ interface StatusHandler {
 
     fun tryBoolean(message: String = "Caught exception", code: Supplier<Boolean>): Boolean = try {
         code.get()
-    } catch (ignored: InterruptedException) {
-        Thread.currentThread().interrupt()
-        false
     } catch (cause: Exception) {
         error(message, cause)
         false
@@ -140,11 +137,18 @@ interface StatusHandler {
      */
     fun <Value> tryValue(message: String = "Caught exception", code: Supplier<Value>): Value? = try {
         code.get()
-    } catch (ignored: InterruptedException) {
-        Thread.currentThread().interrupt()
-        null
     } catch (cause: Exception) {
         error(message, cause)
         null
+    }
+
+    /**
+     * Guards the given functional code block by catching exceptions and reporting them as errors
+     */
+    fun tryUnit(message: String = "Caught exception", code: Runnable): Unit = try {
+        code.run()
+    } catch (cause: Exception) {
+        error(message, cause)
+        Unit
     }
 }

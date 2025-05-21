@@ -3,6 +3,7 @@ package jonathanlocke.katalyst.serialization
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.serialization.formats.properties.PropertiesSerialization
 import java.util.*
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class SerializationTest {
@@ -29,7 +30,7 @@ class SerializationTest {
     }
 
     // todo: this test is currently failing due to a regression likely to do with property walker
-    // @Test
+    @Test
     fun testSuccess() {
 
         // Create a test value with null fields,

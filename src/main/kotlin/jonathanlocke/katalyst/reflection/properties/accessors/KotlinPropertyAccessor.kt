@@ -14,7 +14,9 @@ import kotlin.reflect.KVisibility.*
 import kotlin.reflect.full.findAnnotations
 import kotlin.reflect.jvm.javaField
 
-open class KotlinPropertyAccessor<Value : Any>(val property: KProperty<Value>) : PropertyAccessor<Value> {
+open class KotlinPropertyAccessor<Value : Any>(
+    val property: KProperty<Value>,
+) : PropertyAccessor<Value> {
 
     override val visibility: Visibility = when (property.visibility) {
         PUBLIC -> Public
@@ -49,13 +51,15 @@ open class KotlinPropertyAccessor<Value : Any>(val property: KProperty<Value>) :
         return !(isStatic || declaringClass?.enclosingClass == null)
     }
 
+    override fun get(instance: Any): Value? =
+        tryValue("Cannot get property: $this") { property.getter.call(instance) }
 
-    override fun get(instance: Any): Value? = property.getter.call(instance)
-    override fun set(instance: Any, value: Value?) {
-        if (property is KMutableProperty<*>) {
-            property.setter.call(instance, value)
+    override fun set(instance: Any, value: Value?): Unit =
+        tryUnit("Cannot set property: $this = $value") {
+            if (property is KMutableProperty<*>) {
+                property.setter.call(instance, value)
+            }
         }
-    }
 
     companion object {
         private val inaccessibleGetters = ConcurrentHashMap<KProperty.Getter<*>, Boolean>()
