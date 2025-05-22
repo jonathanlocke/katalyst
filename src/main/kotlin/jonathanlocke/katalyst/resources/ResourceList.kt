@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.resources
 
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.count
-import jonathanlocke.katalyst.data.values.temporal.TimeExtensions.Companion.profile
+import jonathanlocke.katalyst.data.values.temporal.TimeExtensions.profile
 import jonathanlocke.katalyst.progress.ProgressReporter
 import jonathanlocke.katalyst.progress.ProgressReporter.Companion.progressReporter
 import jonathanlocke.katalyst.resources.streaming.ResourceStreamable.CopyMethod

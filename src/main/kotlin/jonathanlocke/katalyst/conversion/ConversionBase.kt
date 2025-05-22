@@ -16,7 +16,7 @@ import jonathanlocke.katalyst.reflection.ValueType
  */
 abstract class ConversionBase<From : Any, To : Any>(
     override val from: ValueType<From>,
-    override val to: ValueType<To>
+    override val to: ValueType<To>,
 ) :
     Conversion<From, To> {
 

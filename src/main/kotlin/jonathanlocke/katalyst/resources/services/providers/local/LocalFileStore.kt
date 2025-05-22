@@ -1,20 +1,20 @@
 package jonathanlocke.katalyst.resources.services.providers.local
 
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.toBytes
-import jonathanlocke.katalyst.status.StatusHandlerMixin
 import jonathanlocke.katalyst.resources.capabilities.ResourceStoreCapability.Companion.GetTemporaryFolderLocation
 import jonathanlocke.katalyst.resources.capabilities.ResourceStoreCapability.Companion.GetTemporaryResourceLocation
 import jonathanlocke.katalyst.resources.capabilities.ResourceStoreCapability.Companion.Resolve
 import jonathanlocke.katalyst.resources.location.ResourceLocation
 import jonathanlocke.katalyst.resources.location.ResourceProximity.Local
 import jonathanlocke.katalyst.resources.location.path.Filename
-import jonathanlocke.katalyst.resources.location.path.Paths.Companion.isRoot
+import jonathanlocke.katalyst.resources.location.path.Paths.isRoot
 import jonathanlocke.katalyst.resources.metadata.ResourceStoreMetadata
 import jonathanlocke.katalyst.resources.metadata.ResourceStoreMetadataValue.*
 import jonathanlocke.katalyst.resources.services.ResourceFolderService
 import jonathanlocke.katalyst.resources.services.ResourceNodeService
 import jonathanlocke.katalyst.resources.services.ResourceService
 import jonathanlocke.katalyst.resources.services.ResourceStoreService
+import jonathanlocke.katalyst.status.StatusHandlerMixin
 import java.nio.file.Files
 import kotlin.io.path.name
 

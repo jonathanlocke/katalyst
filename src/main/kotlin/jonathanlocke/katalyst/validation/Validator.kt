@@ -69,8 +69,8 @@ interface Validator<Value : Any> {
         ): ValidationResult<Value> {
             val result = ValidationResult(value)
             validators.stream()
-                .map { it -> it.validate(value) }
-                .forEach { it -> it.statuses().forEach(result::handle) }
+                .map { it.validate(value) }
+                .forEach { it.statuses().forEach(result::handle) }
             return result
         }
 

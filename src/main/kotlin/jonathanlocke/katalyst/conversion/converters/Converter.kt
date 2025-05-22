@@ -4,7 +4,7 @@ import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.status.Status
 import jonathanlocke.katalyst.status.StatusException
 import jonathanlocke.katalyst.status.StatusHandler
-import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
+import jonathanlocke.katalyst.status.StatusHandlers.throwOnError
 import jonathanlocke.katalyst.status.handlers.ReturnOnError
 import jonathanlocke.katalyst.status.handlers.ThrowOnError
 import jonathanlocke.katalyst.validation.ValidationResult
@@ -59,7 +59,8 @@ interface Converter<From : Any, To : Any> {
      * Converts the given [From] value to a [To] value. If an error occurs, the [StatusHandler] is called and
      * that determines whether a null value is returned ([ReturnOnError]) or an exception is thrown ([ThrowOnError]).
      * @param from The value to convert
-     * @param statusHandler The error handler to use when the conversion fails. Defaults to [ThrowOnError] if not provided.
+     * @param statusHandler The error handler to use when the conversion fails. Defaults to [ThrowOnError] if not
+     * provided.
      * @return Returns [To] if the conversion succeeded. If the conversion failed, returns null unless the error handler
      * throws an exception
      * @throws StatusException Thrown by error handler if the conversion fails and the handler is [ThrowOnError]

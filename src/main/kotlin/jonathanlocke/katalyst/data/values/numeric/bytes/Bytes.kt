@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.data.values.numeric.bytes
 
-import jonathanlocke.katalyst.conversion.converters.strings.StringConversions.Companion.stringToValueConverter
+import jonathanlocke.katalyst.conversion.converters.strings.StringConversions.stringToValueConverter
 import jonathanlocke.katalyst.data.values.numeric.Numeric
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.bytesConverter
 import jonathanlocke.katalyst.data.values.numeric.bytes.Bytes.Companion.exabytes
@@ -22,7 +22,7 @@ import jonathanlocke.katalyst.data.values.numeric.percent.Percent
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.percentFromUnitValue
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.status.StatusHandler
-import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
+import jonathanlocke.katalyst.status.StatusHandlers.throwOnError
 import jonathanlocke.katalyst.text.formatting.Formattable
 import jonathanlocke.katalyst.text.formatting.Formatter
 import java.text.DecimalFormat

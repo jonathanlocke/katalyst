@@ -42,10 +42,10 @@ abstract class ValidatorBase<Value : Any> : Validator<Value> {
             // call the subclass to validate the value
             onValidate(value, result.get())
 
-        } catch (e: Exception) {
+        } catch (cause: Exception) {
 
             // and if an exception is thrown, record an error.
-            validationError("Unexpected exception: ${e.message}")
+            validationError("Unexpected exception: ${cause.message}")
         }
 
         return result.get()

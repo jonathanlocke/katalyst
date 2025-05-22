@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.status
 
-import jonathanlocke.katalyst.status.StatusFormatters.Companion.statusListDetailsFormatter
+import jonathanlocke.katalyst.status.StatusFormatters.statusListDetailsFormatter
 
 /**
  * An exception that optionally includes a [StatusList]

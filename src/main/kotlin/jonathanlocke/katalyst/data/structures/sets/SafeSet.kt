@@ -2,7 +2,6 @@ package jonathanlocke.katalyst.data.structures.sets
 
 import jonathanlocke.katalyst.data.structures.SafeDataStructure
 import jonathanlocke.katalyst.status.StatusHandler
-import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
 
 /**
  * A [MutableSet] that is safe to use.
@@ -15,10 +14,10 @@ import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
  * @see StatusHandler
  */
 class SafeSet<Member : Any> internal constructor(
+    override val statusHandler: StatusHandler,
     override val metadata: SafetyMetadata,
-    override val statusHandler: StatusHandler = throwOnError,
     private val set: MutableSet<Member>,
-) : SafeDataStructure(metadata, statusHandler), MutableSet<Member> {
+) : SafeDataStructure(statusHandler, metadata), MutableSet<Member> {
 
     fun toImmutableSet(): Set<Member> = set.toSet()
 

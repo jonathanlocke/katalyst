@@ -30,7 +30,7 @@ class PropertiesDeserializer<Value : Any>(
     /**
      * Deserializes individual properties
      */
-    internal inner class PropertyDeserializer() {
+    internal inner class PropertyDeserializer {
 
         /**
          * The root value we're deserializing
@@ -78,7 +78,7 @@ class PropertiesDeserializer<Value : Any>(
 
                     // first ensure the path only increases by one level at a time,
                     if (path.size > lastPath.size + 1) {
-                        error("PropertyAccessor path '$path' skips levels - can only increase depth by one level at a time")
+                        error("PropertyAccessor path '$path' skips one or more levels")
                         return
                     }
 

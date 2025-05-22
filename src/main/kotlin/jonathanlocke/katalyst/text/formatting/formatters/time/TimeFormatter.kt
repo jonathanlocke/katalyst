@@ -6,6 +6,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class TimeFormatter : Formatter<Instant> {
+
     private val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd-h.mm.ssa")
 
     override fun format(duration: Instant): String {

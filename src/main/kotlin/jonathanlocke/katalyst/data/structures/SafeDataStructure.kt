@@ -7,11 +7,11 @@ import jonathanlocke.katalyst.data.structures.sets.SafeSet
 import jonathanlocke.katalyst.data.values.numeric.count.Count
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.count
 import jonathanlocke.katalyst.status.StatusHandler
-import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
+import jonathanlocke.katalyst.status.StatusHandlers.throwOnError
 
 abstract class SafeDataStructure(
-    open val metadata: SafetyMetadata,
     open val statusHandler: StatusHandler,
+    open val metadata: SafetyMetadata,
 ) {
     open class SafetyMetadata(
         val name: String,
@@ -70,11 +70,11 @@ abstract class SafeDataStructure(
             initialSize: Count = globalInitialSize,
             warningSize: Count = globalWarningSize,
             maximumSize: Count = globalMaximumSize,
-            newUnsafeList: (Count) -> MutableList<Element> = { size -> ArrayList(size.asInt()) },
+            newUnsafeList: (Count) -> MutableList<Element> = { ArrayList(it.asInt()) },
             statusHandler: StatusHandler = throwOnError,
         ): SafeList<Element> {
             val metadata = SafetyMetadata(name, initialSize, warningSize, maximumSize)
-            return SafeList(metadata, statusHandler, newUnsafeList.invoke(initialSize))
+            return SafeList(statusHandler, metadata, newUnsafeList.invoke(initialSize))
         }
 
         /**
@@ -92,11 +92,11 @@ abstract class SafeDataStructure(
             initialSize: Count = globalInitialSize,
             warningSize: Count = globalWarningSize,
             maximumSize: Count = globalMaximumSize,
-            newUnsafeSet: (Count) -> MutableSet<Member> = { size -> HashSet(size.asInt()) },
+            newUnsafeSet: (Count) -> MutableSet<Member> = { HashSet(it.asInt()) },
             statusHandler: StatusHandler = throwOnError,
         ): SafeSet<Member> {
             val metadata = SafetyMetadata(name, initialSize, warningSize, maximumSize)
-            return SafeSet(metadata, statusHandler, newUnsafeSet.invoke(initialSize))
+            return SafeSet(statusHandler, metadata, newUnsafeSet.invoke(initialSize))
         }
 
         /**
@@ -114,11 +114,11 @@ abstract class SafeDataStructure(
             initialSize: Count = globalInitialSize,
             warningSize: Count = globalWarningSize,
             maximumSize: Count = globalMaximumSize,
-            newUnsafeMap: (Count) -> MutableMap<Key, Value> = { size -> HashMap(size.asInt()) },
+            newUnsafeMap: (Count) -> MutableMap<Key, Value> = { HashMap(it.asInt()) },
             statusHandler: StatusHandler = throwOnError,
         ): SafeMap<Key, Value> {
             val metadata = SafetyMetadata(name, initialSize, warningSize, maximumSize)
-            return SafeMap(metadata, statusHandler, newUnsafeMap.invoke(initialSize))
+            return SafeMap(statusHandler, metadata, newUnsafeMap.invoke(initialSize))
         }
 
         /**
@@ -137,12 +137,14 @@ abstract class SafeDataStructure(
             initialSize: Count = globalInitialSize,
             warningSize: Count = globalWarningSize,
             maximumSize: Count = globalMaximumSize,
-            newUnsafeMap: (Count) -> MutableMap<Key, Value> = { size -> HashMap(size.asInt()) },
-            newSafeList: () -> SafeList<Value>,
+            newUnsafeMap: (Count) -> MutableMap<Key, MutableList<Value>> = { HashMap(it.asInt()) },
+            newUnsafeList: (Count) -> MutableList<Value> = { ArrayList(it.asInt()) },
             statusHandler: StatusHandler = throwOnError,
         ): SafeMultiMap<Key, Value> {
             val metadata = SafetyMetadata(name, initialSize, warningSize, maximumSize)
-            return SafeMultiMap(metadata, statusHandler, newSafeList)
+            return SafeMultiMap(statusHandler, metadata, newUnsafeMap.invoke(initialSize)) {
+                newUnsafeList.invoke(initialSize)
+            }
         }
     }
 

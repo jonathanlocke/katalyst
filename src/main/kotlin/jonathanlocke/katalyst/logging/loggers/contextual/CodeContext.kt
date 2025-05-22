@@ -5,7 +5,7 @@ import java.lang.StackWalker.Option.RETAIN_CLASS_REFERENCE
 import java.lang.StackWalker.StackFrame
 import java.util.function.Predicate
 
-class CodeLocation(val type: Class<*>, val methodName: String, val lineNumber: Int) : Formattable<CodeLocation> {
+class CodeContext(val type: Class<*>, val methodName: String, val lineNumber: Int) : Formattable<CodeContext> {
 
     override fun toString(): String = "${type.simpleName}.$methodName:$lineNumber"
 
@@ -38,14 +38,14 @@ class CodeLocation(val type: Class<*>, val methodName: String, val lineNumber: I
                     excludePackages.none { packageName.startsWith(it) }
         }
 
-        fun codeLocation(filter: Predicate<StackFrame> = defaultFilter): CodeLocation {
+        fun codeContext(filter: Predicate<StackFrame> = defaultFilter): CodeContext {
             val caller = stackWalker.walk { stackFrames ->
                 stackFrames.skip(1).filter(filter).findFirst().orElse(null)
             }
             return if (caller == null) {
-                CodeLocation(CodeLocation::class.java, "unknown", -1)
+                CodeContext(CodeContext::class.java, "unknown", -1)
             } else {
-                CodeLocation(caller.declaringClass, caller.methodName, caller.lineNumber)
+                CodeContext(caller.declaringClass, caller.methodName, caller.lineNumber)
             }
         }
     }

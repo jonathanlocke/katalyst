@@ -1,8 +1,8 @@
 package jonathanlocke.katalyst.resources.location.path
 
-import jonathanlocke.katalyst.resources.location.path.Paths.Companion.extension
+import jonathanlocke.katalyst.resources.location.path.Paths.extension
 import jonathanlocke.katalyst.status.StatusHandler
-import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
+import jonathanlocke.katalyst.status.StatusHandlers.throwOnError
 import java.nio.file.Path
 import kotlin.io.path.name
 

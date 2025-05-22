@@ -79,7 +79,7 @@ open class KotlinPropertyAccessor<Value : Any>(
                     get(instance)
                     return true
 
-                } catch (e: Exception) {
+                } catch (_: Exception) {
 
                     // and if we fail, record that the getter is inaccessible.
                     inaccessibleGetters[property.getter] = true

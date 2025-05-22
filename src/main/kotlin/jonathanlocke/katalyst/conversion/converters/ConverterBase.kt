@@ -102,10 +102,10 @@ abstract class ConverterBase<From : Any, To : Any>(
                     // convert to the To type
                     onConvert(from)
 
-                } catch (e: Exception) {
+                } catch (cause: Exception) {
 
                     // unless an exception occurs
-                    error("Cannot convert $from")
+                    error("Cannot convert $from", cause)
                     nullValue()
                 }
             }

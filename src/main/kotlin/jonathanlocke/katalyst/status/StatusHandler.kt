@@ -1,6 +1,10 @@
 package jonathanlocke.katalyst.status
 
-import jonathanlocke.katalyst.status.categories.*
+import jonathanlocke.katalyst.status.categories.Error
+import jonathanlocke.katalyst.status.categories.Failure
+import jonathanlocke.katalyst.status.categories.Info
+import jonathanlocke.katalyst.status.categories.Trace
+import jonathanlocke.katalyst.status.categories.Warning
 import jonathanlocke.katalyst.status.handlers.ReturnOnError
 import jonathanlocke.katalyst.status.handlers.ThrowOnError
 import java.util.function.Supplier

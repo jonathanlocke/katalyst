@@ -1,6 +1,6 @@
 package jonathanlocke.katalyst.data.values.numeric.percent
 
-import jonathanlocke.katalyst.conversion.converters.strings.StringConversions.Companion.stringToValueConverter
+import jonathanlocke.katalyst.conversion.converters.strings.StringConversions.stringToValueConverter
 import jonathanlocke.katalyst.data.values.numeric.Numeric
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.DecimalFormat
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.IntegerFormat
@@ -9,7 +9,7 @@ import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.perc
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.percentConverter
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.status.StatusHandler
-import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
+import jonathanlocke.katalyst.status.StatusHandlers.throwOnError
 import jonathanlocke.katalyst.text.formatting.Formattable
 import jonathanlocke.katalyst.text.formatting.Formatter
 
@@ -46,12 +46,14 @@ import jonathanlocke.katalyst.text.formatting.Formatter
  *  - [IntegerFormat]
  *  - [DecimalFormat]
  *
- * @property percent The percentage value of this percent on the scale of 0 to 100, but potentially greater than 100 or less than 0
+ * @property percent The percentage value of this percent on the scale of 0 to 100, but potentially greater than 100 or
+ *                   less than 0
  */
 class Percent(val percent: Double) : Comparable<Percent>, Formattable<Percent>, Numeric {
 
     /**
-     * This percent as a unit value, potentially greater than 1 or less than 0 (if the percentage is greater than 100 or less than 0)
+     * This percent as a unit value, potentially greater than 1 or less than 0 (if the percentage is greater than 100
+     * or less than 0)
      *
      * @return This percentage divided by 100
      */

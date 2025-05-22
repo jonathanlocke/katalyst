@@ -10,12 +10,15 @@ import jonathanlocke.katalyst.resources.streaming.ResourceStreamable.CopyMethod.
 import jonathanlocke.katalyst.resources.streaming.io.ResourceOutputStream
 import jonathanlocke.katalyst.resources.streaming.io.WriteMode
 import jonathanlocke.katalyst.resources.streaming.io.WriteMode.DoNotOverwrite
-import jonathanlocke.katalyst.resources.streaming.io.WriteMode.Overwrite
 import jonathanlocke.katalyst.serialization.Deserializer
 import jonathanlocke.katalyst.serialization.Serializer
 import jonathanlocke.katalyst.status.StatusHandler
-import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
-import java.io.*
+import jonathanlocke.katalyst.status.StatusHandlers.throwOnError
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
+import java.io.Reader
+import java.io.Writer
 
 class ResourceStreamer(
     val resourceStreamable: ResourceStreamable,
@@ -34,14 +37,14 @@ class ResourceStreamer(
 
                 CopyAndRename -> {
                     val temporary = to.store.temporaryResourceLocation(parseFilename("copy"))
-                    temporary.openForWriting(Overwrite, progressReporter).use { output ->
+                    temporary.openForWriting(mode, progressReporter).use { output ->
                         input.copyTo(output)
                     }
                     temporary.moveTo(to)
                 }
 
                 Copy -> {
-                    to.openForWriting(Overwrite, progressReporter).use { output ->
+                    to.openForWriting(mode, progressReporter).use { output ->
                         input.copyTo(output)
                     }
                 }

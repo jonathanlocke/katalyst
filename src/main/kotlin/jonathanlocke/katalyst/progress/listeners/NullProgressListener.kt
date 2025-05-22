@@ -5,9 +5,6 @@ import jonathanlocke.katalyst.data.values.numeric.percent.Percent
 import jonathanlocke.katalyst.progress.ProgressListener
 
 class NullProgressListener : ProgressListener {
-    override fun progress(at: Percent) {
-    }
-
-    override fun progress(at: Count) {
-    }
+    override fun progress(at: Percent) = Unit
+    override fun progress(at: Count) = Unit
 }

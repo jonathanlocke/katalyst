@@ -3,7 +3,7 @@ package jonathanlocke.katalyst.status
 import jonathanlocke.katalyst.logging.LoggerFactory.Companion.defaultLoggerFactory
 import jonathanlocke.katalyst.status.categories.Failure
 
-open class StatusHandlerBase() : StatusHandler {
+open class StatusHandlerBase : StatusHandler {
 
     private val statuses = lazy { StatusList() }
     private val handlers = ArrayList<StatusHandler>()

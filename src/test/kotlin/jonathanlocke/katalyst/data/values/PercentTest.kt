@@ -4,7 +4,7 @@ import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.Deci
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.parsePercent
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.percent
 import jonathanlocke.katalyst.data.values.numeric.percent.Percent.Companion.percentConverter
-import jonathanlocke.katalyst.status.StatusHandlers.Companion.returnOnError
+import jonathanlocke.katalyst.status.StatusHandlers.returnOnError
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import kotlin.test.Test

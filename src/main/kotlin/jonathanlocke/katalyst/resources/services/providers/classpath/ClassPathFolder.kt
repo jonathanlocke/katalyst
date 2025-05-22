@@ -23,7 +23,7 @@ class ClassPathFolder(
     override fun mkdirs() = throw unimplemented()
 
     override fun resources(recursion: Recursion) = scanChildren { it }
-    override fun folders(recursion: Recursion) = scanChildren { it ->
+    override fun folders(recursion: Recursion) = scanChildren {
 
         // If the relative path of the child is two levels deep (like 'a/b.txt'),
         if (it.relativeTo(location).path.count() == 2) {

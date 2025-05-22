@@ -3,7 +3,6 @@ package jonathanlocke.katalyst.conversion
 import jonathanlocke.katalyst.conversion.ConversionRegistry.Companion.defaultConversionRegistry
 import jonathanlocke.katalyst.conversion.converters.strings.StringConversion
 import jonathanlocke.katalyst.conversion.converters.strings.StringToValueConverter
-import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeList
 import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeMultiMap
 import jonathanlocke.katalyst.reflection.ValueType
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
@@ -47,13 +46,13 @@ import kotlin.reflect.full.companionObjectInstance
  * @see Conversion
  * @see ConversionBase
  */
-open class ConversionRegistry() {
+open class ConversionRegistry {
 
     /** Conversions keyed by the From type of the conversion */
-    private val from = safeMultiMap<ValueType<*>, Conversion<*, *>>(newSafeList = { safeList() })
+    private val from = safeMultiMap<ValueType<*>, Conversion<*, *>>()
 
     /** Conversions keyed by the To type of the conversion */
-    private val to = safeMultiMap<ValueType<*>, Conversion<*, *>>(newSafeList = { safeList() })
+    private val to = safeMultiMap<ValueType<*>, Conversion<*, *>>()
 
     companion object {
 
@@ -66,15 +65,11 @@ open class ConversionRegistry() {
         return synchronized(this) {
             "Conversions:\n\n" + from.entries().joinToString("\n") { (fromType, conversionsList) ->
                 "${fromType.simpleName} => ${
-                    conversionsList.joinToString(", ") { it ->
-                        it.forwardConverter().to.simpleName
-                    }
+                    conversionsList.joinToString(", ") { it.forwardConverter().to.simpleName }
                 }\n"
             } + to.entries().joinToString("\n") { (toType, conversionsList) ->
                 "${toType.simpleName} => ${
-                    conversionsList.joinToString(",") { it ->
-                        it.from.simpleName
-                    }
+                    conversionsList.joinToString(",") { it.from.simpleName }
                 }"
             }
         }

@@ -5,13 +5,13 @@ import jonathanlocke.katalyst.data.structures.SafeDataStructure.Companion.safeLi
 import jonathanlocke.katalyst.data.values.numeric.count.Count
 import jonathanlocke.katalyst.status.Status.Effect.CONTINUE
 import jonathanlocke.katalyst.status.Status.Effect.STOP
-import jonathanlocke.katalyst.status.StatusFormatters.Companion.statusListDetailsFormatter
+import jonathanlocke.katalyst.status.StatusFormatters.statusListDetailsFormatter
 import jonathanlocke.katalyst.text.formatting.Formattable
 
 class NullStatusList : StatusList() {
 
     override val size = 0
-    override fun add(index: Int, element: Status) {}
+    override fun add(index: Int, element: Status) = Unit
 }
 
 /**

@@ -18,7 +18,7 @@ abstract class ColumnarFormatter<Value> : Formatter<Value> {
         var width: Int,
         val type: Type,
         val justify: Justify,
-        val maxWidth: Int = Int.MAX_VALUE
+        val maxWidth: Int = Int.MAX_VALUE,
     ) {
 
         private fun justify(text: String): String =

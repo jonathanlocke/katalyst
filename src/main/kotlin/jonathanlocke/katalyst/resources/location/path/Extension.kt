@@ -1,7 +1,7 @@
 package jonathanlocke.katalyst.resources.location.path
 
 import jonathanlocke.katalyst.status.StatusHandler
-import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
+import jonathanlocke.katalyst.status.StatusHandlers.throwOnError
 
 class Extension(text: String) {
 

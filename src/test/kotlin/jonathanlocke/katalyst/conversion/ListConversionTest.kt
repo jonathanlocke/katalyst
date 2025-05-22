@@ -1,8 +1,8 @@
 package jonathanlocke.katalyst.conversion
 
-import jonathanlocke.katalyst.conversion.converters.strings.StringConversions.Companion.convertToList
-import jonathanlocke.katalyst.conversion.converters.strings.values.StringToNumber.Companion.intConverter
-import jonathanlocke.katalyst.status.StatusHandlers.Companion.returnOnError
+import jonathanlocke.katalyst.conversion.converters.strings.StringConversions.convertToList
+import jonathanlocke.katalyst.conversion.converters.strings.values.StringToNumber.intConverter
+import jonathanlocke.katalyst.status.StatusHandlers.returnOnError
 import jonathanlocke.katalyst.text.parsing.Separator.Companion.colonSeparator
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test

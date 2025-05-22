@@ -4,8 +4,8 @@ import jonathanlocke.katalyst.resources.Resource
 import jonathanlocke.katalyst.resources.ResourceFolder
 import jonathanlocke.katalyst.resources.ResourceStore
 import jonathanlocke.katalyst.resources.location.path.Filename
-import jonathanlocke.katalyst.resources.location.path.Paths.Companion.filename
-import jonathanlocke.katalyst.resources.location.path.Paths.Companion.isRoot
+import jonathanlocke.katalyst.resources.location.path.Paths.filename
+import jonathanlocke.katalyst.resources.location.path.Paths.isRoot
 import jonathanlocke.katalyst.status.StatusHandler
 import java.net.URI
 import java.nio.file.Path

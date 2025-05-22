@@ -1,14 +1,14 @@
 package jonathanlocke.katalyst.data.values.numeric.count
 
-import jonathanlocke.katalyst.conversion.converters.strings.StringConversions.Companion.convert
-import jonathanlocke.katalyst.conversion.converters.strings.StringConversions.Companion.stringToValueConverter
-import jonathanlocke.katalyst.conversion.converters.strings.values.StringToNumber.Companion.longConverter
+import jonathanlocke.katalyst.conversion.converters.strings.StringConversions.convert
+import jonathanlocke.katalyst.conversion.converters.strings.StringConversions.stringToValueConverter
+import jonathanlocke.katalyst.conversion.converters.strings.values.StringToNumber.longConverter
 import jonathanlocke.katalyst.data.values.numeric.Numeric
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.ThousandsSeparatedFormatter
 import jonathanlocke.katalyst.data.values.numeric.count.Count.Companion.parseCount
 import jonathanlocke.katalyst.reflection.ValueType.Companion.valueType
 import jonathanlocke.katalyst.status.StatusHandler
-import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
+import jonathanlocke.katalyst.status.StatusHandlers.throwOnError
 import jonathanlocke.katalyst.text.formatting.Formattable
 import jonathanlocke.katalyst.text.formatting.Formatter
 

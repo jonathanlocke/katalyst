@@ -14,7 +14,7 @@ open class IntervalProgressReporter(
     val progressListener: ProgressListener,
     val operationSteps: Count? = null,
     val reportEvery: Count = count(10_000),
-    val reportEveryPercent: Percent = percent(10)
+    val reportEveryPercent: Percent = percent(10),
 ) : ProgressReporter {
     var step = 0
 

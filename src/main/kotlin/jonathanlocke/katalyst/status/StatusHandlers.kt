@@ -4,11 +4,9 @@ import jonathanlocke.katalyst.status.handlers.ConsoleStatusHandler
 import jonathanlocke.katalyst.status.handlers.ReturnOnError
 import jonathanlocke.katalyst.status.handlers.ThrowOnError
 
-class StatusHandlers {
+object StatusHandlers {
 
-    companion object {
-        val returnOnError = ReturnOnError()
-        val throwOnError = ThrowOnError()
-        val consoleStatusHandler = ConsoleStatusHandler()
-    }
+    val returnOnError = ReturnOnError()
+    val throwOnError = ThrowOnError()
+    val consoleStatusHandler = ConsoleStatusHandler()
 }

@@ -2,7 +2,6 @@ package jonathanlocke.katalyst.data.structures.maps
 
 import jonathanlocke.katalyst.data.structures.SafeDataStructure
 import jonathanlocke.katalyst.status.StatusHandler
-import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
 
 /**
  * A [MutableSet] that is safe to use.
@@ -15,10 +14,10 @@ import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
  * @see StatusHandler
  */
 class SafeMap<Key : Any, Value> internal constructor(
+    override val statusHandler: StatusHandler,
     override val metadata: SafetyMetadata,
-    override val statusHandler: StatusHandler = throwOnError,
-    private val map: MutableMap<Key, Value> = HashMap(metadata.initialSize.asInt()),
-) : SafeDataStructure(metadata, statusHandler), MutableMap<Key, Value> {
+    private val map: MutableMap<Key, Value>,
+) : SafeDataStructure(statusHandler, metadata), MutableMap<Key, Value> {
 
     fun toImmutableMap(): Map<Key, Value> = map.toMap()
 

@@ -2,7 +2,6 @@ package jonathanlocke.katalyst.data.structures.lists
 
 import jonathanlocke.katalyst.data.structures.SafeDataStructure
 import jonathanlocke.katalyst.status.StatusHandler
-import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
 
 /**
  * A [MutableList] that is safe to use.
@@ -16,10 +15,10 @@ import jonathanlocke.katalyst.status.StatusHandlers.Companion.throwOnError
  * @see SafeDataStructure
  */
 class SafeList<Element : Any> internal constructor(
+    override val statusHandler: StatusHandler,
     override val metadata: SafetyMetadata,
-    override val statusHandler: StatusHandler = throwOnError,
     private val list: MutableList<Element>,
-) : SafeDataStructure(metadata, statusHandler), MutableList<Element> {
+) : SafeDataStructure(statusHandler, metadata), MutableList<Element> {
 
     fun toImmutableList(): List<Element> = list.toList()
 
