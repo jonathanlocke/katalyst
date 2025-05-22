@@ -1,6 +1,7 @@
 package jonathanlocke.katalyst.data.structures.maps
 
 import jonathanlocke.katalyst.data.structures.SafeDataStructure
+import jonathanlocke.katalyst.data.values.numeric.count.Count
 import jonathanlocke.katalyst.status.StatusHandler
 
 /**
@@ -16,13 +17,21 @@ import jonathanlocke.katalyst.status.StatusHandler
 class SafeMultiMap<Key : Any, Value : Any> internal constructor(
     override val statusHandler: StatusHandler,
     override val metadata: SafetyMetadata,
-    private val map: MutableMap<Key, MutableList<Value>>,
-    private val newUnsafeList: () -> MutableList<Value>,
+    private val newUnsafeMap: (Count) -> MutableMap<Key, MutableList<Value>>,
+    private val newUnsafeList: (Count) -> MutableList<Value>,
 ) : SafeDataStructure(statusHandler, metadata) {
+
+    private val map = newUnsafeMap(metadata.initialSize)
 
     var totalSize = 0
 
     override val size = totalSize
+
+    fun copy(): SafeMultiMap<Key, Value> {
+        val copy = SafeMultiMap(statusHandler, metadata, newUnsafeMap, newUnsafeList)
+        copy.putAll(this)
+        return copy
+    }
 
     fun entries(): List<Pair<Key, List<Value>>> = map.map { it.key to it.value.toList() }
 
@@ -33,7 +42,7 @@ class SafeMultiMap<Key : Any, Value : Any> internal constructor(
     fun put(key: Key, value: Value) {
         ensureSafeToAdd(1)
         map.getOrPut(key) {
-            newUnsafeList.invoke()
+            newUnsafeList.invoke(metadata.initialSize)
         }.add(value)
         totalSize += 1
     }
@@ -41,7 +50,7 @@ class SafeMultiMap<Key : Any, Value : Any> internal constructor(
     fun putAll(key: Key, values: Collection<Value>) {
         ensureSafeToAdd(values.size)
         map.getOrPut(key) {
-            newUnsafeList.invoke()
+            newUnsafeList.invoke(metadata.initialSize)
         }.addAll(values)
         totalSize += values.size
     }

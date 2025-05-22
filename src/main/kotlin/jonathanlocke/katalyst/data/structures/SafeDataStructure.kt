@@ -74,7 +74,7 @@ abstract class SafeDataStructure(
             statusHandler: StatusHandler = throwOnError,
         ): SafeList<Element> {
             val metadata = SafetyMetadata(name, initialSize, warningSize, maximumSize)
-            return SafeList(statusHandler, metadata, newUnsafeList.invoke(initialSize))
+            return SafeList(statusHandler, metadata, newUnsafeList)
         }
 
         /**
@@ -96,7 +96,7 @@ abstract class SafeDataStructure(
             statusHandler: StatusHandler = throwOnError,
         ): SafeSet<Member> {
             val metadata = SafetyMetadata(name, initialSize, warningSize, maximumSize)
-            return SafeSet(statusHandler, metadata, newUnsafeSet.invoke(initialSize))
+            return SafeSet(statusHandler, metadata, newUnsafeSet)
         }
 
         /**
@@ -118,7 +118,7 @@ abstract class SafeDataStructure(
             statusHandler: StatusHandler = throwOnError,
         ): SafeMap<Key, Value> {
             val metadata = SafetyMetadata(name, initialSize, warningSize, maximumSize)
-            return SafeMap(statusHandler, metadata, newUnsafeMap.invoke(initialSize))
+            return SafeMap(statusHandler, metadata, newUnsafeMap)
         }
 
         /**
@@ -129,7 +129,7 @@ abstract class SafeDataStructure(
          * @param warningSize The size at which the warning listener will be called
          * @param maximumSize The maximum size of the collection
          * @param newUnsafeMap A function that creates a new mutable map with the given estimated size
-         * @param newSafeList A function that creates a new mutable list with the given estimated size
+         * @param newUnsafeList A function that creates a new mutable list with the given estimated size
          * @param statusHandler The status handler to use
          */
         fun <Key : Any, Value : Any> safeMultiMap(
@@ -142,9 +142,7 @@ abstract class SafeDataStructure(
             statusHandler: StatusHandler = throwOnError,
         ): SafeMultiMap<Key, Value> {
             val metadata = SafetyMetadata(name, initialSize, warningSize, maximumSize)
-            return SafeMultiMap(statusHandler, metadata, newUnsafeMap.invoke(initialSize)) {
-                newUnsafeList.invoke(initialSize)
-            }
+            return SafeMultiMap(statusHandler, metadata, newUnsafeMap, newUnsafeList)
         }
     }
 

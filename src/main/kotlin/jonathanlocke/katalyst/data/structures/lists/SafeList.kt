@@ -1,6 +1,7 @@
 package jonathanlocke.katalyst.data.structures.lists
 
 import jonathanlocke.katalyst.data.structures.SafeDataStructure
+import jonathanlocke.katalyst.data.values.numeric.count.Count
 import jonathanlocke.katalyst.status.StatusHandler
 
 /**
@@ -17,10 +18,30 @@ import jonathanlocke.katalyst.status.StatusHandler
 class SafeList<Element : Any> internal constructor(
     override val statusHandler: StatusHandler,
     override val metadata: SafetyMetadata,
-    private val list: MutableList<Element>,
+    private val newUnsafeList: (Count) -> MutableList<Element>,
 ) : SafeDataStructure(statusHandler, metadata), MutableList<Element> {
 
+    private val list = newUnsafeList(metadata.initialSize)
+
+    fun copy(): SafeList<Element> {
+        val copy = SafeList(statusHandler, metadata, newUnsafeList)
+        copy.addAll(this as MutableCollection<out Element>)
+        return copy
+    }
+
     fun toImmutableList(): List<Element> = list.toList()
+
+    fun with(element: Element): SafeList<Element> {
+        val copy: SafeList<Element> = copy()
+        copy.add(element)
+        return copy
+    }
+
+    fun with(elements: Iterable<Element>): SafeList<Element> {
+        val copy: SafeList<Element> = copy()
+        copy.addAll(elements)
+        return copy
+    }
 
     override fun add(element: Element): Boolean {
         ensureSafeToAdd(1)

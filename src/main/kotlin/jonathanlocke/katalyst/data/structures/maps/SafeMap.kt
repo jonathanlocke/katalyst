@@ -1,6 +1,7 @@
 package jonathanlocke.katalyst.data.structures.maps
 
 import jonathanlocke.katalyst.data.structures.SafeDataStructure
+import jonathanlocke.katalyst.data.values.numeric.count.Count
 import jonathanlocke.katalyst.status.StatusHandler
 
 /**
@@ -16,8 +17,16 @@ import jonathanlocke.katalyst.status.StatusHandler
 class SafeMap<Key : Any, Value> internal constructor(
     override val statusHandler: StatusHandler,
     override val metadata: SafetyMetadata,
-    private val map: MutableMap<Key, Value>,
+    private val newUnsafeMap: (Count) -> MutableMap<Key, Value>,
 ) : SafeDataStructure(statusHandler, metadata), MutableMap<Key, Value> {
+
+    private val map = newUnsafeMap(metadata.initialSize)
+
+    fun copy(): SafeMap<Key, Value> {
+        val copy = SafeMap(statusHandler, metadata, newUnsafeMap)
+        copy.putAll(this)
+        return copy
+    }
 
     fun toImmutableMap(): Map<Key, Value> = map.toMap()
 
