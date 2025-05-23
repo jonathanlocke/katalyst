@@ -15,7 +15,7 @@ open class ResourceLocation(open val uri: URI) {
 
     constructor(path: Path) : this(path.toUri())
     constructor(filename: Filename) : this(filename.path)
-    constructor(location: String) : this(URI.create(location))
+    constructor(location: String) : this(Path.of(location))
 
     companion object {
         fun Path.toResourceLocation() = ResourceLocation(this)
@@ -32,7 +32,7 @@ open class ResourceLocation(open val uri: URI) {
         fun URI.toResourceStore(statusHandler: StatusHandler) = ResourceLocation(this).store(statusHandler)
     }
 
-    val root: ResourceLocation get() = ResourceLocation(uri.resolve(rootPath.toString()))
+    val root: ResourceLocation get() = ResourceLocation(rootPath)
     val parent: ResourceLocation? get() = path.parent?.let { ResourceLocation(uri.resolve(it.toString())) }
     val rootPath: Path get() = path.root ?: Path.of(separator)
     val path: Path get() = Path.of(uri.path)
@@ -53,4 +53,8 @@ open class ResourceLocation(open val uri: URI) {
 
     fun relativeTo(folder: ResourceLocation) = ResourceLocation(uri.resolve(path.relativeTo(folder.path).toString()))
     fun isUnder(location: ResourceLocation) = location.uri.path.startsWith(uri.path)
+
+    override fun equals(other: Any?) = if (other is ResourceLocation) uri == other.uri else false
+    override fun hashCode() = uri.hashCode()
+    override fun toString() = uri.toString()
 }

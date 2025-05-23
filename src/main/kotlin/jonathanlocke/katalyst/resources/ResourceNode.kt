@@ -14,6 +14,11 @@ abstract class ResourceNode(
 
     val store = ResourceStore(statusHandler, location)
 
+    internal val storeService = store.storeService
+    internal val nodeService by lazy { store.nodeService(location) }
+    internal val resourceService by lazy { store.resourceService(location) }
+    internal val folderService by lazy { store.folderService(location) }
+
     fun size(): Bytes? = metadata()?.size
     fun createdAtUtc(): Instant? = metadata()?.createdAtUtc
     fun lastModifiedAtUtc(): Instant? = metadata()?.lastModifiedAtUtc
@@ -29,9 +34,4 @@ abstract class ResourceNode(
 
     fun moveTo(target: Resource) = nodeService.moveTo(target.location)
     fun delete() = nodeService.delete()
-
-    internal val storeService = store.storeService()
-    internal val nodeService by lazy { store.nodeService(location) }
-    internal val resourceService by lazy { store.resourceService(location) }
-    internal val folderService by lazy { store.folderService(location) }
 }

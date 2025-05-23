@@ -6,8 +6,8 @@ import jonathanlocke.katalyst.resources.services.ResourceStoreServiceResolver
 import jonathanlocke.katalyst.resources.services.providers.classpath.ClassPathResourceStore
 import jonathanlocke.katalyst.resources.services.providers.local.LocalFileStore
 import jonathanlocke.katalyst.status.StatusHandlerMixin
+import java.io.File
 import java.net.URI
-import java.nio.file.FileSystems
 
 class ResourceStoreServiceRegistry : ResourceStoreServiceResolver, StatusHandlerMixin {
 
@@ -21,10 +21,10 @@ class ResourceStoreServiceRegistry : ResourceStoreServiceResolver, StatusHandler
     init {
 
         // For each local file store,
-        FileSystems.getDefault().fileStores.forEach { store ->
+        File.listRoots().forEach { root ->
 
             // register it as a local filesystem.
-            register(LocalFileStore(ResourceLocation(URI.create("file:///${store.name()}"))))
+            register(LocalFileStore(ResourceLocation(URI.create("file://$root"))))
         }
 
         register(ClassPathResourceStore(ResourceLocation(URI.create("classpath:///"))))
