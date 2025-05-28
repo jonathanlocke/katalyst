@@ -1,2 +1,2 @@
 # katalyst
-Kotlin acceleration.
+Kotlin accelerant.
